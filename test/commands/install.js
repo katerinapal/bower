@@ -638,18 +638,18 @@ describe('bower install', function() {
         // root directory for nested components
         var rootDir = new helpers.TempDir().prepare();
 
-        var package = new helpers.TempDir({
+        var package1 = new helpers.TempDir({
             'bower.json': {
                 name: 'package'
             }
         });
-        package.path = path.join(rootDir.path, 'src/a/b');
-        package.prepare();
+        package1.path = path.join(rootDir.path, 'src/a/b');
+        package1.prepare();
         var package2 = new helpers.TempDir({
             'bower.json': {
                 name: 'package2',
                 dependencies: {
-                    package: package.path
+                    package: package1.path
                 }
             }
         });
@@ -667,7 +667,7 @@ describe('bower install', function() {
         package3.create(); // run create to avoid deleting nested directories
 
         var installPackage = helpers.command('install', {
-            cwd: package.path
+            cwd: package1.path
         });
         var installPackage2 = helpers.command('install', {
             cwd: package2.path
