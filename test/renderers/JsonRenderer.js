@@ -1,11 +1,13 @@
-var expect = require('chai').expect;
-var helpers = require('../helpers');
-var multiline = require('multiline').stripIndent;
+import ext_chai_chai from "chai";
+import * as helpers_helpersjsjs from "../helpers";
+import ext_multiline_multiline from "multiline";
+var expect = ext_chai_chai.expect;
+var multiline = ext_multiline_multiline.stripIndent;
 
-var JsonRenderer = helpers.require('lib/renderers/JsonRenderer');
+var JsonRenderer = helpers_helpersjsjs.require('lib/renderers/JsonRenderer');
 
 var jsonRendererWithPrompt = function(stubs) {
-    return helpers.require('lib/renderers/JsonRenderer', {
+    return helpers_helpersjsjs.require('lib/renderers/JsonRenderer', {
         promptly: stubs
     });
 };
@@ -17,7 +19,7 @@ var normalize = function(string) {
 
 describe('JsonRenderer', function() {
     it('logs simple message to stderr', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new JsonRenderer();
                 renderer.log({
@@ -45,7 +47,7 @@ describe('JsonRenderer', function() {
     });
 
     it('logs error message to stderr', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new JsonRenderer();
                 renderer.error({
@@ -88,7 +90,7 @@ describe('JsonRenderer', function() {
 
         var renderer = new JsonRenderer();
 
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 return renderer
                     .prompt([

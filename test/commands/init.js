@@ -1,13 +1,13 @@
-var expect = require('expect.js');
-var helpers = require('../helpers');
+import ext_expect_expect from "expect.js";
+import * as helpers_helpersjsjs from "../helpers";
 
-var init = helpers.command('init');
+var init = helpers_helpersjsjs.command('init');
 
 describe('bower init', function() {
-    var mainPackage = new helpers.TempDir();
+    var mainPackage = new helpers_helpersjsjs.TempDir();
 
     it('correctly reads arguments', function() {
-        expect(init.readOptions([])).to.eql([]);
+        ext_expect_expect(init.readOptions([])).to.eql([]);
     });
 
     it('generates bower.json file', function() {
@@ -18,7 +18,7 @@ describe('bower init', function() {
             interactive: true
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .expectEvent(logger, 'prompt')
             .spread(function(prompt, answer) {
                 answer({
@@ -31,14 +31,14 @@ describe('bower init', function() {
                     private: true
                 });
 
-                return helpers.expectEvent(logger, 'prompt');
+                return helpers_helpersjsjs.expectEvent(logger, 'prompt');
             })
             .spread(function(prompt, answer) {
                 answer({ prompt: true });
-                return helpers.expectEvent(logger, 'end');
+                return helpers_helpersjsjs.expectEvent(logger, 'end');
             })
             .then(function() {
-                expect(mainPackage.readJson('bower.json')).to.eql({
+                ext_expect_expect(mainPackage.readJson('bower.json')).to.eql({
                     name: 'test-name',
                     homepage: 'test-homepage',
                     authors: ['test-author'],
@@ -53,15 +53,15 @@ describe('bower init', function() {
     it('errors on non-interactive mode', function() {
         mainPackage.prepare();
 
-        return helpers.run(init, { cwd: mainPackage.path }).then(
+        return helpers_helpersjsjs.run(init, { cwd: mainPackage.path }).then(
             function() {
                 throw 'should fail';
             },
             function(reason) {
-                expect(reason.message).to.be(
+                ext_expect_expect(reason.message).to.be(
                     'Register requires an interactive shell'
                 );
-                expect(reason.code).to.be('ENOINT');
+                ext_expect_expect(reason.code).to.be('ENOINT');
             }
         );
     });
@@ -75,9 +75,9 @@ describe('bower init', function() {
 
         var logger = init({ cwd: mainPackage.path, interactive: true });
 
-        return helpers.expectEvent(logger, 'log').spread(function(event) {
-            expect(event.level).to.be('warn');
-            expect(event.message).to.be(
+        return helpers_helpersjsjs.expectEvent(logger, 'log').spread(function(event) {
+            ext_expect_expect(event.level).to.be('warn');
+            ext_expect_expect(event.message).to.be(
                 'The existing bower.json file will be used and filled in'
             );
         });
@@ -100,7 +100,7 @@ describe('bower init', function() {
             interactive: true
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .expectEvent(logger, 'prompt')
             .spread(function(prompt, answer) {
                 // Get defaults from prompt
@@ -121,14 +121,14 @@ describe('bower init', function() {
                     private: true
                 });
 
-                return helpers.expectEvent(logger, 'prompt');
+                return helpers_helpersjsjs.expectEvent(logger, 'prompt');
             })
             .spread(function(prompt, answer) {
                 answer({ prompt: true });
-                return helpers.expectEvent(logger, 'end');
+                return helpers_helpersjsjs.expectEvent(logger, 'end');
             })
             .then(function() {
-                expect(mainPackage.readJson('bower.json')).to.eql({
+                ext_expect_expect(mainPackage.readJson('bower.json')).to.eql({
                     name: 'name-from-npm',
                     description: 'description from npm',
                     main: 'index.js',
@@ -153,6 +153,6 @@ describe('bower init', function() {
             interactive: true
         });
 
-        return helpers.expectEvent(logger, 'prompt');
+        return helpers_helpersjsjs.expectEvent(logger, 'prompt');
     });
 });

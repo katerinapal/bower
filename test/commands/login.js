@@ -1,5 +1,5 @@
-var expect = require('expect.js');
-var helpers = require('../helpers');
+import ext_expect_expect from "expect.js";
+import * as helpers_helpersjsjs from "../helpers";
 
 var fakeGitHub = function(authenticate) {
     function FakeGitHub() {}
@@ -45,10 +45,10 @@ var fakeConfigstore = function(set, get) {
     return FakeConfigstore;
 };
 
-var login = helpers.command('login');
+var login = helpers_helpersjsjs.command('login');
 
 var loginFactory = function(options) {
-    return helpers.command('login', {
+    return helpers_helpersjsjs.command('login', {
         github: fakeGitHub(),
         configstore: fakeConfigstore(
             options.set ||
@@ -65,20 +65,20 @@ var loginFactory = function(options) {
 
 describe('bower login', function() {
     it('correctly reads arguments', function() {
-        expect(login.readOptions(['--token', 'foobar'])).to.eql([
+        ext_expect_expect(login.readOptions(['--token', 'foobar'])).to.eql([
             { token: 'foobar' }
         ]);
     });
 
     it('fails if run in non-interactive shell without token passed', function() {
-        return helpers.run(login, []).fail(function(reason) {
-            expect(reason.message).to.be('Login requires an interactive shell');
-            expect(reason.code).to.be('ENOINT');
+        return helpers_helpersjsjs.run(login, []).fail(function(reason) {
+            ext_expect_expect(reason.message).to.be('Login requires an interactive shell');
+            ext_expect_expect(reason.code).to.be('ENOINT');
         });
     });
 
     it('succeeds if run in non-interactive shell with token passed', function() {
-        return helpers.run(login, [{ token: 'foobar' }]);
+        return helpers_helpersjsjs.run(login, [{ token: 'foobar' }]);
     });
 
     it('succeeds if provided password is valid', function() {
@@ -93,8 +93,8 @@ describe('bower login', function() {
             });
         });
 
-        return helpers.expectEvent(logger, 'end').spread(function(options) {
-            expect(options.token).to.be('faketoken');
+        return helpers_helpersjsjs.expectEvent(logger, 'end').spread(function(options) {
+            ext_expect_expect(options.token).to.be('faketoken');
         });
     });
 
@@ -116,8 +116,8 @@ describe('bower login', function() {
             });
         });
 
-        return helpers.expectEvent(logger, 'end').spread(function(options) {
-            expect(options.token).to.be('faketwoauthtoken');
+        return helpers_helpersjsjs.expectEvent(logger, 'end').spread(function(options) {
+            ext_expect_expect(options.token).to.be('faketwoauthtoken');
         });
     });
 
@@ -133,9 +133,9 @@ describe('bower login', function() {
             });
         });
 
-        return helpers.expectEvent(logger, 'error').spread(function(error) {
-            expect(error.code).to.be('EAUTH');
-            expect(error.message).to.be('Authorization failed');
+        return helpers_helpersjsjs.expectEvent(logger, 'error').spread(function(error) {
+            ext_expect_expect(error.code).to.be('EAUTH');
+            ext_expect_expect(error.message).to.be('Authorization failed');
         });
     });
 
@@ -150,10 +150,10 @@ describe('bower login', function() {
 
         var logger = login({}, { interactive: true });
 
-        return helpers
+        return helpers_helpersjsjs
             .expectEvent(logger, 'prompt')
             .spread(function(prompt, answer) {
-                expect(prompt[0].default).to.be('savedusername');
+                ext_expect_expect(prompt[0].default).to.be('savedusername');
             });
     });
 
@@ -161,7 +161,7 @@ describe('bower login', function() {
         var login = loginFactory({
             set: function(key, value) {
                 if (key === 'username') {
-                    expect(value).to.be('user');
+                    ext_expect_expect(value).to.be('user');
                     done();
                 }
             }
@@ -181,7 +181,7 @@ describe('bower login', function() {
         var login = loginFactory({
             set: function(key, value) {
                 if (key === 'accessToken') {
-                    expect(value).to.be('faketoken');
+                    ext_expect_expect(value).to.be('faketoken');
                     done();
                 }
             }

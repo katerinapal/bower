@@ -1,10 +1,10 @@
-var expect = require('expect.js');
-var helpers = require('../helpers');
+import ext_expect_expect from "expect.js";
+import * as helpers_helpersjsjs from "../helpers";
 
-var prune = helpers.command('prune');
+var prune = helpers_helpersjsjs.command('prune');
 
 describe('bower home', function() {
-    var mainPackage = new helpers.TempDir({
+    var mainPackage = new helpers_helpersjsjs.TempDir({
         'bower.json': {
             name: 'package',
             dependencies: {
@@ -15,11 +15,11 @@ describe('bower home', function() {
     });
 
     it('correctly reads arguments', function() {
-        expect(prune.readOptions(['-p'])).to.eql([{ production: true }]);
+        ext_expect_expect(prune.readOptions(['-p'])).to.eql([{ production: true }]);
     });
 
     it('correctly reads long arguments', function() {
-        expect(prune.readOptions(['--production'])).to.eql([
+        ext_expect_expect(prune.readOptions(['--production'])).to.eql([
             { production: true }
         ]);
     });
@@ -30,10 +30,10 @@ describe('bower home', function() {
             'bower_components/angular/.bower.json': { name: 'angular' }
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .run(prune, [{}, { cwd: mainPackage.path }])
             .then(function() {
-                expect(
+                ext_expect_expect(
                     mainPackage.exists('bower_components/angular/angular.js')
                 ).to.be(false);
             });
@@ -44,10 +44,10 @@ describe('bower home', function() {
             'bower_components/angular/angular.js': 'angular source'
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .run(prune, [{}, { cwd: mainPackage.path }])
             .then(function() {
-                expect(
+                ext_expect_expect(
                     mainPackage.exists('bower_components/angular/angular.js')
                 ).to.be(true);
             });
@@ -62,13 +62,13 @@ describe('bower home', function() {
             'components/angular/angular.js': 'angular source'
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .run(prune, [{}, { cwd: mainPackage.path }])
             .then(function() {
-                expect(
+                ext_expect_expect(
                     mainPackage.exists('components/angular/angular.js')
                 ).to.be(false);
-                expect(
+                ext_expect_expect(
                     mainPackage.exists('bower_components/angular/angular.js')
                 ).to.be(true);
             });

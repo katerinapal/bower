@@ -1,25 +1,25 @@
-var path = require('path');
-var expect = require('expect.js');
-var helpers = require('../helpers');
+import ext_path_path from "path";
+import ext_expect_expect from "expect.js";
+import * as helpers_helpersjsjs from "../helpers";
 
-var link = helpers.command('link');
+var link = helpers_helpersjsjs.command('link');
 
 describe('bower link', function() {
-    var mainPackage = new helpers.TempDir({
+    var mainPackage = new helpers_helpersjsjs.TempDir({
         'bower.json': {
             name: 'package'
         },
         'index.js': 'Hello World!'
     });
 
-    var otherPackage = new helpers.TempDir({
+    var otherPackage = new helpers_helpersjsjs.TempDir({
         'bower.json': {
             name: 'package2'
         },
         'index.js': 'Welcome World!'
     });
 
-    var linksDir = new helpers.TempDir();
+    var linksDir = new helpers_helpersjsjs.TempDir();
 
     beforeEach(function() {
         mainPackage.prepare();
@@ -28,14 +28,14 @@ describe('bower link', function() {
     });
 
     it('correctly reads arguments', function() {
-        expect(link.readOptions(['jquery', 'angular'])).to.eql([
+        ext_expect_expect(link.readOptions(['jquery', 'angular'])).to.eql([
             'jquery',
             'angular'
         ]);
     });
 
     it('creates self link', function() {
-        return helpers
+        return helpers_helpersjsjs
             .run(link, [
                 undefined,
                 undefined,
@@ -47,12 +47,12 @@ describe('bower link', function() {
                 }
             ])
             .then(function() {
-                expect(linksDir.read('package/index.js')).to.be('Hello World!');
+                ext_expect_expect(linksDir.read('package/index.js')).to.be('Hello World!');
             });
     });
 
     it('creates inter-link', function() {
-        return helpers
+        return helpers_helpersjsjs
             .run(link, [
                 undefined,
                 undefined,
@@ -64,7 +64,7 @@ describe('bower link', function() {
                 }
             ])
             .then(function() {
-                return helpers.run(link, [
+                return helpers_helpersjsjs.run(link, [
                     'package',
                     undefined,
                     {
@@ -76,14 +76,14 @@ describe('bower link', function() {
                 ]);
             })
             .then(function() {
-                expect(
+                ext_expect_expect(
                     otherPackage.read('bower_components/package/index.js')
                 ).to.be('Hello World!');
             });
     });
 
     it('creates inter-link to relative config.directory', function() {
-        return helpers
+        return helpers_helpersjsjs
             .run(link, [
                 undefined,
                 undefined,
@@ -95,7 +95,7 @@ describe('bower link', function() {
                 }
             ])
             .then(function() {
-                return helpers.run(link, [
+                return helpers_helpersjsjs.run(link, [
                     'package',
                     undefined,
                     {
@@ -108,14 +108,14 @@ describe('bower link', function() {
                 ]);
             })
             .then(function() {
-                expect(
+                ext_expect_expect(
                     otherPackage.read('valid-extend/package/index.js')
                 ).to.be('Hello World!');
             });
     });
 
     it('creates inter-link to absolute config.directory', function() {
-        return helpers
+        return helpers_helpersjsjs
             .run(link, [
                 undefined,
                 undefined,
@@ -127,12 +127,12 @@ describe('bower link', function() {
                 }
             ])
             .then(function() {
-                return helpers.run(link, [
+                return helpers_helpersjsjs.run(link, [
                     'package',
                     undefined,
                     {
-                        cwd: path.join(otherPackage.path, 'invalid'),
-                        directory: path.join(
+                        cwd: ext_path_path.join(otherPackage.path, 'invalid'),
+                        directory: ext_path_path.join(
                             otherPackage.path,
                             'valid-override'
                         ),
@@ -143,14 +143,14 @@ describe('bower link', function() {
                 ]);
             })
             .then(function() {
-                expect(
+                ext_expect_expect(
                     otherPackage.read('valid-override/package/index.js')
                 ).to.be('Hello World!');
             });
     });
 
     it('creates inter-link with custom local name', function() {
-        return helpers
+        return helpers_helpersjsjs
             .run(link, [
                 undefined,
                 undefined,
@@ -162,7 +162,7 @@ describe('bower link', function() {
                 }
             ])
             .then(function() {
-                return helpers.run(link, [
+                return helpers_helpersjsjs.run(link, [
                     'package',
                     'local',
                     {
@@ -174,14 +174,14 @@ describe('bower link', function() {
                 ]);
             })
             .then(function() {
-                expect(
+                ext_expect_expect(
                     otherPackage.read('bower_components/local/index.js')
                 ).to.be('Hello World!');
             });
     });
 
     it('errors on unexising package', function() {
-        return helpers
+        return helpers_helpersjsjs
             .run(link, [
                 'package',
                 'local',
@@ -196,8 +196,8 @@ describe('bower link', function() {
                 throw 'Should fail creating a link!';
             })
             .fail(function(reason) {
-                expect(reason.code).to.be('ENOENT');
-                expect(reason.message).to.be(
+                ext_expect_expect(reason.code).to.be('ENOENT');
+                ext_expect_expect(reason.message).to.be(
                     'Failed to create link to package'
                 );
             });

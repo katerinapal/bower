@@ -1,25 +1,25 @@
-var expect = require('expect.js');
-var util = require('util');
-var path = require('path');
-var fs = require('../../../lib/util/fs');
-var chmodr = require('chmodr');
-var rimraf = require('../../../lib/util/rimraf');
-var mkdirp = require('mkdirp');
-var Q = require('q');
-var mout = require('mout');
-var Logger = require('bower-logger');
-var copy = require('../../../lib/util/copy');
-var GitResolver = require('../../../lib/core/resolvers/GitResolver');
-var defaultConfig = require('../../../lib/config');
+import ext_expect_expect from "expect.js";
+import ext_util_util from "util";
+import ext_path_path from "path";
+import { fs as libutilfs_fsjs } from "../../../lib/util/fs";
+import ext_chmodr_chmodr from "chmodr";
+import { rimrafjs as libutilrimraf_rimrafjsjs } from "../../../lib/util/rimraf";
+import ext_mkdirp_mkdirp from "mkdirp";
+import ext_q_Q from "q";
+import ext_mout_mout from "mout";
+import ext_bowerlogger_Logger from "bower-logger";
+import { copyDir as libutilcopy_copyDirjs } from "../../../lib/util/copy";
+import { GitResolver as libcoreresolversGitResolver_GitResolverjs } from "../../../lib/core/resolvers/GitResolver";
+import { defaultConfig as libconfig_defaultConfigjs } from "../../../lib/config";
 
 describe('GitResolver', function() {
-    var tempDir = path.resolve(__dirname, '../../tmp/tmp');
-    var originalrefs = GitResolver.refs;
+    var tempDir = ext_path_path.resolve(__dirname, '../../tmp/tmp');
+    var originalrefs = libcoreresolversGitResolver_GitResolverjs.refs;
     var originalEnv = process.env;
     var logger;
 
     before(function() {
-        logger = new Logger();
+        logger = new ext_bowerlogger_Logger();
     });
 
     afterEach(function() {
@@ -28,8 +28,8 @@ describe('GitResolver', function() {
     });
 
     function clearResolverRuntimeCache() {
-        GitResolver.refs = originalrefs;
-        GitResolver.clearRuntimeCache();
+        libcoreresolversGitResolver_GitResolverjs.refs = originalrefs;
+        libcoreresolversGitResolver_GitResolverjs.clearRuntimeCache();
     }
 
     function create(decEndpoint) {
@@ -37,7 +37,7 @@ describe('GitResolver', function() {
             decEndpoint = { source: decEndpoint };
         }
 
-        return new GitResolver(decEndpoint, defaultConfig(), logger);
+        return new libcoreresolversGitResolver_GitResolverjs(decEndpoint, libconfig_defaultConfigjs(), logger);
     }
 
     describe('misc', function() {
@@ -47,43 +47,43 @@ describe('GitResolver', function() {
             var resolver;
             var decEndpoint = { source: 'foo' };
 
-            expect(process.env).to.not.have.property('GIT_SSL_NO_VERIFY');
+            ext_expect_expect(process.env).to.not.have.property('GIT_SSL_NO_VERIFY');
 
-            resolver = new GitResolver(decEndpoint, defaultConfig(), logger);
-            expect(process.env).to.not.have.property('GIT_SSL_NO_VERIFY');
+            resolver = new libcoreresolversGitResolver_GitResolverjs(decEndpoint, libconfig_defaultConfigjs(), logger);
+            ext_expect_expect(process.env).to.not.have.property('GIT_SSL_NO_VERIFY');
 
-            resolver = new GitResolver(
+            resolver = new libcoreresolversGitResolver_GitResolverjs(
                 decEndpoint,
-                defaultConfig({ strictSsl: false }),
+                libconfig_defaultConfigjs({ strictSsl: false }),
                 logger
             );
-            expect(process.env).to.have.property('GIT_SSL_NO_VERIFY', 'true');
+            ext_expect_expect(process.env).to.have.property('GIT_SSL_NO_VERIFY', 'true');
             delete process.env.GIT_SSL_NO_VERIFY;
 
             // git only checks the existence of GIT_SSL_NO_VERIFY.
             // git does NOT check whether is true of false.
             // Hence not exporting GIT_SSL_NO_VERIFY is effectively equivalent to 'false'
-            resolver = new GitResolver(
+            resolver = new libcoreresolversGitResolver_GitResolverjs(
                 decEndpoint,
-                defaultConfig({ strictSsl: true }),
+                libconfig_defaultConfigjs({ strictSsl: true }),
                 logger
             );
-            expect(process.env).to.not.have.property('GIT_SSL_NO_VERIFY');
+            ext_expect_expect(process.env).to.not.have.property('GIT_SSL_NO_VERIFY');
         });
     });
 
     describe('.hasNew', function() {
         before(function() {
-            mkdirp.sync(tempDir);
+            ext_mkdirp_mkdirp.sync(tempDir);
         });
 
         afterEach(function(next) {
             clearResolverRuntimeCache();
-            rimraf(path.join(tempDir, '.bower.json'), next);
+            libutilrimraf_rimrafjsjs(ext_path_path.join(tempDir, '.bower.json'), next);
         });
 
         after(function(next) {
-            rimraf(tempDir, next);
+            libutilrimraf_rimrafjsjs(tempDir, next);
         });
 
         it('should be true when the resolution type is different', function(next) {
@@ -99,8 +99,8 @@ describe('GitResolver', function() {
                 }
             };
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/master' // same commit hash on purpose
                 ]);
             };
@@ -109,7 +109,7 @@ describe('GitResolver', function() {
             resolver
                 .hasNew(pkgMeta)
                 .then(function(hasNew) {
-                    expect(hasNew).to.be(true);
+                    ext_expect_expect(hasNew).to.be(true);
                     next();
                 })
                 .done();
@@ -128,8 +128,8 @@ describe('GitResolver', function() {
                 }
             };
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/1.0.0',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/1.0.1' // same commit hash on purpose
@@ -140,7 +140,7 @@ describe('GitResolver', function() {
             resolver
                 .hasNew(pkgMeta)
                 .then(function(hasNew) {
-                    expect(hasNew).to.be(true);
+                    ext_expect_expect(hasNew).to.be(true);
                     next();
                 })
                 .done();
@@ -159,8 +159,8 @@ describe('GitResolver', function() {
                 }
             };
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/1.0.0'
                 ]);
@@ -170,7 +170,7 @@ describe('GitResolver', function() {
             resolver
                 .hasNew(pkgMeta)
                 .then(function(hasNew) {
-                    expect(hasNew).to.be(true);
+                    ext_expect_expect(hasNew).to.be(true);
                     next();
                 })
                 .done();
@@ -189,8 +189,8 @@ describe('GitResolver', function() {
                 }
             };
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/1.0.0',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/1.0.1'
@@ -201,7 +201,7 @@ describe('GitResolver', function() {
             resolver
                 .hasNew(pkgMeta)
                 .then(function(hasNew) {
-                    expect(hasNew).to.be(false);
+                    ext_expect_expect(hasNew).to.be(false);
                     next();
                 })
                 .done();
@@ -220,8 +220,8 @@ describe('GitResolver', function() {
                 }
             };
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/1.0.0',
                     'dddddddddddddddddddddddddddddddddddddddd refs/tags/1.0.1'
@@ -232,7 +232,7 @@ describe('GitResolver', function() {
             resolver
                 .hasNew(pkgMeta)
                 .then(function(hasNew) {
-                    expect(hasNew).to.be(true);
+                    ext_expect_expect(hasNew).to.be(true);
                     next();
                 })
                 .done();
@@ -250,8 +250,8 @@ describe('GitResolver', function() {
                 }
             };
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/master'
                 ]);
             };
@@ -260,7 +260,7 @@ describe('GitResolver', function() {
             resolver
                 .hasNew(pkgMeta)
                 .then(function(hasNew) {
-                    expect(hasNew).to.be(true);
+                    ext_expect_expect(hasNew).to.be(true);
                     next();
                 })
                 .done();
@@ -278,8 +278,8 @@ describe('GitResolver', function() {
                 }
             };
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master'
                 ]);
             };
@@ -288,7 +288,7 @@ describe('GitResolver', function() {
             resolver
                 .hasNew(pkgMeta)
                 .then(function(hasNew) {
-                    expect(hasNew).to.be(false);
+                    ext_expect_expect(hasNew).to.be(false);
                     next();
                 })
                 .done();
@@ -305,8 +305,8 @@ describe('GitResolver', function() {
                 }
             };
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/master'
                 ]);
             };
@@ -315,7 +315,7 @@ describe('GitResolver', function() {
             resolver
                 .hasNew(pkgMeta)
                 .then(function(hasNew) {
-                    expect(hasNew).to.be(true);
+                    ext_expect_expect(hasNew).to.be(true);
                     next();
                 })
                 .done();
@@ -329,31 +329,31 @@ describe('GitResolver', function() {
             var resolver;
 
             function DummyResolver() {
-                GitResolver.apply(this, arguments);
+                libcoreresolversGitResolver_GitResolverjs.apply(this, arguments);
                 this._stack = [];
             }
 
-            util.inherits(DummyResolver, GitResolver);
-            mout.object.mixIn(DummyResolver, GitResolver);
+            ext_util_util.inherits(DummyResolver, libcoreresolversGitResolver_GitResolverjs);
+            ext_mout_mout.object.mixIn(DummyResolver, libcoreresolversGitResolver_GitResolverjs);
 
             DummyResolver.prototype.getStack = function() {
                 return this._stack;
             };
 
             DummyResolver.refs = function() {
-                return Q.resolve([
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master'
                 ]);
             };
 
             DummyResolver.prototype.resolve = function() {
                 this._stack = [];
-                return GitResolver.prototype.resolve.apply(this, arguments);
+                return libcoreresolversGitResolver_GitResolverjs.prototype.resolve.apply(this, arguments);
             };
 
             DummyResolver.prototype._findResolution = function() {
                 this._stack.push('before _findResolution');
-                return GitResolver.prototype._findResolution
+                return libcoreresolversGitResolver_GitResolverjs.prototype._findResolution
                     .apply(this, arguments)
                     .then(
                         function(val) {
@@ -365,7 +365,7 @@ describe('GitResolver', function() {
 
             DummyResolver.prototype._checkout = function() {
                 this._stack.push('before _checkout');
-                return Q.resolve().then(
+                return ext_q_Q.resolve().then(
                     function(val) {
                         this._stack.push('after _checkout');
                         return val;
@@ -375,7 +375,7 @@ describe('GitResolver', function() {
 
             DummyResolver.prototype._cleanup = function() {
                 this._stack.push('before _cleanup');
-                return GitResolver.prototype._cleanup
+                return libcoreresolversGitResolver_GitResolverjs.prototype._cleanup
                     .apply(this, arguments)
                     .then(
                         function(val) {
@@ -387,14 +387,14 @@ describe('GitResolver', function() {
 
             resolver = new DummyResolver(
                 { source: 'foo', target: 'master' },
-                defaultConfig(),
+                libconfig_defaultConfigjs(),
                 logger
             );
 
             resolver
                 .resolve()
                 .then(function() {
-                    expect(resolver.getStack()).to.eql([
+                    ext_expect_expect(resolver.getStack()).to.eql([
                         'before _findResolution',
                         'after _findResolution',
                         'before _checkout',
@@ -410,8 +410,8 @@ describe('GitResolver', function() {
         it('should reject the promise if _checkout is not implemented', function(next) {
             var resolver = create('foo');
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master'
                 ]);
             };
@@ -423,8 +423,8 @@ describe('GitResolver', function() {
                         next(new Error('Should have rejected the promise'));
                     },
                     function(err) {
-                        expect(err).to.be.an(Error);
-                        expect(err.message).to.contain(
+                        ext_expect_expect(err).to.be.an(Error);
+                        ext_expect_expect(err.message).to.contain(
                             '_checkout not implemented'
                         );
                         next();
@@ -437,7 +437,7 @@ describe('GitResolver', function() {
             var resolver = create('foo');
 
             resolver._checkout = function() {
-                return Q.resolve();
+                return ext_q_Q.resolve();
             };
 
             resolver
@@ -447,8 +447,8 @@ describe('GitResolver', function() {
                         next(new Error('Should have rejected the promise'));
                     },
                     function(err) {
-                        expect(err).to.be.an(Error);
-                        expect(err.message).to.contain('refs not implemented');
+                        ext_expect_expect(err).to.be.an(Error);
+                        ext_expect_expect(err.message).to.contain('refs not implemented');
                         next();
                     }
                 )
@@ -462,8 +462,8 @@ describe('GitResolver', function() {
         it('should resolve to an object', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master'
                 ]);
             };
@@ -472,7 +472,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('*')
                 .then(function(resolution) {
-                    expect(resolution).to.be.an('object');
+                    ext_expect_expect(resolution).to.be.an('object');
                     next();
                 })
                 .done();
@@ -481,8 +481,8 @@ describe('GitResolver', function() {
         it('should fail to resolve * if no tags/heads are found', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([]);
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([]);
             };
 
             resolver = create('foo');
@@ -493,12 +493,12 @@ describe('GitResolver', function() {
                         next(new Error('Should have failed'));
                     },
                     function(err) {
-                        expect(err).to.be.an(Error);
-                        expect(err.message).to.match(
+                        ext_expect_expect(err).to.be.an(Error);
+                        ext_expect_expect(err.message).to.match(
                             /branch master does not exist/i
                         );
-                        expect(err.details).to.match(/no branches found/i);
-                        expect(err.code).to.equal('ENORESTARGET');
+                        ext_expect_expect(err.details).to.match(/no branches found/i);
+                        ext_expect_expect(err.code).to.equal('ENORESTARGET');
                         next();
                     }
                 )
@@ -508,8 +508,8 @@ describe('GitResolver', function() {
         it('should resolve "*" to the latest commit on master if a repository has no valid semver tags', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/some-branch',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/some-tag'
@@ -520,7 +520,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('*')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'branch',
                         branch: 'master',
                         commit: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
@@ -533,8 +533,8 @@ describe('GitResolver', function() {
         it('should resolve "*" to the latest version if a repository has valid semver tags, ignoring pre-releases', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/0.1.0',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/v0.1.1',
@@ -546,7 +546,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('*')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'version',
                         tag: 'v0.1.1',
                         commit: 'cccccccccccccccccccccccccccccccccccccccc'
@@ -559,8 +559,8 @@ describe('GitResolver', function() {
         it('should resolve "0.1.*" to the latest version if a repository has valid semver tags, ignoring pre-releases', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/0.1.0',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/v0.1.1',
@@ -572,7 +572,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('0.1.*')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'version',
                         tag: 'v0.1.1',
                         commit: 'cccccccccccccccccccccccccccccccccccccccc'
@@ -585,8 +585,8 @@ describe('GitResolver', function() {
         it('should resolve "*" to the latest version if a repository has valid semver tags, not ignoring pre-releases if they are the only versions', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/0.1.0-rc.1',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/0.1.0-rc.2'
@@ -597,7 +597,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('*')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'version',
                         tag: '0.1.0-rc.2',
                         commit: 'cccccccccccccccccccccccccccccccccccccccc'
@@ -610,8 +610,8 @@ describe('GitResolver', function() {
         it('should resolve "0.1.*" to the latest version if a repository has valid semver tags, not ignoring pre-releases if they are the only versions', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/0.1.0-rc.1',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/0.1.0-rc.2'
@@ -622,7 +622,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('0.1.*')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'version',
                         tag: '0.1.0-rc.2',
                         commit: 'cccccccccccccccccccccccccccccccccccccccc'
@@ -635,8 +635,8 @@ describe('GitResolver', function() {
         it('should resolve to the latest version that matches a range/version', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/0.1.0',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/v0.1.1',
@@ -649,7 +649,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('~0.2.0')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'version',
                         tag: 'v0.2.1',
                         commit: 'ffffffffffffffffffffffffffffffffffffffff'
@@ -663,8 +663,8 @@ describe('GitResolver', function() {
             var resolver;
 
             // See #771
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/3.0.0-wip',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/v0.1.1'
@@ -675,7 +675,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('3.0.0-wip')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'branch',
                         branch: '3.0.0-wip',
                         commit: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
@@ -688,8 +688,8 @@ describe('GitResolver', function() {
         it('should resolve to a tag even if target is a range that does not exist', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/1.0'
                 ]);
@@ -699,7 +699,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('1.0')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'tag',
                         tag: '1.0',
                         commit: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
@@ -712,8 +712,8 @@ describe('GitResolver', function() {
         it('should resolve to the latest pre-release version that matches a range/version', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/0.1.0',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/v0.1.1',
@@ -726,7 +726,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('~0.2.1')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'version',
                         tag: 'v0.2.1-rc.1',
                         commit: 'ffffffffffffffffffffffffffffffffffffffff'
@@ -739,8 +739,8 @@ describe('GitResolver', function() {
         it('should resolve to the exact version if exists', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/0.8.1',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/0.8.1+build.1',
@@ -753,7 +753,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('0.8.1+build.2')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'version',
                         tag: '0.8.1+build.2',
                         commit: 'dddddddddddddddddddddddddddddddddddddddd'
@@ -766,8 +766,8 @@ describe('GitResolver', function() {
         it('should fail to resolve if none of the versions matched a range/version', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/0.1.0',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/v0.1.1'
@@ -782,14 +782,14 @@ describe('GitResolver', function() {
                         next(new Error('Should have failed'));
                     },
                     function(err) {
-                        expect(err).to.be.an(Error);
-                        expect(err.message).to.match(
+                        ext_expect_expect(err).to.be.an(Error);
+                        ext_expect_expect(err.message).to.match(
                             /was able to satisfy ~0.2.0/i
                         );
-                        expect(err.details).to.match(
+                        ext_expect_expect(err.details).to.match(
                             /available versions in foo: 0\.1\.1, 0\.1\.0/i
                         );
-                        expect(err.code).to.equal('ENORESTARGET');
+                        ext_expect_expect(err.code).to.equal('ENORESTARGET');
                         next();
                     }
                 )
@@ -799,8 +799,8 @@ describe('GitResolver', function() {
         it('should fail to resolve if there are no versions to match a range/version', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master'
                 ]);
             };
@@ -814,14 +814,14 @@ describe('GitResolver', function() {
                         next(new Error('Should have failed'));
                     },
                     function(err) {
-                        expect(err).to.be.an(Error);
-                        expect(err.message).to.match(
+                        ext_expect_expect(err).to.be.an(Error);
+                        ext_expect_expect(err.message).to.match(
                             /was able to satisfy ~0.2.0/i
                         );
-                        expect(err.details).to.match(
+                        ext_expect_expect(err.details).to.match(
                             /no versions found in foo/i
                         );
-                        expect(err.code).to.equal('ENORESTARGET');
+                        ext_expect_expect(err.code).to.equal('ENORESTARGET');
                         next();
                     }
                 )
@@ -831,8 +831,8 @@ describe('GitResolver', function() {
         it('should resolve to the specified commit', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master'
                 ]);
             };
@@ -841,7 +841,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'commit',
                         commit: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
                     });
@@ -853,8 +853,8 @@ describe('GitResolver', function() {
         it('should resolve to the specified short commit', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master'
                 ]);
             };
@@ -863,7 +863,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('bbbbbbb')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'commit',
                         commit: 'bbbbbbb'
                     });
@@ -875,8 +875,8 @@ describe('GitResolver', function() {
         it('should resolve to the specified tag if it exists', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/some-tag'
                 ]);
@@ -886,7 +886,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('some-tag')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'tag',
                         tag: 'some-tag',
                         commit: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
@@ -899,8 +899,8 @@ describe('GitResolver', function() {
         it('should resolve to the specified branch if it exists', function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/some-branch'
                 ]);
@@ -910,7 +910,7 @@ describe('GitResolver', function() {
             resolver
                 ._findResolution('some-branch')
                 .then(function(resolution) {
-                    expect(resolution).to.eql({
+                    ext_expect_expect(resolution).to.eql({
                         type: 'branch',
                         branch: 'some-branch',
                         commit: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
@@ -923,8 +923,8 @@ describe('GitResolver', function() {
         it("should fail to resolve to the specified tag/branch if it doesn't exists", function(next) {
             var resolver;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/some-tag'
                 ]);
@@ -938,17 +938,17 @@ describe('GitResolver', function() {
                         next(new Error('Should have failed'));
                     },
                     function(err) {
-                        expect(err).to.be.an(Error);
-                        expect(err.message).to.match(
+                        ext_expect_expect(err).to.be.an(Error);
+                        ext_expect_expect(err.message).to.match(
                             /tag\/branch some-branch does not exist/i
                         );
-                        expect(err.details).to.match(
+                        ext_expect_expect(err.details).to.match(
                             /available branches: master/i
                         );
-                        expect(err.details).to.match(
+                        ext_expect_expect(err.details).to.match(
                             /available tags: some-tag/i
                         );
-                        expect(err.code).to.equal('ENORESTARGET');
+                        ext_expect_expect(err.code).to.equal('ENORESTARGET');
                         next();
                     }
                 )
@@ -958,26 +958,25 @@ describe('GitResolver', function() {
 
     describe('._cleanup', function() {
         beforeEach(function() {
-            mkdirp.sync(tempDir);
+            ext_mkdirp_mkdirp.sync(tempDir);
         });
 
         afterEach(function(next) {
             clearResolverRuntimeCache();
             // Need to chmodr before removing..at least on windows
             // because .git has some read only files
-            chmodr(tempDir, 0o777, function() {
-                rimraf(tempDir, next);
+            ext_chmodr_chmodr(tempDir, 0o777, function() {
+                libutilrimraf_rimrafjsjs(tempDir, next);
             });
         });
 
         it('should remove the .git folder from the temp dir', function(next) {
             var resolver = create('foo');
-            var dst = path.join(tempDir, '.git');
+            var dst = ext_path_path.join(tempDir, '.git');
 
             // Copy .git folder to the tempDir
-            copy
-                .copyDir(
-                    path.resolve(__dirname, '../../assets/package-a/.git'),
+            libutilcopy_copyDirjs(
+                    ext_path_path.resolve(__dirname, '../../assets/package-a/.git'),
                     dst,
                 {
                     mode: 0o777
@@ -987,7 +986,7 @@ describe('GitResolver', function() {
                     resolver._tempDir = tempDir;
 
                     return resolver._cleanup().then(function() {
-                        expect(fs.existsSync(dst)).to.be(false);
+                        ext_expect_expect(libutilfs_fsjs.existsSync(dst)).to.be(false);
                         next();
                     });
                 })
@@ -996,14 +995,14 @@ describe('GitResolver', function() {
 
         it('should not fail if .git does not exist for some reason', function(next) {
             var resolver = create('foo');
-            var dst = path.join(tempDir, '.git');
+            var dst = ext_path_path.join(tempDir, '.git');
 
             resolver._tempDir = tempDir;
 
             resolver
                 ._cleanup()
                 .then(function() {
-                    expect(fs.existsSync(dst)).to.be(false);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(dst)).to.be(false);
                     next();
                 })
                 .done();
@@ -1013,20 +1012,20 @@ describe('GitResolver', function() {
             var resolver = create('foo');
             var called = false;
 
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master'
                 ]);
             };
 
             resolver._tempDir = tempDir;
             resolver._checkout = function() {
-                return Q.reject(new Error('Some error'));
+                return ext_q_Q.reject(new Error('Some error'));
             };
 
             resolver._cleanup = function() {
                 called = true;
-                return GitResolver.prototype._cleanup.apply(this, arguments);
+                return libcoreresolversGitResolver_GitResolverjs.prototype._cleanup.apply(this, arguments);
             };
 
             resolver
@@ -1036,7 +1035,7 @@ describe('GitResolver', function() {
                         next(new Error('Should have failed'));
                     },
                     function() {
-                        expect(called).to.be(true);
+                        ext_expect_expect(called).to.be(true);
                         next();
                     }
                 )
@@ -1046,15 +1045,15 @@ describe('GitResolver', function() {
 
     describe('._savePkgMeta', function() {
         before(function() {
-            mkdirp.sync(tempDir);
+            ext_mkdirp_mkdirp.sync(tempDir);
         });
 
         afterEach(function(next) {
-            rimraf(path.join(tempDir, '.bower.json'), next);
+            libutilrimraf_rimrafjsjs(ext_path_path.join(tempDir, '.bower.json'), next);
         });
 
         after(function(next) {
-            rimraf(tempDir, next);
+            libutilrimraf_rimrafjsjs(tempDir, next);
         });
 
         it('should save the resolution to the .bower.json to be used later by .hasNew', function(next) {
@@ -1066,15 +1065,15 @@ describe('GitResolver', function() {
             resolver
                 ._savePkgMeta({ name: 'foo', version: '0.0.1' })
                 .then(function() {
-                    return Q.nfcall(
-                        fs.readFile,
-                        path.join(tempDir, '.bower.json')
+                    return ext_q_Q.nfcall(
+                        libutilfs_fsjs.readFile,
+                        ext_path_path.join(tempDir, '.bower.json')
                     );
                 })
                 .then(function(contents) {
                     var json = JSON.parse(contents.toString());
 
-                    expect(json._resolution).to.eql(resolver._resolution);
+                    ext_expect_expect(json._resolution).to.eql(resolver._resolution);
                     next();
                 })
                 .done();
@@ -1082,7 +1081,7 @@ describe('GitResolver', function() {
 
         it('should save the release in the package meta', function(next) {
             var resolver = create('foo');
-            var metaFile = path.join(tempDir, '.bower.json');
+            var metaFile = ext_path_path.join(tempDir, '.bower.json');
 
             // Test with type 'version'
             resolver._resolution = {
@@ -1095,11 +1094,11 @@ describe('GitResolver', function() {
             resolver
                 ._savePkgMeta({ name: 'foo', version: '0.0.1' })
                 .then(function() {
-                    return Q.nfcall(fs.readFile, metaFile);
+                    return ext_q_Q.nfcall(libutilfs_fsjs.readFile, metaFile);
                 })
                 .then(function(contents) {
                     var json = JSON.parse(contents.toString());
-                    expect(json._release).to.equal('0.0.1');
+                    ext_expect_expect(json._release).to.equal('0.0.1');
                 })
                 // Test with type 'version' + build metadata
                 .then(function() {
@@ -1111,11 +1110,11 @@ describe('GitResolver', function() {
                     return resolver._savePkgMeta({ name: 'foo' });
                 })
                 .then(function() {
-                    return Q.nfcall(fs.readFile, metaFile);
+                    return ext_q_Q.nfcall(libutilfs_fsjs.readFile, metaFile);
                 })
                 .then(function(contents) {
                     var json = JSON.parse(contents.toString());
-                    expect(json._release).to.equal('0.0.1+build.5');
+                    ext_expect_expect(json._release).to.equal('0.0.1+build.5');
                 })
                 // Test with type 'tag'
                 .then(function() {
@@ -1127,11 +1126,11 @@ describe('GitResolver', function() {
                     return resolver._savePkgMeta({ name: 'foo' });
                 })
                 .then(function() {
-                    return Q.nfcall(fs.readFile, metaFile);
+                    return ext_q_Q.nfcall(libutilfs_fsjs.readFile, metaFile);
                 })
                 .then(function(contents) {
                     var json = JSON.parse(contents.toString());
-                    expect(json._release).to.equal('0.0.1');
+                    ext_expect_expect(json._release).to.equal('0.0.1');
                 })
                 // Test with type 'branch'
                 // In this case, it should be the commit
@@ -1144,11 +1143,11 @@ describe('GitResolver', function() {
                     return resolver._savePkgMeta({ name: 'foo' });
                 })
                 .then(function() {
-                    return Q.nfcall(fs.readFile, metaFile);
+                    return ext_q_Q.nfcall(libutilfs_fsjs.readFile, metaFile);
                 })
                 .then(function(contents) {
                     var json = JSON.parse(contents.toString());
-                    expect(json._release).to.equal('aaaaaaaaaa');
+                    ext_expect_expect(json._release).to.equal('aaaaaaaaaa');
                 })
                 // Test with type 'commit'
                 .then(function() {
@@ -1159,11 +1158,11 @@ describe('GitResolver', function() {
                     return resolver._savePkgMeta({ name: 'foo' });
                 })
                 .then(function() {
-                    return Q.nfcall(fs.readFile, metaFile);
+                    return ext_q_Q.nfcall(libutilfs_fsjs.readFile, metaFile);
                 })
                 .then(function(contents) {
                     var json = JSON.parse(contents.toString());
-                    expect(json._release).to.equal('aaaaaaaaaa');
+                    ext_expect_expect(json._release).to.equal('aaaaaaaaaa');
                     next();
                 })
                 .done();
@@ -1178,14 +1177,14 @@ describe('GitResolver', function() {
             resolver
                 ._savePkgMeta({ name: 'foo' })
                 .then(function() {
-                    return Q.nfcall(
-                        fs.readFile,
-                        path.join(tempDir, '.bower.json')
+                    return ext_q_Q.nfcall(
+                        libutilfs_fsjs.readFile,
+                        ext_path_path.join(tempDir, '.bower.json')
                     );
                 })
                 .then(function(contents) {
                     var json = JSON.parse(contents.toString());
-                    expect(json.version).to.equal('0.0.1');
+                    ext_expect_expect(json.version).to.equal('0.0.1');
 
                     next();
                 })
@@ -1204,14 +1203,14 @@ describe('GitResolver', function() {
             resolver
                 ._savePkgMeta({ name: 'foo', version: '0.0.1' })
                 .then(function() {
-                    return Q.nfcall(
-                        fs.readFile,
-                        path.join(tempDir, '.bower.json')
+                    return ext_q_Q.nfcall(
+                        libutilfs_fsjs.readFile,
+                        ext_path_path.join(tempDir, '.bower.json')
                     );
                 })
                 .then(function(contents) {
                     var json = JSON.parse(contents.toString());
-                    expect(json).to.not.have.property('version');
+                    ext_expect_expect(json).to.not.have.property('version');
 
                     next();
                 })
@@ -1226,10 +1225,10 @@ describe('GitResolver', function() {
             resolver._tempDir = tempDir;
 
             logger.on('log', function(log) {
-                expect(log).to.be.an('object');
+                ext_expect_expect(log).to.be.an('object');
 
                 if (log.level === 'warn' && log.id === 'mismatch') {
-                    expect(log.message).to.match(
+                    ext_expect_expect(log.message).to.match(
                         /\(0\.0\.0\).*different.*\(0\.0\.1\)/
                     );
                     notified = true;
@@ -1239,15 +1238,15 @@ describe('GitResolver', function() {
             resolver
                 ._savePkgMeta({ name: 'foo', version: '0.0.0' })
                 .then(function() {
-                    return Q.nfcall(
-                        fs.readFile,
-                        path.join(tempDir, '.bower.json')
+                    return ext_q_Q.nfcall(
+                        libutilfs_fsjs.readFile,
+                        ext_path_path.join(tempDir, '.bower.json')
                     );
                 })
                 .then(function(contents) {
                     var json = JSON.parse(contents.toString());
-                    expect(json.version).to.equal('0.0.1');
-                    expect(notified).to.be(true);
+                    ext_expect_expect(json.version).to.equal('0.0.1');
+                    ext_expect_expect(notified).to.be(true);
 
                     next();
                 })
@@ -1264,15 +1263,15 @@ describe('GitResolver', function() {
             resolver
                 ._savePkgMeta({ name: 'foo', version: '0.0.1' })
                 .then(function() {
-                    return Q.nfcall(
-                        fs.readFile,
-                        path.join(tempDir, '.bower.json')
+                    return ext_q_Q.nfcall(
+                        libutilfs_fsjs.readFile,
+                        ext_path_path.join(tempDir, '.bower.json')
                     );
                 }, null)
                 .then(function(contents) {
                     var json = JSON.parse(contents.toString());
-                    expect(json.version).to.equal('0.0.1');
-                    expect(notified).to.be(false);
+                    ext_expect_expect(json.version).to.equal('0.0.1');
+                    ext_expect_expect(notified).to.be(false);
 
                     next();
                 })
@@ -1284,22 +1283,22 @@ describe('GitResolver', function() {
         afterEach(clearResolverRuntimeCache);
 
         it('should resolve to an empty object if no heads are found', function(next) {
-            GitResolver.refs = function() {
-                return Q.resolve([]);
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([]);
             };
 
-            GitResolver.branches('foo')
+            libcoreresolversGitResolver_GitResolverjs.branches('foo')
                 .then(function(branches) {
-                    expect(branches).to.be.an('object');
-                    expect(branches).to.eql({});
+                    ext_expect_expect(branches).to.be.an('object');
+                    ext_expect_expect(branches).to.eql({});
                     next();
                 })
                 .done();
         });
 
         it('should resolve to an object where keys are branches and values their commit hashes', function(next) {
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/some-branch',
                     'foo refs/heads/invalid', // invalid
@@ -1310,9 +1309,9 @@ describe('GitResolver', function() {
                 ]);
             };
 
-            GitResolver.branches('foo')
+            libcoreresolversGitResolver_GitResolverjs.branches('foo')
                 .then(function(branches) {
-                    expect(branches).to.eql({
+                    ext_expect_expect(branches).to.eql({
                         master: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
                         'some-branch':
                             'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
@@ -1323,53 +1322,53 @@ describe('GitResolver', function() {
         });
 
         it('should cache the result for each source', function(next) {
-            GitResolver.refs = function(source) {
+            libcoreresolversGitResolver_GitResolverjs.refs = function(source) {
                 if (source === 'foo') {
-                    return Q.resolve([
+                    return ext_q_Q.resolve([
                         'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                         'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/some-branch'
                     ]);
                 }
 
-                return Q.resolve([
+                return ext_q_Q.resolve([
                     'cccccccccccccccccccccccccccccccccccccccc refs/heads/master',
                     'dddddddddddddddddddddddddddddddddddddddd refs/heads/other-branch'
                 ]);
             };
 
-            GitResolver.branches('foo')
+            libcoreresolversGitResolver_GitResolverjs.branches('foo')
                 .then(function(branches) {
-                    expect(branches).to.eql({
+                    ext_expect_expect(branches).to.eql({
                         master: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
                         'some-branch':
                             'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
                     });
 
-                    return GitResolver.branches('bar');
+                    return libcoreresolversGitResolver_GitResolverjs.branches('bar');
                 })
                 .then(function(branches) {
-                    expect(branches).to.eql({
+                    ext_expect_expect(branches).to.eql({
                         master: 'cccccccccccccccccccccccccccccccccccccccc',
                         'other-branch':
                             'dddddddddddddddddddddddddddddddddddddddd'
                     });
 
                     // Manipulate the cache and check if it resolves for the cached ones
-                    delete GitResolver._cache.branches.get('foo').master;
-                    delete GitResolver._cache.branches.get('bar').master;
+                    delete libcoreresolversGitResolver_GitResolverjs._cache.branches.get('foo').master;
+                    delete libcoreresolversGitResolver_GitResolverjs._cache.branches.get('bar').master;
 
-                    return GitResolver.branches('foo');
+                    return libcoreresolversGitResolver_GitResolverjs.branches('foo');
                 })
                 .then(function(branches) {
-                    expect(branches).to.eql({
+                    ext_expect_expect(branches).to.eql({
                         'some-branch':
                             'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
                     });
 
-                    return GitResolver.branches('bar');
+                    return libcoreresolversGitResolver_GitResolverjs.branches('bar');
                 })
                 .then(function(branches) {
-                    expect(branches).to.eql({
+                    ext_expect_expect(branches).to.eql({
                         'other-branch':
                             'dddddddddddddddddddddddddddddddddddddddd'
                     });
@@ -1380,21 +1379,21 @@ describe('GitResolver', function() {
         });
 
         it('should work if requested in parallel for the same source', function(next) {
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/some-branch'
                 ]);
             };
 
-            Q.all([GitResolver.branches('foo'), GitResolver.branches('foo')])
+            ext_q_Q.all([libcoreresolversGitResolver_GitResolverjs.branches('foo'), libcoreresolversGitResolver_GitResolverjs.branches('foo')])
                 .spread(function(branches1, branches2) {
-                    expect(branches1).to.eql({
+                    ext_expect_expect(branches1).to.eql({
                         master: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
                         'some-branch':
                             'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
                     });
-                    expect(branches1).to.eql(branches2);
+                    ext_expect_expect(branches1).to.eql(branches2);
 
                     next();
                 })
@@ -1406,22 +1405,22 @@ describe('GitResolver', function() {
         afterEach(clearResolverRuntimeCache);
 
         it('should resolve to an empty hash if no tags are found', function(next) {
-            GitResolver.refs = function() {
-                return Q.resolve([]);
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([]);
             };
 
-            GitResolver.tags('foo')
+            libcoreresolversGitResolver_GitResolverjs.tags('foo')
                 .then(function(tags) {
-                    expect(tags).to.be.an('object');
-                    expect(tags).to.eql({});
+                    ext_expect_expect(tags).to.be.an('object');
+                    ext_expect_expect(tags).to.eql({});
                     next();
                 })
                 .done();
         });
 
         it('should resolve to an hash of tags', function(next) {
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/some-branch',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/0.2.1',
@@ -1434,9 +1433,9 @@ describe('GitResolver', function() {
                 ]);
             };
 
-            GitResolver.tags('foo')
+            libcoreresolversGitResolver_GitResolverjs.tags('foo')
                 .then(function(tags) {
-                    expect(tags).to.eql({
+                    ext_expect_expect(tags).to.eql({
                         '0.2.1': 'cccccccccccccccccccccccccccccccccccccccc',
                         '0.1.0': 'dddddddddddddddddddddddddddddddddddddddd',
                         'v0.1.1': 'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
@@ -1448,50 +1447,50 @@ describe('GitResolver', function() {
         });
 
         it('should cache the result for each source', function(next) {
-            GitResolver.refs = function(source) {
+            libcoreresolversGitResolver_GitResolverjs.refs = function(source) {
                 if (source === 'foo') {
-                    return Q.resolve([
+                    return ext_q_Q.resolve([
                         'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/tags/0.2.1',
                         'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/some-tag'
                     ]);
                 }
 
-                return Q.resolve([
+                return ext_q_Q.resolve([
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/0.3.1',
                     'dddddddddddddddddddddddddddddddddddddddd refs/tags/some-tag'
                 ]);
             };
 
-            GitResolver.tags('foo')
+            libcoreresolversGitResolver_GitResolverjs.tags('foo')
                 .then(function(versions) {
-                    expect(versions).to.eql({
+                    ext_expect_expect(versions).to.eql({
                         '0.2.1': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
                         'some-tag': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
                     });
 
-                    return GitResolver.tags('bar');
+                    return libcoreresolversGitResolver_GitResolverjs.tags('bar');
                 })
                 .then(function(versions) {
-                    expect(versions).to.eql({
+                    ext_expect_expect(versions).to.eql({
                         '0.3.1': 'cccccccccccccccccccccccccccccccccccccccc',
                         'some-tag': 'dddddddddddddddddddddddddddddddddddddddd'
                     });
 
                     // Manipulate the cache and check if it resolves for the cached ones
-                    delete GitResolver._cache.tags.get('foo')['0.2.1'];
-                    delete GitResolver._cache.tags.get('bar')['0.3.1'];
+                    delete libcoreresolversGitResolver_GitResolverjs._cache.tags.get('foo')['0.2.1'];
+                    delete libcoreresolversGitResolver_GitResolverjs._cache.tags.get('bar')['0.3.1'];
 
-                    return GitResolver.tags('foo');
+                    return libcoreresolversGitResolver_GitResolverjs.tags('foo');
                 })
                 .then(function(tags) {
-                    expect(tags).to.eql({
+                    ext_expect_expect(tags).to.eql({
                         'some-tag': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'
                     });
 
-                    return GitResolver.tags('bar');
+                    return libcoreresolversGitResolver_GitResolverjs.tags('bar');
                 })
                 .then(function(tags) {
-                    expect(tags).to.eql({
+                    ext_expect_expect(tags).to.eql({
                         'some-tag': 'dddddddddddddddddddddddddddddddddddddddd'
                     });
 
@@ -1501,20 +1500,20 @@ describe('GitResolver', function() {
         });
 
         it('should work if requested in parallel for the same source', function(next) {
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/0.3.1',
                     'dddddddddddddddddddddddddddddddddddddddd refs/tags/some-tag'
                 ]);
             };
 
-            Q.all([GitResolver.tags('foo'), GitResolver.tags('foo')])
+            ext_q_Q.all([libcoreresolversGitResolver_GitResolverjs.tags('foo'), libcoreresolversGitResolver_GitResolverjs.tags('foo')])
                 .spread(function(tags1, tags2) {
-                    expect(tags1).to.eql({
+                    ext_expect_expect(tags1).to.eql({
                         '0.3.1': 'cccccccccccccccccccccccccccccccccccccccc',
                         'some-tag': 'dddddddddddddddddddddddddddddddddddddddd'
                     });
-                    expect(tags2).to.eql(tags1);
+                    ext_expect_expect(tags2).to.eql(tags1);
 
                     next();
                 })
@@ -1526,31 +1525,31 @@ describe('GitResolver', function() {
         // Use a class that inherit the GitResolver to see if it uses
         // late binding when clearing the cache
         function CustomGitResolver() {}
-        util.inherits(CustomGitResolver, GitResolver);
-        mout.object.mixIn(CustomGitResolver, GitResolver);
+        ext_util_util.inherits(CustomGitResolver, libcoreresolversGitResolver_GitResolverjs);
+        ext_mout_mout.object.mixIn(CustomGitResolver, libcoreresolversGitResolver_GitResolverjs);
 
         it('should clear refs cache', function() {
             CustomGitResolver._cache.refs.set('foo', {});
             CustomGitResolver.clearRuntimeCache();
-            expect(CustomGitResolver._cache.refs.has('foo')).to.be(false);
+            ext_expect_expect(CustomGitResolver._cache.refs.has('foo')).to.be(false);
         });
 
         it('should clear branches cache', function() {
             CustomGitResolver._cache.branches.set('foo', {});
             CustomGitResolver.clearRuntimeCache();
-            expect(CustomGitResolver._cache.branches.has('foo')).to.be(false);
+            ext_expect_expect(CustomGitResolver._cache.branches.has('foo')).to.be(false);
         });
 
         it('should clear tags cache', function() {
             CustomGitResolver._cache.tags.set('foo', {});
             CustomGitResolver.clearRuntimeCache();
-            expect(CustomGitResolver._cache.tags.has('foo')).to.be(false);
+            ext_expect_expect(CustomGitResolver._cache.tags.has('foo')).to.be(false);
         });
 
         it('should clear versions cache', function() {
             CustomGitResolver._cache.versions.set('foo', {});
             CustomGitResolver.clearRuntimeCache();
-            expect(CustomGitResolver._cache.versions.has('foo')).to.be(false);
+            ext_expect_expect(CustomGitResolver._cache.versions.has('foo')).to.be(false);
         });
     });
 
@@ -1558,40 +1557,40 @@ describe('GitResolver', function() {
         afterEach(clearResolverRuntimeCache);
 
         it('should resolve to an empty array if no tags are found', function(next) {
-            GitResolver.refs = function() {
-                return Q.resolve([]);
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([]);
             };
 
-            GitResolver.versions('foo')
+            libcoreresolversGitResolver_GitResolverjs.versions('foo')
                 .then(function(versions) {
-                    expect(versions).to.be.an('array');
-                    expect(versions).to.eql([]);
+                    ext_expect_expect(versions).to.be.an('array');
+                    ext_expect_expect(versions).to.eql([]);
                     next();
                 })
                 .done();
         });
 
         it('should resolve to an empty array if no valid semver tags', function(next) {
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/some-branch',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/some-tag'
                 ]);
             };
 
-            GitResolver.versions('foo')
+            libcoreresolversGitResolver_GitResolverjs.versions('foo')
                 .then(function(versions) {
-                    expect(versions).to.be.an('array');
-                    expect(versions).to.eql([]);
+                    ext_expect_expect(versions).to.be.an('array');
+                    ext_expect_expect(versions).to.eql([]);
                     next();
                 })
                 .done();
         });
 
         it('should resolve to an array of versions, ignoring invalid semver tags', function(next) {
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/heads/master',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/heads/some-branch',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/0.2.1',
@@ -1603,9 +1602,9 @@ describe('GitResolver', function() {
                 ]);
             };
 
-            GitResolver.versions('foo', true)
+            libcoreresolversGitResolver_GitResolverjs.versions('foo', true)
                 .then(function(versions) {
-                    expect(versions).to.eql([
+                    ext_expect_expect(versions).to.eql([
                         {
                             version: '0.2.1',
                             tag: '0.2.1',
@@ -1624,18 +1623,18 @@ describe('GitResolver', function() {
                     ]);
                 })
                 .then(function() {
-                    return GitResolver.versions('foo');
+                    return libcoreresolversGitResolver_GitResolverjs.versions('foo');
                 })
                 .then(function(versions) {
-                    expect(versions).to.eql(['0.2.1', '0.1.1', '0.1.0']);
+                    ext_expect_expect(versions).to.eql(['0.2.1', '0.1.1', '0.1.0']);
                     next();
                 })
                 .done();
         });
 
         it('should order the versions according to the semver spec', function(next) {
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/tags/0.1.0',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/0.1.1+build.11',
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/0.1.1+build.100',
@@ -1646,9 +1645,9 @@ describe('GitResolver', function() {
                 ]);
             };
 
-            GitResolver.versions('foo', true)
+            libcoreresolversGitResolver_GitResolverjs.versions('foo', true)
                 .then(function(versions) {
-                    expect(versions).to.eql([
+                    ext_expect_expect(versions).to.eql([
                         {
                             version: '0.2.1',
                             tag: 'v0.2.1',
@@ -1691,59 +1690,59 @@ describe('GitResolver', function() {
         });
 
         it('should cache the result for each source', function(next) {
-            GitResolver.refs = function(source) {
+            libcoreresolversGitResolver_GitResolverjs.refs = function(source) {
                 if (source === 'foo') {
-                    return Q.resolve([
+                    return ext_q_Q.resolve([
                         'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/tags/0.2.1',
                         'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/0.1.0'
                     ]);
                 }
 
-                return Q.resolve([
+                return ext_q_Q.resolve([
                     'cccccccccccccccccccccccccccccccccccccccc refs/tags/0.3.1',
                     'dddddddddddddddddddddddddddddddddddddddd refs/tags/0.3.0'
                 ]);
             };
 
-            GitResolver.versions('foo')
+            libcoreresolversGitResolver_GitResolverjs.versions('foo')
                 .then(function(versions) {
-                    expect(versions).to.eql(['0.2.1', '0.1.0']);
+                    ext_expect_expect(versions).to.eql(['0.2.1', '0.1.0']);
 
-                    return GitResolver.versions('bar');
+                    return libcoreresolversGitResolver_GitResolverjs.versions('bar');
                 })
                 .then(function(versions) {
-                    expect(versions).to.eql(['0.3.1', '0.3.0']);
+                    ext_expect_expect(versions).to.eql(['0.3.1', '0.3.0']);
 
                     // Manipulate the cache and check if it resolves for the cached ones
-                    GitResolver._cache.versions.get('foo').splice(1, 1);
-                    GitResolver._cache.versions.get('bar').splice(1, 1);
+                    libcoreresolversGitResolver_GitResolverjs._cache.versions.get('foo').splice(1, 1);
+                    libcoreresolversGitResolver_GitResolverjs._cache.versions.get('bar').splice(1, 1);
 
-                    return GitResolver.versions('foo');
+                    return libcoreresolversGitResolver_GitResolverjs.versions('foo');
                 })
                 .then(function(versions) {
-                    expect(versions).to.eql(['0.2.1']);
+                    ext_expect_expect(versions).to.eql(['0.2.1']);
 
-                    return GitResolver.versions('bar');
+                    return libcoreresolversGitResolver_GitResolverjs.versions('bar');
                 })
                 .then(function(versions) {
-                    expect(versions).to.eql(['0.3.1']);
+                    ext_expect_expect(versions).to.eql(['0.3.1']);
                     next();
                 })
                 .done();
         });
 
         it('should work if requested in parallel for the same source', function(next) {
-            GitResolver.refs = function() {
-                return Q.resolve([
+            libcoreresolversGitResolver_GitResolverjs.refs = function() {
+                return ext_q_Q.resolve([
                     'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa refs/tags/0.2.1',
                     'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb refs/tags/0.1.0'
                 ]);
             };
 
-            Q.all([GitResolver.versions('foo'), GitResolver.versions('foo')])
+            ext_q_Q.all([libcoreresolversGitResolver_GitResolverjs.versions('foo'), libcoreresolversGitResolver_GitResolverjs.versions('foo')])
                 .spread(function(versions1, versions2) {
-                    expect(versions1).to.eql(['0.2.1', '0.1.0']);
-                    expect(versions2).to.eql(versions1);
+                    ext_expect_expect(versions1).to.eql(['0.2.1', '0.1.0']);
+                    ext_expect_expect(versions2).to.eql(versions1);
 
                     next();
                 })

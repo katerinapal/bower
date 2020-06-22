@@ -1,33 +1,33 @@
-var expect = require('expect.js');
-var fs = require('../../../lib/util/fs');
-var path = require('path');
-var util = require('util');
-var rimraf = require('../../../lib/util/rimraf');
-var mkdirp = require('mkdirp');
-var tmp = require('tmp');
-var Q = require('q');
-var Logger = require('bower-logger');
-var cmd = require('../../../lib/util/cmd');
-var copy = require('../../../lib/util/copy');
-var Resolver = require('../../../lib/core/resolvers/Resolver');
-var defaultConfig = require('../../../lib/config');
+import ext_expect_expect from "expect.js";
+import { fs as libutilfs_fsjs } from "../../../lib/util/fs";
+import ext_path_path from "path";
+import ext_util_util from "util";
+import { rimrafjs as libutilrimraf_rimrafjsjs } from "../../../lib/util/rimraf";
+import ext_mkdirp_mkdirp from "mkdirp";
+import ext_tmp_tmp from "tmp";
+import ext_q_Q from "q";
+import ext_bowerlogger_Logger from "bower-logger";
+import { cmd as libutilcmd_cmdjs } from "../../../lib/util/cmd";
+import { copyDir as libutilcopy_copyDirjs } from "../../../lib/util/copy";
+import { Resolver as libcoreresolversResolver_Resolverjs } from "../../../lib/core/resolvers/Resolver";
+import { defaultConfig as libconfig_defaultConfigjs } from "../../../lib/config";
 
 describe('Resolver', function() {
-    var tempDir = path.resolve(__dirname, '../../tmp/tmp');
-    var testPackage = path.resolve(__dirname, '../../assets/package-a');
+    var tempDir = ext_path_path.resolve(__dirname, '../../tmp/tmp');
+    var testPackage = ext_path_path.resolve(__dirname, '../../assets/package-a');
     var logger;
     var dirMode0777;
-    var config = defaultConfig();
+    var config = libconfig_defaultConfigjs();
 
     before(function() {
         var stat;
 
-        mkdirp.sync(tempDir);
-        stat = fs.statSync(tempDir);
+        ext_mkdirp_mkdirp.sync(tempDir);
+        stat = libutilfs_fsjs.statSync(tempDir);
         dirMode0777 = stat.mode;
-        rimraf.sync(tempDir);
+        libutilrimraf_rimrafjsjs.sync(tempDir);
 
-        logger = new Logger();
+        logger = new ext_bowerlogger_Logger();
     });
 
     afterEach(function() {
@@ -39,14 +39,14 @@ describe('Resolver', function() {
             decEndpoint = { source: decEndpoint };
         }
 
-        return new Resolver(decEndpoint, config, logger);
+        return new libcoreresolversResolver_Resolverjs(decEndpoint, config, logger);
     }
 
     describe('.getSource', function() {
         it('should return the resolver source', function() {
             var resolver = create('foo');
 
-            expect(resolver.getSource()).to.equal('foo');
+            ext_expect_expect(resolver.getSource()).to.equal('foo');
         });
     });
 
@@ -54,13 +54,13 @@ describe('Resolver', function() {
         it('should return the resolver name', function() {
             var resolver = create({ source: 'foo', name: 'bar' });
 
-            expect(resolver.getName()).to.equal('bar');
+            ext_expect_expect(resolver.getName()).to.equal('bar');
         });
 
         it('should return the resolver source if none is specified (default guess mechanism)', function() {
             var resolver = create('foo');
 
-            expect(resolver.getName()).to.equal('foo');
+            ext_expect_expect(resolver.getName()).to.equal('foo');
         });
     });
 
@@ -68,30 +68,30 @@ describe('Resolver', function() {
         it('should return the resolver target', function() {
             var resolver = create({ source: 'foo', target: '~2.1.0' });
 
-            expect(resolver.getTarget()).to.equal('~2.1.0');
+            ext_expect_expect(resolver.getTarget()).to.equal('~2.1.0');
         });
 
         it('should return * if none was configured', function() {
             var resolver = create('foo');
 
-            expect(resolver.getTarget()).to.equal('*');
+            ext_expect_expect(resolver.getTarget()).to.equal('*');
         });
 
         it('should return * if latest was configured (for backwards compatibility)', function() {
             var resolver = create('foo');
 
-            expect(resolver.getTarget()).to.equal('*');
+            ext_expect_expect(resolver.getTarget()).to.equal('*');
         });
     });
 
     describe('.hasNew', function() {
         before(function() {
-            mkdirp.sync(tempDir);
+            ext_mkdirp_mkdirp.sync(tempDir);
         });
 
         beforeEach(function() {
-            fs.writeFileSync(
-                path.join(tempDir, '.bower.json'),
+            libutilfs_fsjs.writeFileSync(
+                ext_path_path.join(tempDir, '.bower.json'),
                 JSON.stringify({
                     name: 'test'
                 })
@@ -99,7 +99,7 @@ describe('Resolver', function() {
         });
 
         after(function(next) {
-            rimraf(tempDir, next);
+            libutilrimraf_rimrafjsjs(tempDir, next);
         });
 
         it('should throw an error if already working (resolving)', function(next) {
@@ -125,9 +125,9 @@ describe('Resolver', function() {
                     succeeded = true;
                 },
                 function(err) {
-                    expect(err).to.be.an(Error);
-                    expect(err.code).to.equal('EWORKING');
-                    expect(err.message).to.match(/already working/i);
+                    ext_expect_expect(err).to.be.an(Error);
+                    ext_expect_expect(err.code).to.equal('EWORKING');
+                    ext_expect_expect(err.message).to.match(/already working/i);
                 }
             );
         });
@@ -153,9 +153,9 @@ describe('Resolver', function() {
                     succeeded = true;
                 },
                 function(err) {
-                    expect(err).to.be.an(Error);
-                    expect(err.code).to.equal('EWORKING');
-                    expect(err.message).to.match(/already working/i);
+                    ext_expect_expect(err).to.be.an(Error);
+                    ext_expect_expect(err.code).to.equal('EWORKING');
+                    ext_expect_expect(err.message).to.match(/already working/i);
                 }
             );
         });
@@ -166,7 +166,7 @@ describe('Resolver', function() {
             resolver
                 .hasNew({})
                 .then(function(hasNew) {
-                    expect(hasNew).to.equal(true);
+                    ext_expect_expect(hasNew).to.equal(true);
                     next();
                 })
                 .done();
@@ -178,14 +178,14 @@ describe('Resolver', function() {
 
             resolver._hasNew = function(pkgMeta) {
                 meta = pkgMeta;
-                return Q.resolve(true);
+                return ext_q_Q.resolve(true);
             };
 
             resolver
                 .hasNew({ name: 'test' })
                 .then(function() {
-                    expect(meta).to.be.an('object');
-                    expect(meta.name).to.equal('test');
+                    ext_expect_expect(meta).to.be.an('object');
+                    ext_expect_expect(meta.name).to.equal('test');
                     next();
                 })
                 .done();
@@ -197,7 +197,7 @@ describe('Resolver', function() {
 
             resolver._hasNew = function(pkgMeta) {
                 meta = pkgMeta;
-                return Q.resolve(true);
+                return ext_q_Q.resolve(true);
             };
 
             resolver
@@ -205,8 +205,8 @@ describe('Resolver', function() {
                     name: 'foo'
                 })
                 .then(function() {
-                    expect(meta).to.be.an('object');
-                    expect(meta.name).to.equal('foo');
+                    ext_expect_expect(meta).to.be.an('object');
+                    ext_expect_expect(meta.name).to.equal('foo');
                     next();
                 })
                 .done();
@@ -224,8 +224,8 @@ describe('Resolver', function() {
                         next(new Error('Should have rejected the promise'));
                     },
                     function(err) {
-                        expect(err).to.be.an(Error);
-                        expect(err.message).to.contain(
+                        ext_expect_expect(err).to.be.an(Error);
+                        ext_expect_expect(err.message).to.contain(
                             '_resolve not implemented'
                         );
                         next();
@@ -257,9 +257,9 @@ describe('Resolver', function() {
                     succeeded = true;
                 },
                 function(err) {
-                    expect(err).to.be.an(Error);
-                    expect(err.code).to.equal('EWORKING');
-                    expect(err.message).to.match(/already working/i);
+                    ext_expect_expect(err).to.be.an(Error);
+                    ext_expect_expect(err.code).to.equal('EWORKING');
+                    ext_expect_expect(err.message).to.match(/already working/i);
                 }
             );
         });
@@ -287,9 +287,9 @@ describe('Resolver', function() {
                     succeeded = true;
                 },
                 function(err) {
-                    expect(err).to.be.an(Error);
-                    expect(err.code).to.equal('EWORKING');
-                    expect(err.message).to.match(/already working/i);
+                    ext_expect_expect(err).to.be.an(Error);
+                    ext_expect_expect(err.code).to.equal('EWORKING');
+                    ext_expect_expect(err.message).to.match(/already working/i);
                 }
             );
         });
@@ -298,11 +298,11 @@ describe('Resolver', function() {
             var resolver;
 
             function DummyResolver() {
-                Resolver.apply(this, arguments);
+                libcoreresolversResolver_Resolverjs.apply(this, arguments);
                 this._stack = [];
             }
 
-            util.inherits(DummyResolver, Resolver);
+            ext_util_util.inherits(DummyResolver, libcoreresolversResolver_Resolverjs);
 
             DummyResolver.prototype.getStack = function() {
                 return this._stack;
@@ -310,12 +310,12 @@ describe('Resolver', function() {
 
             DummyResolver.prototype.resolve = function() {
                 this._stack = [];
-                return Resolver.prototype.resolve.apply(this, arguments);
+                return libcoreresolversResolver_Resolverjs.prototype.resolve.apply(this, arguments);
             };
 
             DummyResolver.prototype._createTempDir = function() {
                 this._stack.push('before _createTempDir');
-                return Resolver.prototype._createTempDir
+                return libcoreresolversResolver_Resolverjs.prototype._createTempDir
                     .apply(this, arguments)
                     .then(
                         function(val) {
@@ -327,7 +327,7 @@ describe('Resolver', function() {
             DummyResolver.prototype._resolve = function() {};
             DummyResolver.prototype._readJson = function() {
                 this._stack.push('before _readJson');
-                return Resolver.prototype._readJson.apply(this, arguments).then(
+                return libcoreresolversResolver_Resolverjs.prototype._readJson.apply(this, arguments).then(
                     function(val) {
                         this._stack.push('after _readJson');
                         return val;
@@ -336,7 +336,7 @@ describe('Resolver', function() {
             };
             DummyResolver.prototype._applyPkgMeta = function() {
                 this._stack.push('before _applyPkgMeta');
-                return Resolver.prototype._applyPkgMeta
+                return libcoreresolversResolver_Resolverjs.prototype._applyPkgMeta
                     .apply(this, arguments)
                     .then(
                         function(val) {
@@ -347,7 +347,7 @@ describe('Resolver', function() {
             };
             DummyResolver.prototype._savePkgMeta = function() {
                 this._stack.push('before _savePkgMeta');
-                return Resolver.prototype._savePkgMeta
+                return libcoreresolversResolver_Resolverjs.prototype._savePkgMeta
                     .apply(this, arguments)
                     .then(
                         function(val) {
@@ -362,7 +362,7 @@ describe('Resolver', function() {
             resolver
                 .resolve()
                 .then(function() {
-                    expect(resolver.getStack()).to.eql([
+                    ext_expect_expect(resolver.getStack()).to.eql([
                         'before _createTempDir',
                         'after _createTempDir',
                         'before _readJson',
@@ -386,8 +386,8 @@ describe('Resolver', function() {
             resolver
                 .resolve()
                 .then(function(folder) {
-                    expect(folder).to.be.a('string');
-                    expect(fs.existsSync(folder)).to.be(true);
+                    ext_expect_expect(folder).to.be.a('string');
+                    ext_expect_expect(libutilfs_fsjs.existsSync(folder)).to.be(true);
                     next();
                 })
                 .done();
@@ -398,7 +398,7 @@ describe('Resolver', function() {
         it('should return null if resolver is not yet resolved', function() {
             var resolver = create('foo');
 
-            expect(resolver.getTempDir() == null).to.be(true);
+            ext_expect_expect(resolver.getTempDir() == null).to.be(true);
         });
 
         it('should still return null if resolve failed', function() {
@@ -410,7 +410,7 @@ describe('Resolver', function() {
                 };
 
                 resolver.resolve().fail(function() {
-                    expect(resolver.getTempDir() == null).to.be(true);
+                    ext_expect_expect(resolver.getTempDir() == null).to.be(true);
                     next();
                 });
             });
@@ -426,8 +426,8 @@ describe('Resolver', function() {
                 .then(function() {
                     var dir = resolver.getTempDir();
 
-                    expect(dir).to.be.a('string');
-                    expect(fs.existsSync(dir)).to.be(true);
+                    ext_expect_expect(dir).to.be.a('string');
+                    ext_expect_expect(libutilfs_fsjs.existsSync(dir)).to.be(true);
                     next();
                 })
                 .done();
@@ -438,7 +438,7 @@ describe('Resolver', function() {
         it('should return null if resolver is not yet resolved', function() {
             var resolver = create('foo');
 
-            expect(resolver.getPkgMeta() == null).to.be(true);
+            ext_expect_expect(resolver.getPkgMeta() == null).to.be(true);
         });
 
         it('should still return null if resolve failed', function() {
@@ -450,7 +450,7 @@ describe('Resolver', function() {
                 };
 
                 resolver.resolve().fail(function() {
-                    expect(resolver.getPkgMeta() == null).to.be(true);
+                    ext_expect_expect(resolver.getPkgMeta() == null).to.be(true);
                     next();
                 });
             });
@@ -464,7 +464,7 @@ describe('Resolver', function() {
             resolver
                 .resolve()
                 .then(function() {
-                    expect(resolver.getPkgMeta()).to.be.an('object');
+                    ext_expect_expect(resolver.getPkgMeta()).to.be.an('object');
                     next();
                 })
                 .done();
@@ -481,17 +481,17 @@ describe('Resolver', function() {
                     var dirname;
                     var osTempDir;
 
-                    expect(dir).to.be.a('string');
-                    expect(fs.existsSync(dir)).to.be(true);
+                    ext_expect_expect(dir).to.be.a('string');
+                    ext_expect_expect(libutilfs_fsjs.existsSync(dir)).to.be(true);
 
-                    dirname = path.dirname(dir);
-                    osTempDir = path.resolve(tmp.tmpdir);
+                    dirname = ext_path_path.dirname(dir);
+                    osTempDir = ext_path_path.resolve(ext_tmp_tmp.tmpdir);
 
-                    expect(dir.indexOf(osTempDir)).to.be(0);
-                    expect(dir.indexOf(config.tmp)).to.be(0);
+                    ext_expect_expect(dir.indexOf(osTempDir)).to.be(0);
+                    ext_expect_expect(dir.indexOf(config.tmp)).to.be(0);
 
-                    expect(path.basename(dirname)).to.equal('bower');
-                    expect(path.dirname(path.dirname(dirname))).to.equal(
+                    ext_expect_expect(ext_path_path.basename(dirname)).to.equal('bower');
+                    ext_expect_expect(ext_path_path.dirname(ext_path_path.dirname(dirname))).to.equal(
                         osTempDir
                     );
                     next();
@@ -505,10 +505,10 @@ describe('Resolver', function() {
             resolver
                 ._createTempDir()
                 .then(function(dir) {
-                    var stat = fs.statSync(dir);
+                    var stat = libutilfs_fsjs.statSync(dir);
                     var expectedMode = dirMode0777 & ~process.umask();
 
-                    expect(stat.mode).to.equal(expectedMode);
+                    ext_expect_expect(stat.mode).to.equal(expectedMode);
                     next();
                 })
                 .done();
@@ -517,16 +517,16 @@ describe('Resolver', function() {
         it('should remove the folder after execution', function(next) {
             this.timeout(15000); // Give some time to execute
 
-            rimraf(config.tmp, function(err) {
+            libutilrimraf_rimrafjsjs(config.tmp, function(err) {
                 if (err) return next(err);
 
-                cmd('node', ['test/assets/test-temp-dir/test.js'], {
-                    cwd: path.resolve(__dirname, '../../..')
+                libutilcmd_cmdjs('node', ['test/assets/test-temp-dir/test.js'], {
+                    cwd: ext_path_path.resolve(__dirname, '../../..')
                 })
                     .then(
                         function() {
-                            expect(fs.existsSync(config.tmp)).to.be(true);
-                            expect(fs.readdirSync(config.tmp)).to.eql([]);
+                            ext_expect_expect(libutilfs_fsjs.existsSync(config.tmp)).to.be(true);
+                            ext_expect_expect(libutilfs_fsjs.readdirSync(config.tmp)).to.eql([]);
                             next();
                         },
                         function(err) {
@@ -538,19 +538,19 @@ describe('Resolver', function() {
         });
 
         it('should remove the folder on an uncaught exception', function(next) {
-            rimraf(config.tmp, function(err) {
+            libutilrimraf_rimrafjsjs(config.tmp, function(err) {
                 if (err) return next(err);
 
-                cmd('node', ['test/assets/test-temp-dir/test-exception.js'], {
-                    cwd: path.resolve(__dirname, '../../..')
+                libutilcmd_cmdjs('node', ['test/assets/test-temp-dir/test-exception.js'], {
+                    cwd: ext_path_path.resolve(__dirname, '../../..')
                 })
                     .then(
                         function() {
                             next(new Error('The command should have failed'));
                         },
                         function() {
-                            expect(fs.existsSync(config.tmp)).to.be(true);
-                            expect(fs.readdirSync(config.tmp)).to.eql([]);
+                            ext_expect_expect(libutilfs_fsjs.existsSync(config.tmp)).to.be(true);
+                            ext_expect_expect(libutilfs_fsjs.readdirSync(config.tmp)).to.eql([]);
                             next();
                         }
                     )
@@ -564,8 +564,8 @@ describe('Resolver', function() {
             resolver
                 ._createTempDir()
                 .then(function(dir) {
-                    expect(resolver._tempDir).to.be.ok();
-                    expect(resolver._tempDir).to.equal(dir);
+                    ext_expect_expect(resolver._tempDir).to.be.ok();
+                    ext_expect_expect(resolver._tempDir).to.equal(dir);
                     next();
                 })
                 .done();
@@ -577,8 +577,8 @@ describe('Resolver', function() {
             resolver
                 ._createTempDir()
                 .then(function(dir) {
-                    expect(resolver._tempDir).to.be.ok();
-                    expect(resolver._tempDir.indexOf('@')).to.equal(-1);
+                    ext_expect_expect(resolver._tempDir).to.be.ok();
+                    ext_expect_expect(resolver._tempDir.indexOf('@')).to.equal(-1);
                     next();
                 })
                 .done();
@@ -602,8 +602,8 @@ describe('Resolver', function() {
                 ._createTempDir()
                 .then(resolver._cleanTempDir.bind(resolver))
                 .then(function(dir) {
-                    expect(dir).to.equal(resolver.getTempDir());
-                    expect(fs.readdirSync(dir).length).to.be(0);
+                    ext_expect_expect(dir).to.equal(resolver.getTempDir());
+                    ext_expect_expect(libutilfs_fsjs.readdirSync(dir).length).to.be(0);
                     next();
                 })
                 .done();
@@ -616,10 +616,10 @@ describe('Resolver', function() {
                 ._createTempDir()
                 .then(resolver._cleanTempDir.bind(resolver))
                 .then(function(dir) {
-                    var stat = fs.statSync(dir);
+                    var stat = libutilfs_fsjs.statSync(dir);
                     var expectedMode = dirMode0777 & ~process.umask();
 
-                    expect(stat.mode).to.equal(expectedMode);
+                    ext_expect_expect(stat.mode).to.equal(expectedMode);
                     next();
                 })
                 .done();
@@ -636,7 +636,7 @@ describe('Resolver', function() {
                     return resolver._cleanTempDir();
                 })
                 .then(function(dir) {
-                    expect(dir).to.equal(tempDir);
+                    ext_expect_expect(dir).to.equal(tempDir);
                     next();
                 })
                 .done();
@@ -645,28 +645,28 @@ describe('Resolver', function() {
 
     describe('._readJson', function() {
         afterEach(function(next) {
-            rimraf(tempDir, next);
+            libutilrimraf_rimrafjsjs(tempDir, next);
         });
 
         it('should read the bower.json file', function(next) {
             var resolver = create('foo');
 
-            mkdirp.sync(tempDir);
-            fs.writeFileSync(
-                path.join(tempDir, 'bower.json'),
+            ext_mkdirp_mkdirp.sync(tempDir);
+            libutilfs_fsjs.writeFileSync(
+                ext_path_path.join(tempDir, 'bower.json'),
                 JSON.stringify({ name: 'foo', version: '0.0.0' })
             );
-            fs.writeFileSync(
-                path.join(tempDir, 'component.json'),
+            libutilfs_fsjs.writeFileSync(
+                ext_path_path.join(tempDir, 'component.json'),
                 JSON.stringify({ name: 'bar', version: '0.0.0' })
             );
 
             resolver
                 ._readJson(tempDir)
                 .then(function(meta) {
-                    expect(meta).to.be.an('object');
-                    expect(meta.name).to.equal('foo');
-                    expect(meta.version).to.equal('0.0.0');
+                    ext_expect_expect(meta).to.be.an('object');
+                    ext_expect_expect(meta.name).to.equal('foo');
+                    ext_expect_expect(meta.version).to.equal('0.0.0');
                     next();
                 })
                 .done();
@@ -676,16 +676,16 @@ describe('Resolver', function() {
             var resolver = create('foo');
             var notified = false;
 
-            mkdirp.sync(tempDir);
-            fs.writeFileSync(
-                path.join(tempDir, 'component.json'),
+            ext_mkdirp_mkdirp.sync(tempDir);
+            libutilfs_fsjs.writeFileSync(
+                ext_path_path.join(tempDir, 'component.json'),
                 JSON.stringify({ name: 'bar', version: '0.0.0' })
             );
 
             logger.on('log', function(log) {
-                expect(log).to.be.an('object');
+                ext_expect_expect(log).to.be.an('object');
                 if (log.level === 'warn' && /deprecated/i.test(log.id)) {
-                    expect(log.message).to.contain('component.json');
+                    ext_expect_expect(log.message).to.contain('component.json');
                     notified = true;
                 }
             });
@@ -693,10 +693,10 @@ describe('Resolver', function() {
             resolver
                 ._readJson(tempDir)
                 .then(function(meta) {
-                    expect(meta).to.be.an('object');
-                    expect(meta.name).to.equal('bar');
-                    expect(meta.version).to.equal('0.0.0');
-                    expect(notified).to.be(true);
+                    ext_expect_expect(meta).to.be.an('object');
+                    ext_expect_expect(meta.name).to.equal('bar');
+                    ext_expect_expect(meta.version).to.equal('0.0.0');
+                    ext_expect_expect(notified).to.be(true);
                     next();
                 })
                 .done();
@@ -708,8 +708,8 @@ describe('Resolver', function() {
             resolver
                 ._readJson(tempDir)
                 .then(function(meta) {
-                    expect(meta).to.be.an('object');
-                    expect(meta.name).to.equal('foo');
+                    ext_expect_expect(meta).to.be.an('object');
+                    ext_expect_expect(meta.name).to.equal('foo');
                     next();
                 })
                 .done();
@@ -722,26 +722,26 @@ describe('Resolver', function() {
 
     describe('._applyPkgMeta', function() {
         afterEach(function(next) {
-            rimraf(tempDir, next);
+            libutilrimraf_rimrafjsjs(tempDir, next);
         });
 
         it('should resolve with the same package meta', function(next) {
             var resolver = create('foo');
             var meta = { name: 'foo' };
 
-            mkdirp.sync(tempDir);
+            ext_mkdirp_mkdirp.sync(tempDir);
             resolver._tempDir = tempDir;
 
             resolver
                 ._applyPkgMeta(meta)
                 .then(function(retMeta) {
-                    expect(retMeta).to.equal(meta);
+                    ext_expect_expect(retMeta).to.equal(meta);
 
                     // Test also with the ignore property because the code is different
                     meta = { name: 'foo', ignore: ['somefile'] };
 
                     return resolver._applyPkgMeta(meta).then(function(retMeta) {
-                        expect(retMeta).to.equal(meta);
+                        ext_expect_expect(retMeta).to.equal(meta);
                         next();
                     });
                 })
@@ -751,14 +751,14 @@ describe('Resolver', function() {
         it('should remove files that match the ignore patterns excluding main files', function(next) {
             var resolver = create({ source: 'foo', name: 'foo' });
 
-            mkdirp.sync(tempDir);
+            ext_mkdirp_mkdirp.sync(tempDir);
 
             // Checkout test package version 0.2.1 which has a bower.json
             // with ignores
-            cmd('git', ['checkout', '0.2.2'], { cwd: testPackage })
+            libutilcmd_cmdjs('git', ['checkout', '0.2.2'], { cwd: testPackage })
                 // Copy its contents to the temporary dir
                 .then(function() {
-                    return copy.copyDir(testPackage, tempDir);
+                    return libutilcopy_copyDirjs(testPackage, tempDir);
                 })
                 .then(function() {
                     var json;
@@ -767,32 +767,32 @@ describe('Resolver', function() {
                     // Complete checks are made in the 'describe' below
                     resolver._tempDir = tempDir;
                     json = JSON.parse(
-                        fs
-                            .readFileSync(path.join(tempDir, 'bower.json'))
+                        libutilfs_fsjs
+                            .readFileSync(ext_path_path.join(tempDir, 'bower.json'))
                             .toString()
                     );
 
                     return resolver._applyPkgMeta(json).then(function() {
-                        expect(fs.existsSync(path.join(tempDir, 'foo'))).to.be(
+                        ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(tempDir, 'foo'))).to.be(
                             true
                         );
-                        expect(fs.existsSync(path.join(tempDir, 'baz'))).to.be(
+                        ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(tempDir, 'baz'))).to.be(
                             true
                         );
-                        expect(fs.existsSync(path.join(tempDir, 'test'))).to.be(
+                        ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(tempDir, 'test'))).to.be(
                             false
                         );
-                        expect(
-                            fs.existsSync(path.join(tempDir, 'bower.json'))
+                        ext_expect_expect(
+                            libutilfs_fsjs.existsSync(ext_path_path.join(tempDir, 'bower.json'))
                         ).to.be(true);
-                        expect(
-                            fs.existsSync(path.join(tempDir, 'main.js'))
+                        ext_expect_expect(
+                            libutilfs_fsjs.existsSync(ext_path_path.join(tempDir, 'main.js'))
                         ).to.be(true);
-                        expect(
-                            fs.existsSync(path.join(tempDir, 'more/docs'))
+                        ext_expect_expect(
+                            libutilfs_fsjs.existsSync(ext_path_path.join(tempDir, 'more/docs'))
                         ).to.be(false);
-                        expect(
-                            fs.existsSync(path.join(tempDir, 'more/assets'))
+                        ext_expect_expect(
+                            libutilfs_fsjs.existsSync(ext_path_path.join(tempDir, 'more/assets'))
                         ).to.be(false);
                         next();
                     });
@@ -822,15 +822,15 @@ describe('Resolver', function() {
 
     describe('._savePkgMeta', function() {
         before(function() {
-            mkdirp.sync(tempDir);
+            ext_mkdirp_mkdirp.sync(tempDir);
         });
 
         afterEach(function(next) {
-            rimraf(path.join(tempDir, '.bower.json'), next);
+            libutilrimraf_rimrafjsjs(ext_path_path.join(tempDir, '.bower.json'), next);
         });
 
         after(function(next) {
-            rimraf(tempDir, next);
+            libutilrimraf_rimrafjsjs(tempDir, next);
         });
 
         it('should resolve with the same package meta', function(next) {
@@ -842,7 +842,7 @@ describe('Resolver', function() {
             resolver
                 ._savePkgMeta(meta)
                 .then(function(retMeta) {
-                    expect(retMeta).to.equal(meta);
+                    ext_expect_expect(retMeta).to.equal(meta);
                     next();
                 })
                 .done();
@@ -857,8 +857,8 @@ describe('Resolver', function() {
             resolver
                 ._savePkgMeta(meta)
                 .then(function(retMeta) {
-                    expect(retMeta._source).to.equal('bar');
-                    expect(retMeta._target).to.equal('~2.0.0');
+                    ext_expect_expect(retMeta._source).to.equal('bar');
+                    ext_expect_expect(retMeta._target).to.equal('~2.0.0');
                     next();
                 })
                 .done();
@@ -872,14 +872,14 @@ describe('Resolver', function() {
             resolver
                 ._savePkgMeta({ name: 'bar' })
                 .then(function(retMeta) {
-                    fs.readFile(path.join(tempDir, '.bower.json'), function(
+                    libutilfs_fsjs.readFile(ext_path_path.join(tempDir, '.bower.json'), function(
                         err,
                         contents
                     ) {
                         if (err) return next(err);
 
                         contents = contents.toString();
-                        expect(JSON.parse(contents)).to.eql(retMeta);
+                        ext_expect_expect(JSON.parse(contents)).to.eql(retMeta);
                         next();
                     });
                 })
@@ -889,16 +889,16 @@ describe('Resolver', function() {
 
     describe('#isTargetable', function() {
         it('should return true by default', function() {
-            expect(Resolver.isTargetable()).to.be(true);
+            ext_expect_expect(libcoreresolversResolver_Resolverjs.isTargetable()).to.be(true);
         });
     });
 
     describe('#versions', function() {
         it('should resolve to an array by default', function(next) {
-            Resolver.versions()
+            libcoreresolversResolver_Resolverjs.versions()
                 .then(function(versions) {
-                    expect(versions).to.be.an('array');
-                    expect(versions.length).to.be(0);
+                    ext_expect_expect(versions).to.be.an('array');
+                    ext_expect_expect(versions.length).to.be(0);
 
                     next();
                 })
@@ -908,38 +908,38 @@ describe('Resolver', function() {
 
     describe('#isCacheable', function() {
         it('caches for normal name', function() {
-            var resolver = new Resolver({ source: 'foo' });
-            expect(resolver.isCacheable()).to.be(true);
+            var resolver = new libcoreresolversResolver_Resolverjs({ source: 'foo' });
+            ext_expect_expect(resolver.isCacheable()).to.be(true);
         });
 
         it('does not cache for absolute paths', function() {
-            var resolver = new Resolver({ source: '/foo' });
-            expect(resolver.isCacheable()).to.be(false);
+            var resolver = new libcoreresolversResolver_Resolverjs({ source: '/foo' });
+            ext_expect_expect(resolver.isCacheable()).to.be(false);
         });
 
         it('does not cache for relative paths', function() {
-            var resolver = new Resolver({ source: './foo' });
-            expect(resolver.isCacheable()).to.be(false);
+            var resolver = new libcoreresolversResolver_Resolverjs({ source: './foo' });
+            ext_expect_expect(resolver.isCacheable()).to.be(false);
         });
 
         it('does not cache for parent paths', function() {
-            var resolver = new Resolver({ source: '../foo' });
-            expect(resolver.isCacheable()).to.be(false);
+            var resolver = new libcoreresolversResolver_Resolverjs({ source: '../foo' });
+            ext_expect_expect(resolver.isCacheable()).to.be(false);
         });
 
         it('does not cache for file:/// prefix', function() {
-            var resolver = new Resolver({ source: 'file:///foo' });
-            expect(resolver.isCacheable()).to.be(false);
+            var resolver = new libcoreresolversResolver_Resolverjs({ source: 'file:///foo' });
+            ext_expect_expect(resolver.isCacheable()).to.be(false);
         });
 
         it('does not cache for windows paths', function() {
-            var resolver = new Resolver({ source: '..\\foo' });
-            expect(resolver.isCacheable()).to.be(false);
+            var resolver = new libcoreresolversResolver_Resolverjs({ source: '..\\foo' });
+            ext_expect_expect(resolver.isCacheable()).to.be(false);
         });
 
         it('does not cache for windows absolute paths', function() {
-            var resolver = new Resolver({ source: 'C:\\foo' });
-            expect(resolver.isCacheable()).to.be(false);
+            var resolver = new libcoreresolversResolver_Resolverjs({ source: 'C:\\foo' });
+            ext_expect_expect(resolver.isCacheable()).to.be(false);
         });
     });
 });

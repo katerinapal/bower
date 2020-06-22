@@ -1,19 +1,19 @@
-var path = require('path');
-var Q = require('q');
-var fs = require('fs');
-var expect = require('expect.js');
-var helpers = require('../helpers');
-var createLink = require('../../lib/util/createLink');
+import ext_path_path from "path";
+import ext_q_Q from "q";
+import ext_fs_fs from "fs";
+import ext_expect_expect from "expect.js";
+import * as helpers_TempDirjs from "../helpers";
+import { createLink as libutilcreateLink_createLinkjs } from "../../lib/util/createLink";
 
 describe('createLink', function() {
-    var srcDir = new helpers.TempDir({
+    var srcDir = new helpers_TempDirjs.TempDir({
         someFile: 'Hello World',
         someDirectory: {
             otherFile: 'Hello World'
         }
     });
 
-    var dstDir = new helpers.TempDir();
+    var dstDir = new helpers_TempDirjs.TempDir();
 
     beforeEach(function() {
         srcDir.prepare();
@@ -21,25 +21,25 @@ describe('createLink', function() {
     });
 
     it('creates a symlink to a file', function() {
-        var src = path.join(srcDir.path, 'someFile'),
-            dst = path.join(dstDir.path, 'someFile');
+        var src = ext_path_path.join(srcDir.path, 'someFile'),
+            dst = ext_path_path.join(dstDir.path, 'someFile');
 
-        return createLink(src, dst).then(function() {
-            return Q.nfcall(fs.readlink, dst).then(function(linkString) {
-                expect(linkString).to.be.equal(src);
+        return libutilcreateLink_createLinkjs(src, dst).then(function() {
+            return ext_q_Q.nfcall(ext_fs_fs.readlink, dst).then(function(linkString) {
+                ext_expect_expect(linkString).to.be.equal(src);
             });
         });
     });
 
     it('throws an error when destination already exists', function() {
-        var src = path.join(srcDir.path, 'someFile'),
-            dst = path.join(dstDir.path);
+        var src = ext_path_path.join(srcDir.path, 'someFile'),
+            dst = ext_path_path.join(dstDir.path);
 
-        var deferred = Q.defer();
+        var deferred = ext_q_Q.defer();
 
-        createLink(src, dst)
+        libutilcreateLink_createLinkjs(src, dst)
             .catch(function(err) {
-                expect(err.code).to.be.equal('EEXIST');
+                ext_expect_expect(err.code).to.be.equal('EEXIST');
                 deferred.resolve();
             })
             .then(function() {

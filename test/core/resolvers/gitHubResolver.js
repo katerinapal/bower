@@ -1,18 +1,18 @@
-var path = require('path');
-var nock = require('nock');
-var fs = require('../../../lib/util/fs');
-var expect = require('expect.js');
-var Logger = require('bower-logger');
-var GitRemoteResolver = require('../../../lib/core/resolvers/GitRemoteResolver');
-var GitHubResolver = require('../../../lib/core/resolvers/GitHubResolver');
-var defaultConfig = require('../../../lib/config');
+import ext_path_path from "path";
+import ext_nock_nock from "nock";
+import { fs as libutilfs_fsjs } from "../../../lib/util/fs";
+import ext_expect_expect from "expect.js";
+import ext_bowerlogger_Logger from "bower-logger";
+import { GitRemoteResolver as libcoreresolversGitRemoteResolver_GitRemoteResolverjs } from "../../../lib/core/resolvers/GitRemoteResolver";
+import { GitHubResolver as libcoreresolversGitHubResolver_GitHubResolverjs } from "../../../lib/core/resolvers/GitHubResolver";
+import { defaultConfig as libconfig_defaultConfigjs } from "../../../lib/config";
 
 describe('GitHub', function() {
     var logger;
-    var testPackage = path.resolve(__dirname, '../../assets/package-a');
+    var testPackage = ext_path_path.resolve(__dirname, '../../assets/package-a');
 
     before(function() {
-        logger = new Logger();
+        logger = new ext_bowerlogger_Logger();
     });
 
     afterEach(function() {
@@ -24,9 +24,9 @@ describe('GitHub', function() {
             decEndpoint = { source: decEndpoint };
         }
 
-        return new GitHubResolver(
+        return new libcoreresolversGitHubResolver_GitHubResolverjs(
             decEndpoint,
-            defaultConfig({ strictSsl: false }),
+            libconfig_defaultConfigjs({ strictSsl: false }),
             logger
         );
     }
@@ -38,17 +38,17 @@ describe('GitHub', function() {
             var resolver;
 
             resolver = create('git://github.com/twitter/bower');
-            expect(resolver.getSource()).to.equal(
+            ext_expect_expect(resolver.getSource()).to.equal(
                 'git://github.com/twitter/bower.git'
             );
 
             resolver = create('git://github.com/twitter/bower.git');
-            expect(resolver.getSource()).to.equal(
+            ext_expect_expect(resolver.getSource()).to.equal(
                 'git://github.com/twitter/bower.git'
             );
 
             resolver = create('git://github.com/twitter/bower.git/');
-            expect(resolver.getSource()).to.equal(
+            ext_expect_expect(resolver.getSource()).to.equal(
                 'git://github.com/twitter/bower.git'
             );
         });
@@ -58,11 +58,11 @@ describe('GitHub', function() {
         it('should download and extract the .tar.gz archive from GitHub.com', function(next) {
             var resolver;
 
-            nock('https://github.com')
+            ext_nock_nock('https://github.com')
                 .get('/IndigoUnited/js-events-emitter/archive/0.1.0.tar.gz')
                 .replyWithFile(
                     200,
-                    path.resolve(__dirname, '../../assets/package-tar.tar.gz')
+                    ext_path_path.resolve(__dirname, '../../assets/package-tar.tar.gz')
                 );
 
             resolver = create({
@@ -73,16 +73,16 @@ describe('GitHub', function() {
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'foo.js'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, '.bower.json'))).to.be(
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'foo.js'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, '.bower.json'))).to.be(
                         true
                     );
-                    expect(fs.existsSync(path.join(dir, 'bar.js'))).to.be(true);
-                    expect(
-                        fs.existsSync(path.join(dir, 'package-tar.tar.gz'))
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'bar.js'))).to.be(true);
+                    ext_expect_expect(
+                        libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'package-tar.tar.gz'))
                     ).to.be(false);
-                    expect(
-                        fs.existsSync(path.join(dir, 'package-tar.tar'))
+                    ext_expect_expect(
+                        libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'package-tar.tar'))
                     ).to.be(false);
                     next();
                 })
@@ -95,7 +95,7 @@ describe('GitHub', function() {
             var resolver;
             var retried;
 
-            nock('https://github.com')
+            ext_nock_nock('https://github.com')
                 .get('/IndigoUnited/js-events-emitter/archive/0.1.0.tar.gz')
                 .reply(200, 'this is not a valid tar');
 
@@ -116,10 +116,10 @@ describe('GitHub', function() {
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(retried).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'foo'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'bar'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'baz'))).to.be(true);
+                    ext_expect_expect(retried).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'foo'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'bar'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'baz'))).to.be(true);
                     next();
                 })
                 .done();
@@ -131,7 +131,7 @@ describe('GitHub', function() {
             var resolver;
             var retried;
 
-            nock('https://github.com')
+            ext_nock_nock('https://github.com')
                 .get('/IndigoUnited/js-events-emitter/archive/0.1.0.tar.gz')
                 .reply(500);
 
@@ -152,10 +152,10 @@ describe('GitHub', function() {
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(retried).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'foo'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'bar'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'baz'))).to.be(true);
+                    ext_expect_expect(retried).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'foo'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'bar'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'baz'))).to.be(true);
                     next();
                 })
                 .done();
@@ -166,10 +166,10 @@ describe('GitHub', function() {
                 source: 'git://github.com/foo/bar.git',
                 target: '2af02ac6ddeaac1c2f4bead8d6287ce54269c039'
             });
-            var originalCheckout = GitRemoteResolver.prototype._checkout;
+            var originalCheckout = libcoreresolversGitRemoteResolver_GitRemoteResolverjs.prototype._checkout;
             var called;
 
-            GitRemoteResolver.prototype._checkout = function() {
+            libcoreresolversGitRemoteResolver_GitRemoteResolverjs.prototype._checkout = function() {
                 called = true;
                 return originalCheckout.apply(this, arguments);
             };
@@ -180,14 +180,14 @@ describe('GitHub', function() {
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'foo'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'bar'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'baz'))).to.be(true);
-                    expect(called).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'foo'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'bar'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'baz'))).to.be(true);
+                    ext_expect_expect(called).to.be(true);
                     next();
                 })
                 .fin(function() {
-                    GitRemoteResolver.prototype._checkout = originalCheckout;
+                    libcoreresolversGitRemoteResolver_GitRemoteResolverjs.prototype._checkout = originalCheckout;
                 })
                 .done();
         });

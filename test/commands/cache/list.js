@@ -1,10 +1,10 @@
-var expect = require('expect.js');
-var helpers = require('../../helpers');
+import ext_expect_expect from "expect.js";
+import * as helpers_helpersjsjs from "../../helpers";
 
-var cacheList = helpers.command('cache/list');
+var cacheList = helpers_helpersjsjs.command('cache/list');
 
 describe('bower cache list', function() {
-    var cacheDir = new helpers.TempDir({
+    var cacheDir = new helpers_helpersjsjs.TempDir({
         '87323d6d4e48be291a9616a033d4cc6c/1.3.8/.bower.json': {
             name: 'angular',
             version: '1.3.8'
@@ -20,7 +20,7 @@ describe('bower cache list', function() {
     });
 
     it('correctly reads arguments', function() {
-        expect(cacheList.readOptions(['jquery', 'angular'])).to.eql([
+        ext_expect_expect(cacheList.readOptions(['jquery', 'angular'])).to.eql([
             ['jquery', 'angular'],
             {}
         ]);
@@ -29,7 +29,7 @@ describe('bower cache list', function() {
     it('lists packages from cache', function() {
         cacheDir.prepare();
 
-        return helpers
+        return helpers_helpersjsjs
             .run(cacheList, [
                 undefined,
                 {},
@@ -40,19 +40,19 @@ describe('bower cache list', function() {
                 }
             ])
             .spread(function(result) {
-                expect(result[0].canonicalDir).to.be(
+                ext_expect_expect(result[0].canonicalDir).to.be(
                     cacheDir.getPath('87323d6d4e48be291a9616a033d4cc6c/1.3.8')
                 );
-                expect(result[0].pkgMeta.version).to.be('1.3.8');
-                expect(result[1].pkgMeta.version).to.be('1.3.9');
-                expect(result[2].pkgMeta.version).to.be('1.0.0');
+                ext_expect_expect(result[0].pkgMeta.version).to.be('1.3.8');
+                ext_expect_expect(result[1].pkgMeta.version).to.be('1.3.9');
+                ext_expect_expect(result[2].pkgMeta.version).to.be('1.0.0');
             });
     });
 
     it('lists selected package names', function() {
         cacheDir.prepare();
 
-        return helpers
+        return helpers_helpersjsjs
             .run(cacheList, [
                 ['angular'],
                 {},
@@ -63,11 +63,11 @@ describe('bower cache list', function() {
                 }
             ])
             .spread(function(result) {
-                expect(result[0].canonicalDir).to.be(
+                ext_expect_expect(result[0].canonicalDir).to.be(
                     cacheDir.getPath('87323d6d4e48be291a9616a033d4cc6c/1.3.8')
                 );
-                expect(result[0].pkgMeta.version).to.be('1.3.8');
-                expect(result[1].pkgMeta.version).to.be('1.3.9');
+                ext_expect_expect(result[0].pkgMeta.version).to.be('1.3.8');
+                ext_expect_expect(result[1].pkgMeta.version).to.be('1.3.9');
             });
     });
 });

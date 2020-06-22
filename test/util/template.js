@@ -1,6 +1,6 @@
-var expect = require('expect.js');
-var template = require('../../lib/util/template');
-var fs = require('fs');
+import ext_expect_expect from "expect.js";
+import { templatejs as libutiltemplate_templatejsjs } from "../../lib/util/template";
+import ext_fs_fs from "fs";
 
 describe('template: util template methods for templates in lib/templates', function() {
     describe('.render() - Renders a handlebars template', function() {
@@ -8,24 +8,24 @@ describe('template: util template methods for templates in lib/templates', funct
         var testTemplatePath =
             __dirname + '/../../lib/templates/' + testTemplateName;
         beforeEach(function() {
-            fs.writeFileSync(testTemplatePath, '{{foo}}');
+            ext_fs_fs.writeFileSync(testTemplatePath, '{{foo}}');
             console.log();
         });
         it('.render() returns a compiled test-template template', function() {
-            var compiledStr = template.render(testTemplateName, {
+            var compiledStr = libutiltemplate_templatejsjs.render(testTemplateName, {
                 foo: 'foo value'
             });
-            expect(compiledStr).to.be.equal('foo value');
+            ext_expect_expect(compiledStr).to.be.equal('foo value');
         });
         it('.render() throws when a non existent template is provided', function() {
-            expect(function() {
-                template.render('test-template.not-present.tpl', {
+            ext_expect_expect(function() {
+                libutiltemplate_templatejsjs.render('test-template.not-present.tpl', {
                     foo: 'foo value'
                 });
             }).to.throwException();
         });
         afterEach(function() {
-            fs.unlinkSync(testTemplatePath);
+            ext_fs_fs.unlinkSync(testTemplatePath);
         });
     });
 
@@ -34,20 +34,20 @@ describe('template: util template methods for templates in lib/templates', funct
         var testTemplatePath =
             __dirname + '/../../lib/templates/' + testTemplateName;
         beforeEach(function() {
-            fs.writeFileSync(testTemplatePath, '{{foo}}');
+            ext_fs_fs.writeFileSync(testTemplatePath, '{{foo}}');
         });
         it('.exists() returns true for an existing template', function() {
-            var templateExists = template.exists(testTemplateName);
-            expect(templateExists).to.be.ok();
+            var templateExists = libutiltemplate_templatejsjs.exists(testTemplateName);
+            ext_expect_expect(templateExists).to.be.ok();
         });
         it('.exists() returns false for a non existing template', function() {
-            var templateExists = template.exists(
+            var templateExists = libutiltemplate_templatejsjs.exists(
                 'test-template.not-present.tpl'
             );
-            expect(templateExists).to.not.be.ok();
+            ext_expect_expect(templateExists).to.not.be.ok();
         });
         afterEach(function() {
-            fs.unlinkSync(testTemplatePath);
+            ext_fs_fs.unlinkSync(testTemplatePath);
         });
     });
 });

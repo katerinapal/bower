@@ -1,15 +1,17 @@
+import ext_chai_chai from "chai";
+import * as helpers_helpersjsjs from "../helpers";
+import ext_multiline_multiline from "multiline";
 // Simulate wide terminal
 process.stdout.columns = 130;
 
-var expect = require('chai').expect;
-var helpers = require('../helpers');
-var multiline = require('multiline').stripIndent;
+var expect = ext_chai_chai.expect;
+var multiline = ext_multiline_multiline.stripIndent;
 
-var StandardRenderer = helpers.require('lib/renderers/StandardRenderer');
+var StandardRenderer = helpers_helpersjsjs.require('lib/renderers/StandardRenderer');
 
 describe('StandardRenderer', function() {
     it('logs generic simple message', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer();
                 renderer.log({
@@ -30,7 +32,7 @@ describe('StandardRenderer', function() {
     });
 
     it('logs simple error', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer();
                 renderer.error({
@@ -51,7 +53,7 @@ describe('StandardRenderer', function() {
     });
 
     it('logs error with details', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer();
                 renderer.error({
@@ -77,7 +79,7 @@ describe('StandardRenderer', function() {
     });
 
     it('logs system details in verbose mode', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer(undefined, {
                     verbose: true
@@ -106,7 +108,7 @@ describe('StandardRenderer', function() {
     });
 
     it('logs stack trace in verbose mode', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer(undefined, {
                     verbose: true
@@ -133,7 +135,7 @@ describe('StandardRenderer', function() {
     });
 
     it('logs console trace in verbose mode', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer(undefined, {
                     verbose: true
@@ -161,7 +163,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs checkout command log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer();
                 renderer.log({
@@ -183,7 +185,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs full progress for wide command', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('install');
                 renderer.log({
@@ -205,7 +207,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs full progress for narrow command', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('help');
                 renderer.log({
@@ -227,7 +229,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs extract log just as progress log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('install');
                 renderer.log({
@@ -249,7 +251,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs incompatible log with suitable package', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer();
                 renderer.log({
@@ -330,7 +332,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs solver log without suitable package', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer();
                 renderer.log({
@@ -403,7 +405,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs json log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer();
                 renderer.log({
@@ -438,7 +440,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs cached entry log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('install');
                 renderer.log({
@@ -460,7 +462,7 @@ describe('StandardRenderer', function() {
     });
 
     it('adjusts whitespace when package id too long', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('install', {});
                 renderer.log({
@@ -496,7 +498,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs install command log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('install', {
                     cwd: '/tmp'
@@ -631,7 +633,7 @@ describe('StandardRenderer', function() {
                 ]);
             })
             .spread(function(stdout, stderr) {
-                if (helpers.isWin()) {
+                if (helpers_helpersjsjs.isWin()) {
                     expect(stdout).to.equal(
                         multiline(function() {
                             /*
@@ -692,7 +694,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs short info command log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('info', {});
                 renderer.end({
@@ -715,7 +717,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs full info command log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('info', {});
                 renderer.end({
@@ -758,7 +760,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs full info command log with prereleases', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('info', { verbose: true });
                 renderer.end({
@@ -804,7 +806,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs lookup command log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('lookup', {});
                 renderer.end({
@@ -829,7 +831,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs link command log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('link', { cwd: '/tmp' });
                 renderer.end({
@@ -849,7 +851,7 @@ describe('StandardRenderer', function() {
                 });
             })
             .spread(function(stdout, stderr) {
-                if (helpers.isWin()) {
+                if (helpers_helpersjsjs.isWin()) {
                     expect(stdout).to.equal(
                         multiline(function() {
                             /*
@@ -876,7 +878,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs search command log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('search');
                 renderer.end([
@@ -906,7 +908,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs register command log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('register');
                 renderer.end({
@@ -932,7 +934,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs cache list command log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('cache list');
                 renderer.end([
@@ -958,7 +960,7 @@ describe('StandardRenderer', function() {
     });
 
     it('outputs help command log', function() {
-        return helpers
+        return helpers_helpersjsjs
             .capture(function() {
                 var renderer = new StandardRenderer('help');
                 renderer.end({

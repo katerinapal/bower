@@ -1,25 +1,27 @@
-require('chalk').enabled = false;
+import ext_chalk_chalk from "chalk";
+import ext_q_Q from "q";
+import ext_path_path from "path";
+import ext_mkdirp_mkdirp from "mkdirp";
+import { rimrafjs as libutilrimraf_rimrafjsjs } from "../lib/util/rimraf";
+import ext_nodeuuid_uuid from "node-uuid";
+import ext_moutobject_object from "mout/object";
+import { fs as libutilfs_fsjs } from "../lib/util/fs";
+import ext_glob_glob from "glob";
+import ext_os_os from "os";
+import ext_which_which from "which";
+import ext_proxyquire_proxyquire from "proxyquire";
+import ext_spawnsync_spawnSync from "spawn-sync";
+import { reset as configjs_reset } from "../lib/config";
+import ext_nock_nock from "nock";
+import ext_semver_semver from "semver";
+ext_chalk_chalk.enabled = false;
 
-var Q = require('q');
-var path = require('path');
-var mkdirp = require('mkdirp');
-var rimraf = require('../lib/util/rimraf');
-var uuid = require('node-uuid');
-var object = require('mout/object');
-var fs = require('../lib/util/fs');
-var glob = require('glob');
-var os = require('os');
-var which = require('which');
-var proxyquire = require('proxyquire')
+var proxyquire = ext_proxyquire_proxyquire
     .noCallThru()
     .noPreserveCache();
-var spawnSync = require('spawn-sync');
-var config = require('../lib/config');
-var nock = require('nock');
-var semver = require('semver');
 
 // For better promise errors
-Q.longStackSupport = true;
+ext_q_Q.longStackSupport = true;
 
 // Those are needed for Travis or not configured git environment
 var env = {
@@ -32,34 +34,34 @@ var env = {
     NODE_ENV: 'test'
 };
 
-object.mixIn(process.env, env);
+ext_moutobject_object.mixIn(process.env, env);
 
-var tmpLocation = path.join(
-    os.tmpdir ? os.tmpdir() : os.tmpDir(),
+var tmpLocation = ext_path_path.join(
+    ext_os_os.tmpdir ? ext_os_os.tmpdir() : ext_os_os.tmpDir(),
     'bower-tests',
-    uuid.v4().slice(0, 8)
+    ext_nodeuuid_uuid.v4().slice(0, 8)
 );
 
-exports.require = function(name, stubs) {
+require_require = function(name, stubs) {
     if (stubs) {
-        return proxyquire(path.join(__dirname, '../', name), stubs);
+        return proxyquire(ext_path_path.join(__dirname, '../', name), stubs);
     } else {
-        return require(path.join(__dirname, '../', name));
+        return require(ext_path_path.join(__dirname, '../', name));
     }
 };
 
 // We need to reset cache because tests are reusing temp directories
 beforeEach(function() {
-    config.reset();
+    configjs_reset();
 });
 
 after(function() {
-    rimraf.sync(tmpLocation);
+    libutilrimraf_rimrafjsjs.sync(tmpLocation);
 });
 
-exports.TempDir = (function() {
+TempDir_TempDir = (function() {
     function TempDir(defaults) {
-        this.path = path.join(tmpLocation, uuid.v4());
+        this.path = ext_path_path.join(tmpLocation, ext_nodeuuid_uuid.v4());
         this.defaults = defaults;
     }
 
@@ -67,7 +69,7 @@ exports.TempDir = (function() {
         var that = this;
 
         defaults = defaults || this.defaults || {};
-        files = object.merge(files || {}, defaults);
+        files = ext_moutobject_object.merge(files || {}, defaults);
 
         this.meta = function(tag) {
             if (tag) {
@@ -78,14 +80,14 @@ exports.TempDir = (function() {
         };
 
         if (files) {
-            object.forOwn(files, function(contents, filepath) {
+            ext_moutobject_object.forOwn(files, function(contents, filepath) {
                 if (typeof contents === 'object') {
                     contents = JSON.stringify(contents, null, ' ') + '\n';
                 }
 
-                var fullPath = path.join(that.path, filepath);
-                mkdirp.sync(path.dirname(fullPath));
-                fs.writeFileSync(fullPath, contents);
+                var fullPath = ext_path_path.join(that.path, filepath);
+                ext_mkdirp_mkdirp.sync(ext_path_path.dirname(fullPath));
+                libutilfs_fsjs.writeFileSync(fullPath, contents);
             });
         }
 
@@ -93,8 +95,8 @@ exports.TempDir = (function() {
     };
 
     TempDir.prototype.prepare = function(files) {
-        rimraf.sync(this.path);
-        mkdirp.sync(this.path);
+        libutilrimraf_rimrafjsjs.sync(this.path);
+        ext_mkdirp_mkdirp.sync(this.path);
         this.create(files);
 
         return this;
@@ -104,21 +106,21 @@ exports.TempDir = (function() {
     TempDir.prototype.prepareGit = function(revisions) {
         var that = this;
 
-        revisions = object.merge(revisions || {}, this.defaults);
+        revisions = ext_moutobject_object.merge(revisions || {}, this.defaults);
 
-        rimraf.sync(that.path);
+        libutilrimraf_rimrafjsjs.sync(that.path);
 
-        mkdirp.sync(that.path);
+        ext_mkdirp_mkdirp.sync(that.path);
 
         this.git('init');
 
         this.glob('./!(.git)').map(function(removePath) {
-            var fullPath = path.join(that.path, removePath);
+            var fullPath = ext_path_path.join(that.path, removePath);
 
-            rimraf.sync(fullPath);
+            libutilrimraf_rimrafjsjs.sync(fullPath);
         });
 
-        object.forOwn(
+        ext_moutobject_object.forOwn(
             revisions,
             function(files, tag) {
                 this.create(files, {});
@@ -132,18 +134,18 @@ exports.TempDir = (function() {
     };
 
     TempDir.prototype.glob = function(pattern) {
-        return glob.sync(pattern, {
+        return ext_glob_glob.sync(pattern, {
             cwd: this.path,
             dot: true
         });
     };
 
     TempDir.prototype.getPath = function(name) {
-        return path.join(this.path, name);
+        return ext_path_path.join(this.path, name);
     };
 
     TempDir.prototype.read = function(name) {
-        return fs.readFileSync(this.getPath(name), 'utf8');
+        return libutilfs_fsjs.readFileSync(this.getPath(name), 'utf8');
     };
 
     TempDir.prototype.readJson = function(name) {
@@ -152,7 +154,7 @@ exports.TempDir = (function() {
 
     TempDir.prototype.git = function() {
         var args = Array.prototype.slice.call(arguments);
-        var result = spawnSync('git', args, { cwd: this.path });
+        var result = ext_spawnsync_spawnSync('git', args, { cwd: this.path });
 
         if (result.status !== 0) {
             throw new Error(result.stderr);
@@ -167,8 +169,8 @@ exports.TempDir = (function() {
             .map(function(t) {
                 return t[0] == 'v' ? t.slice(1) : t;
             })
-            .filter(semver.valid)
-            .sort(semver.compare);
+            .filter(ext_semver_semver.valid)
+            .sort(ext_semver_semver.compare);
 
         if (versions.length >= 1) {
             return versions[versions.length - 1];
@@ -178,14 +180,14 @@ exports.TempDir = (function() {
     };
 
     TempDir.prototype.exists = function(name) {
-        return fs.existsSync(path.join(this.path, name));
+        return libutilfs_fsjs.existsSync(ext_path_path.join(this.path, name));
     };
 
     return TempDir;
 })();
 
-exports.expectEvent = function expectEvent(emitter, eventName) {
-    var deferred = Q.defer();
+expectEvent_expectEvent = function expectEvent(emitter, eventName) {
+    var deferred = ext_q_Q.defer();
 
     emitter.once(eventName, function() {
         deferred.resolve(arguments);
@@ -198,7 +200,7 @@ exports.expectEvent = function expectEvent(emitter, eventName) {
     return deferred.promise;
 };
 
-exports.command = function(command, stubs) {
+command_command = function(command, stubs) {
     var rawCommand;
     var commandStubs = {};
 
@@ -206,18 +208,18 @@ exports.command = function(command, stubs) {
     var cwd = stubs.cwd;
     delete stubs.cwd;
 
-    rawCommand = exports.require('lib/commands/' + command, stubs);
+    rawCommand = require_require('lib/commands/' + command, stubs);
 
     commandStubs['./' + command] = function() {
         var args = [].slice.call(arguments);
-        args[rawCommand.length - 1] = object.merge(
+        args[rawCommand.length - 1] = ext_moutobject_object.merge(
             { cwd: cwd },
             args[rawCommand.length - 1] || {}
         );
         return rawCommand.apply(null, args);
     };
 
-    var instance = exports.require('lib/commands/index', commandStubs);
+    var instance = require_require('lib/commands/index', commandStubs);
 
     var commandParts = command.split('/');
 
@@ -240,7 +242,7 @@ exports.command = function(command, stubs) {
     return instance;
 };
 
-exports.run = function(command, args) {
+run_run = function(command, args) {
     var logger = command.apply(null, args || []);
 
     // Hack so we can intercept prompring for data
@@ -248,7 +250,7 @@ exports.run = function(command, args) {
         logger.emit('confirm', data);
     };
 
-    var promise = exports.expectEvent(logger, 'end');
+    var promise = expectEvent_expectEvent(logger, 'end');
 
     promise.logger = logger;
 
@@ -256,7 +258,7 @@ exports.run = function(command, args) {
 };
 
 // Captures all stdout and stderr
-exports.capture = function(callback) {
+capture_capture = function(callback) {
     var oldStdout = process.stdout.write;
     var oldStderr = process.stderr.write;
 
@@ -271,7 +273,7 @@ exports.capture = function(callback) {
         stderr += text;
     };
 
-    return Q.fcall(callback)
+    return ext_q_Q.fcall(callback)
         .then(function() {
             process.stdout.write = oldStdout;
             process.stderr.write = oldStderr;
@@ -286,34 +288,36 @@ exports.capture = function(callback) {
         });
 };
 
-exports.hasSvn = function() {
+hasSvn_hasSvn = function() {
     try {
-        which.sync('svn');
+        ext_which_which.sync('svn');
         return true;
     } catch (ex) {
         return false;
     }
 };
 
-exports.isWin = function() {
+isWin_isWin = function() {
     return process.platform === 'win32';
 };
 
-exports.localSource = function(localPath) {
-    localPath = path.normalize(localPath);
+localSource_localSource = function(localPath) {
+    localPath = ext_path_path.normalize(localPath);
 
-    if (!exports.isWin()) {
+    if (!isWin_isWin()) {
         localPath = 'file://' + localPath;
     }
 
     return localPath;
 };
 
-// Used for example by "svn checkout" and "svn export"
-exports.localUrl = function(localPath) {
-    localPath = path.normalize(localPath);
+var localUrl;
 
-    if (!exports.isWin()) {
+// Used for example by "svn checkout" and "svn export"
+localUrl = function(localPath) {
+    localPath = ext_path_path.normalize(localPath);
+
+    if (!isWin_isWin()) {
         localPath = 'file://' + localPath;
     } else {
         localPath = 'file:///' + localPath;
@@ -324,12 +328,32 @@ exports.localUrl = function(localPath) {
 
 // Returns the result of executing the bower binary + args
 // example: runBin('install') --> $ bower install
-exports.runBin = function(args) {
+runBin_runBin = function(args) {
     args = args || [];
-    args.unshift(path.resolve(__dirname, '../bin/bower'));
-    return spawnSync('node', args);
+    args.unshift(ext_path_path.resolve(__dirname, '../bin/bower'));
+    return ext_spawnsync_spawnSync('node', args);
 };
 
 afterEach(function() {
-    nock.cleanAll();
+    ext_nock_nock.cleanAll();
 });
+var hasSvn_hasSvn;
+export { hasSvn_hasSvn as hasSvn };
+var command_command;
+export { command_command as command };
+var run_run;
+export { run_run as run };
+var TempDir_TempDir;
+export { TempDir_TempDir as TempDir };
+var expectEvent_expectEvent;
+export { expectEvent_expectEvent as expectEvent };
+var runBin_runBin;
+export { runBin_runBin as runBin };
+var require_require;
+export { require_require as require };
+var localSource_localSource;
+export { localSource_localSource as localSource };
+var capture_capture;
+export { capture_capture as capture };
+var isWin_isWin;
+export { isWin_isWin as isWin };

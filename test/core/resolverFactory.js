@@ -1,23 +1,28 @@
-var expect = require('expect.js');
-var fs = require('../../lib/util/fs');
-var path = require('path');
-var mkdirp = require('mkdirp');
-var mout = require('mout');
-var Q = require('q');
-var rimraf = require('../../lib/util/rimraf');
-var RegistryClient = require('bower-registry-client');
-var Logger = require('bower-logger');
-var resolverFactory = require('../../lib/core/resolverFactory');
-var resolvers = require('../../lib/core/resolvers');
-var defaultConfig = require('../../lib/config');
-var helpers = require('../helpers');
+import ext_expect_expect from "expect.js";
+import { fs as libutilfs_fsjs } from "../../lib/util/fs";
+import ext_path_path from "path";
+import ext_mkdirp_mkdirp from "mkdirp";
+import ext_mout_mout from "mout";
+import ext_q_Q from "q";
+import { rimrafjs as libutilrimraf_rimrafjsjs } from "../../lib/util/rimraf";
+import ext_bowerregistryclient_RegistryClient from "bower-registry-client";
+import ext_bowerlogger_Logger from "bower-logger";
+
+import {
+    clearRuntimeCache as resolverFactoryjs_clearRuntimeCache,
+    createInstance as libcoreresolverFactory_createInstancejs,
+} from "../../lib/core/resolverFactory";
+
+import { indexjs as libcoreindex_indexjsjs } from "../../lib/core/resolvers";
+import { defaultConfig as libconfig_defaultConfigjs } from "../../lib/config";
+import * as helpers_hasSvnjs from "../helpers";
 
 describe('resolverFactory', function() {
     var tempSource;
-    var logger = new Logger();
-    var registryClient = new RegistryClient(
-        defaultConfig({
-            cache: defaultConfig()._registry
+    var logger = new ext_bowerlogger_Logger();
+    var registryClient = new ext_bowerregistryclient_RegistryClient(
+        libconfig_defaultConfigjs({
+            cache: libconfig_defaultConfigjs()._registry
         })
     );
 
@@ -25,7 +30,7 @@ describe('resolverFactory', function() {
         logger.removeAllListeners();
 
         if (tempSource) {
-            rimraf(tempSource, next);
+            libutilrimraf_rimrafjsjs(tempSource, next);
             tempSource = null;
         } else {
             next();
@@ -33,19 +38,19 @@ describe('resolverFactory', function() {
     });
 
     after(function(next) {
-        rimraf('pure', next);
+        libutilrimraf_rimrafjsjs('pure', next);
     });
 
     function callFactory(decEndpoint, config, skipRegistry) {
-        return resolverFactory(
+        return libcoreresolverFactory_createInstancejs(
             decEndpoint,
-            { config: defaultConfig(config), logger: logger },
+            { config: libconfig_defaultConfigjs(config), logger: logger },
             skipRegistry ? undefined : registryClient
         );
     }
 
     it('should recognize git remote endpoints correctly', function(next) {
-        var promise = Q.resolve();
+        var promise = ext_q_Q.resolve();
         var endpoints;
 
         endpoints = {
@@ -155,17 +160,17 @@ describe('resolverFactory', function() {
             'bower/bower': 'https://github.com/bower/bower.git'
         };
 
-        mout.object.forOwn(endpoints, function(value, key) {
+        ext_mout_mout.object.forOwn(endpoints, function(value, key) {
             // Test without name and target
             promise = promise
                 .then(function() {
                     return callFactory({ source: key });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.be.a(resolvers.GitRemote);
-                    expect(resolver).to.not.be(resolvers.GitHub);
-                    expect(resolver.getSource()).to.equal(value);
-                    expect(resolver.getTarget()).to.equal('*');
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitRemote);
+                    ext_expect_expect(resolver).to.not.be(libcoreindex_indexjsjs.GitHub);
+                    ext_expect_expect(resolver.getSource()).to.equal(value);
+                    ext_expect_expect(resolver.getTarget()).to.equal('*');
                 });
 
             // Test with target
@@ -174,10 +179,10 @@ describe('resolverFactory', function() {
                     return callFactory({ source: key, target: 'commit-ish' });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.be.a(resolvers.GitRemote);
-                    expect(resolver).to.not.be(resolvers.GitHub);
-                    expect(resolver.getSource()).to.equal(value);
-                    expect(resolver.getTarget()).to.equal('commit-ish');
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitRemote);
+                    ext_expect_expect(resolver).to.not.be(libcoreindex_indexjsjs.GitHub);
+                    ext_expect_expect(resolver.getSource()).to.equal(value);
+                    ext_expect_expect(resolver.getTarget()).to.equal('commit-ish');
                 });
 
             // Test with name
@@ -186,11 +191,11 @@ describe('resolverFactory', function() {
                     return callFactory({ name: 'foo', source: key });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.be.a(resolvers.GitRemote);
-                    expect(resolver).to.not.be(resolvers.GitHub);
-                    expect(resolver.getSource()).to.equal(value);
-                    expect(resolver.getName()).to.equal('foo');
-                    expect(resolver.getTarget()).to.equal('*');
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitRemote);
+                    ext_expect_expect(resolver).to.not.be(libcoreindex_indexjsjs.GitHub);
+                    ext_expect_expect(resolver.getSource()).to.equal(value);
+                    ext_expect_expect(resolver.getName()).to.equal('foo');
+                    ext_expect_expect(resolver.getTarget()).to.equal('*');
                 });
         });
 
@@ -198,7 +203,7 @@ describe('resolverFactory', function() {
     });
 
     it('should recognize GitHub endpoints correctly', function(next) {
-        var promise = Q.resolve();
+        var promise = ext_q_Q.resolve();
         var gitHub;
         var nonGitHub;
 
@@ -327,16 +332,16 @@ describe('resolverFactory', function() {
         ];
 
         // Test GitHub ones
-        mout.object.forOwn(gitHub, function(value, key) {
+        ext_mout_mout.object.forOwn(gitHub, function(value, key) {
             // Test without name and target
             promise = promise
                 .then(function() {
                     return callFactory({ source: key });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.be.a(resolvers.GitHub);
-                    expect(resolver.getSource()).to.equal(value);
-                    expect(resolver.getTarget()).to.equal('*');
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitHub);
+                    ext_expect_expect(resolver.getSource()).to.equal(value);
+                    ext_expect_expect(resolver.getTarget()).to.equal('*');
                 });
 
             // Test with target
@@ -346,11 +351,11 @@ describe('resolverFactory', function() {
                 })
                 .then(function(resolver) {
                     if (value) {
-                        expect(resolver).to.be.a(resolvers.GitHub);
-                        expect(resolver.getSource()).to.equal(value);
-                        expect(resolver.getTarget()).to.equal('commit-ish');
+                        ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitHub);
+                        ext_expect_expect(resolver.getSource()).to.equal(value);
+                        ext_expect_expect(resolver.getTarget()).to.equal('commit-ish');
                     } else {
-                        expect(resolver).to.not.be.a(resolvers.GitHub);
+                        ext_expect_expect(resolver).to.not.be.a(libcoreindex_indexjsjs.GitHub);
                     }
                 });
 
@@ -361,12 +366,12 @@ describe('resolverFactory', function() {
                 })
                 .then(function(resolver) {
                     if (value) {
-                        expect(resolver).to.be.a(resolvers.GitHub);
-                        expect(resolver.getSource()).to.equal(value);
-                        expect(resolver.getName()).to.equal('foo');
-                        expect(resolver.getTarget()).to.equal('*');
+                        ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitHub);
+                        ext_expect_expect(resolver.getSource()).to.equal(value);
+                        ext_expect_expect(resolver.getName()).to.equal('foo');
+                        ext_expect_expect(resolver.getTarget()).to.equal('*');
                     } else {
-                        expect(resolver).to.not.be.a(resolvers.GitHub);
+                        ext_expect_expect(resolver).to.not.be.a(libcoreindex_indexjsjs.GitHub);
                     }
                 });
         });
@@ -378,8 +383,8 @@ describe('resolverFactory', function() {
                     return callFactory({ source: value });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.not.be.a(resolvers.GitHub);
-                    expect(resolver).to.be.a(resolvers.GitRemote);
+                    ext_expect_expect(resolver).to.not.be.a(libcoreindex_indexjsjs.GitHub);
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitRemote);
                 });
         });
 
@@ -387,19 +392,19 @@ describe('resolverFactory', function() {
     });
 
     it('should recognize local fs git endpoints correctly', function(next) {
-        var promise = Q.resolve();
+        var promise = ext_q_Q.resolve();
         var endpoints;
         var temp;
 
         endpoints = {};
 
         // Absolute path
-        temp = path.resolve(__dirname, '../assets/package-a');
+        temp = ext_path_path.resolve(__dirname, '../assets/package-a');
         endpoints[temp] = temp;
 
         // Absolute path that ends with a /
         // See: https://github.com/bower/bower/issues/898
-        temp = path.resolve(__dirname, '../assets/package-a') + '/';
+        temp = ext_path_path.resolve(__dirname, '../assets/package-a') + '/';
         endpoints[temp] = temp;
 
         // Relative path
@@ -407,15 +412,15 @@ describe('resolverFactory', function() {
 
         // TODO: test with backslashes on windows and ~/ on unix
 
-        mout.object.forOwn(endpoints, function(value, key) {
+        ext_mout_mout.object.forOwn(endpoints, function(value, key) {
             // Test without name
             promise = promise
                 .then(function() {
                     return callFactory({ source: key });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.be.a(resolvers.GitFs);
-                    expect(resolver.getTarget()).to.equal('*');
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitFs);
+                    ext_expect_expect(resolver.getTarget()).to.equal('*');
                 });
 
             // Test with name
@@ -424,20 +429,20 @@ describe('resolverFactory', function() {
                     return callFactory({ name: 'foo', source: key });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.be.a(resolvers.GitFs);
-                    expect(resolver.getName()).to.equal('foo');
-                    expect(resolver.getTarget()).to.equal('*');
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitFs);
+                    ext_expect_expect(resolver.getName()).to.equal('foo');
+                    ext_expect_expect(resolver.getTarget()).to.equal('*');
                 });
         });
 
         promise.then(next.bind(next, null)).done();
     });
 
-    if (!helpers.hasSvn())
+    if (!helpers_hasSvnjs.hasSvn())
         describe.skip('should recognize svn remote endpoints correctly', function() {});
     else
         it('should recognize svn remote endpoints correctly', function(next) {
-            var promise = Q.resolve();
+            var promise = ext_q_Q.resolve();
             var endpoints;
 
             endpoints = {
@@ -488,19 +493,19 @@ describe('resolverFactory', function() {
                 'svn+file:///project/blah/': 'file:///project/blah'
             };
 
-            mout.object.forOwn(endpoints, function(value, key) {
+            ext_mout_mout.object.forOwn(endpoints, function(value, key) {
                 // Test without name and target
                 promise = promise
                     .then(function() {
                         return callFactory({ source: key });
                     })
                     .then(function(resolver) {
-                        expect(resolver).to.be.a(resolvers.Svn);
-                        expect(resolver).to.not.be(resolvers.GitHub);
-                        expect(
-                            resolvers.Svn.getSource(resolver.getSource())
+                        ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.Svn);
+                        ext_expect_expect(resolver).to.not.be(libcoreindex_indexjsjs.GitHub);
+                        ext_expect_expect(
+                            libcoreindex_indexjsjs.Svn.getSource(resolver.getSource())
                         ).to.equal(value);
-                        expect(resolver.getTarget()).to.equal('*');
+                        ext_expect_expect(resolver.getTarget()).to.equal('*');
                     });
 
                 // Test with target
@@ -512,12 +517,12 @@ describe('resolverFactory', function() {
                         });
                     })
                     .then(function(resolver) {
-                        expect(resolver).to.be.a(resolvers.Svn);
-                        expect(resolver).to.not.be(resolvers.GitHub);
-                        expect(
-                            resolvers.Svn.getSource(resolver.getSource())
+                        ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.Svn);
+                        ext_expect_expect(resolver).to.not.be(libcoreindex_indexjsjs.GitHub);
+                        ext_expect_expect(
+                            libcoreindex_indexjsjs.Svn.getSource(resolver.getSource())
                         ).to.equal(value);
-                        expect(resolver.getTarget()).to.equal('commit-ish');
+                        ext_expect_expect(resolver.getTarget()).to.equal('commit-ish');
                     });
 
                 // Test with name
@@ -526,13 +531,13 @@ describe('resolverFactory', function() {
                         return callFactory({ name: 'foo', source: key });
                     })
                     .then(function(resolver) {
-                        expect(resolver).to.be.a(resolvers.Svn);
-                        expect(resolver).to.not.be(resolvers.GitHub);
-                        expect(
-                            resolvers.Svn.getSource(resolver.getSource())
+                        ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.Svn);
+                        ext_expect_expect(resolver).to.not.be(libcoreindex_indexjsjs.GitHub);
+                        ext_expect_expect(
+                            libcoreindex_indexjsjs.Svn.getSource(resolver.getSource())
                         ).to.equal(value);
-                        expect(resolver.getName()).to.equal('foo');
-                        expect(resolver.getTarget()).to.equal('*');
+                        ext_expect_expect(resolver.getName()).to.equal('foo');
+                        ext_expect_expect(resolver.getTarget()).to.equal('*');
                     });
             });
 
@@ -540,15 +545,15 @@ describe('resolverFactory', function() {
         });
 
     it('should recognize local fs files/folder endpoints correctly', function(next) {
-        var promise = Q.resolve();
+        var promise = ext_q_Q.resolve();
         var endpoints;
         var temp;
 
-        tempSource = path.resolve(__dirname, '../tmp/tmp');
-        mkdirp.sync(tempSource);
-        fs.writeFileSync(path.join(tempSource, '.git'), 'foo');
-        fs.writeFileSync(
-            path.join(tempSource, 'file.with.multiple.dots'),
+        tempSource = ext_path_path.resolve(__dirname, '../tmp/tmp');
+        ext_mkdirp_mkdirp.sync(tempSource);
+        libutilfs_fsjs.writeFileSync(ext_path_path.join(tempSource, '.git'), 'foo');
+        libutilfs_fsjs.writeFileSync(
+            ext_path_path.join(tempSource, 'file.with.multiple.dots'),
             'foo'
         );
 
@@ -560,41 +565,41 @@ describe('resolverFactory', function() {
         endpoints[__dirname + '/../tmp/tmp'] = tempSource;
 
         // Absolute path to folder
-        temp = path.resolve(__dirname, '../assets/test-temp-dir');
+        temp = ext_path_path.resolve(__dirname, '../assets/test-temp-dir');
         endpoints[temp] = temp;
         // Absolute + relative path to folder
         endpoints[__dirname + '/../assets/test-temp-dir'] = temp;
 
         // Absolute path to file
-        temp = path.resolve(__dirname, '../assets/package-zip.zip');
+        temp = ext_path_path.resolve(__dirname, '../assets/package-zip.zip');
         endpoints[temp] = temp;
         // Absolute + relative path to file
         endpoints[__dirname + '/../assets/package-zip.zip'] = temp;
 
         // Relative ../
-        endpoints['../'] = path.normalize(__dirname + '/../../..');
+        endpoints['../'] = ext_path_path.normalize(__dirname + '/../../..');
 
         // Relative ./
-        endpoints['./test/assets'] = path.join(__dirname, '../assets');
+        endpoints['./test/assets'] = ext_path_path.join(__dirname, '../assets');
 
         // Relative with just one slash, to test fs resolution
         // priority against shorthands
-        endpoints['./test'] = path.join(__dirname, '..');
+        endpoints['./test'] = ext_path_path.join(__dirname, '..');
 
         // Test files with multiple dots (PR #474)
-        temp = path.join(tempSource, 'file.with.multiple.dots');
+        temp = ext_path_path.join(tempSource, 'file.with.multiple.dots');
         endpoints[temp] = temp;
 
-        mout.object.forOwn(endpoints, function(value, key) {
+        ext_mout_mout.object.forOwn(endpoints, function(value, key) {
             // Test without name
             promise = promise
                 .then(function() {
                     return callFactory({ source: key });
                 })
                 .then(function(resolver) {
-                    expect(resolver.getSource()).to.equal(value);
-                    expect(resolver).to.be.a(resolvers.Fs);
-                    expect(resolver.getTarget()).to.equal('*');
+                    ext_expect_expect(resolver.getSource()).to.equal(value);
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.Fs);
+                    ext_expect_expect(resolver.getTarget()).to.equal('*');
                 });
 
             // Test with name
@@ -603,10 +608,10 @@ describe('resolverFactory', function() {
                     return callFactory({ name: 'foo', source: key });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.be.a(resolvers.Fs);
-                    expect(resolver.getName()).to.equal('foo');
-                    expect(resolver.getTarget()).to.equal('*');
-                    expect(resolver.getSource()).to.equal(value);
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.Fs);
+                    ext_expect_expect(resolver.getName()).to.equal('foo');
+                    ext_expect_expect(resolver.getTarget()).to.equal('*');
+                    ext_expect_expect(resolver.getSource()).to.equal(value);
                 });
         });
 
@@ -614,7 +619,7 @@ describe('resolverFactory', function() {
     });
 
     it('should recognize URL endpoints correctly', function(next) {
-        var promise = Q.resolve();
+        var promise = ext_q_Q.resolve();
         var endpoints;
 
         endpoints = ['http://bower.io/foo.js', 'https://bower.io/foo.js'];
@@ -626,8 +631,8 @@ describe('resolverFactory', function() {
                     return callFactory({ source: source });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.be.a(resolvers.Url);
-                    expect(resolver.getSource()).to.equal(source);
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.Url);
+                    ext_expect_expect(resolver.getSource()).to.equal(source);
                 });
 
             // Test with name
@@ -636,9 +641,9 @@ describe('resolverFactory', function() {
                     return callFactory({ name: 'foo', source: source });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.be.a(resolvers.Url);
-                    expect(resolver.getName()).to.equal('foo');
-                    expect(resolver.getSource()).to.equal(source);
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.Url);
+                    ext_expect_expect(resolver.getName()).to.equal('foo');
+                    ext_expect_expect(resolver.getSource()).to.equal(source);
                 });
         });
 
@@ -646,7 +651,7 @@ describe('resolverFactory', function() {
     });
 
     it('should recognize URL endpoints correctly', function(next) {
-        var promise = Q.resolve();
+        var promise = ext_q_Q.resolve();
         var endpoints;
 
         endpoints = ['http://bower.io/foo.js', 'https://bower.io/foo.js'];
@@ -658,8 +663,8 @@ describe('resolverFactory', function() {
                     return callFactory({ source: source });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.be.a(resolvers.Url);
-                    expect(resolver.getSource()).to.equal(source);
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.Url);
+                    ext_expect_expect(resolver.getSource()).to.equal(source);
                 });
 
             // Test with name
@@ -668,9 +673,9 @@ describe('resolverFactory', function() {
                     return callFactory({ name: 'foo', source: source });
                 })
                 .then(function(resolver) {
-                    expect(resolver).to.be.a(resolvers.Url);
-                    expect(resolver.getName()).to.equal('foo');
-                    expect(resolver.getSource()).to.equal(source);
+                    ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.Url);
+                    ext_expect_expect(resolver.getName()).to.equal('foo');
+                    ext_expect_expect(resolver.getSource()).to.equal(source);
                 });
         });
 
@@ -679,26 +684,26 @@ describe('resolverFactory', function() {
 
     it('should recognize registry endpoints correctly', function(next) {
         // Create a 'pure' file at the root to prevent regressions of #666
-        fs.writeFileSync('pure', 'foo');
+        libutilfs_fsjs.writeFileSync('pure', 'foo');
 
         callFactory({ source: 'pure' })
             .then(function(resolver) {
-                expect(resolver).to.be.a(resolvers.GitRemote);
-                expect(resolver.getSource()).to.equal(
+                ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitRemote);
+                ext_expect_expect(resolver.getSource()).to.equal(
                     'https://github.com/yui/pure-release.git'
                 );
-                expect(resolver.getTarget()).to.equal('*');
+                ext_expect_expect(resolver.getTarget()).to.equal('*');
             })
             .then(function() {
                 // Test with name
                 return callFactory({ source: 'pure', name: 'foo' }).then(
                     function(resolver) {
-                        expect(resolver).to.be.a(resolvers.GitRemote);
-                        expect(resolver.getSource()).to.equal(
+                        ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitRemote);
+                        ext_expect_expect(resolver.getSource()).to.equal(
                             'https://github.com/yui/pure-release.git'
                         );
-                        expect(resolver.getName()).to.equal('foo');
-                        expect(resolver.getTarget()).to.equal('*');
+                        ext_expect_expect(resolver.getName()).to.equal('foo');
+                        ext_expect_expect(resolver.getTarget()).to.equal('*');
                     }
                 );
             })
@@ -706,8 +711,8 @@ describe('resolverFactory', function() {
                 // Test with target
                 return callFactory({ source: 'pure', target: '~0.4.0' }).then(
                     function(resolver) {
-                        expect(resolver).to.be.a(resolvers.GitRemote);
-                        expect(resolver.getTarget()).to.equal('~0.4.0');
+                        ext_expect_expect(resolver).to.be.a(libcoreindex_indexjsjs.GitRemote);
+                        ext_expect_expect(resolver.getTarget()).to.equal('~0.4.0');
 
                         next();
                     }
@@ -723,9 +728,9 @@ describe('resolverFactory', function() {
                     throw new Error('Should have failed');
                 },
                 function(err) {
-                    expect(err).to.be.an(Error);
-                    expect(err.code).to.equal('ENOTFOUND');
-                    expect(err.message).to.contain(
+                    ext_expect_expect(err).to.be.an(Error);
+                    ext_expect_expect(err.code).to.equal('ENOTFOUND');
+                    ext_expect_expect(err.message).to.contain(
                         'some-package-that-will-never-exist'
                     );
 
@@ -753,14 +758,14 @@ describe('resolverFactory', function() {
                         'https://bower.io/{{owner}}/{{package}}/{{shorthand}}'
                 };
 
-                expect(resolver.getSource()).to.equal(
+                ext_expect_expect(resolver.getSource()).to.equal(
                     'https://github.com/bower/bower.git'
                 );
 
                 return callFactory({ source: 'IndigoUnited/promptly' }, config);
             })
             .then(function(resolver) {
-                expect(resolver.getSource()).to.equal(
+                ext_expect_expect(resolver.getSource()).to.equal(
                     'https://bower.io/IndigoUnited/promptly/IndigoUnited/promptly'
                 );
                 next();
@@ -775,9 +780,9 @@ describe('resolverFactory', function() {
                     throw new Error('Should have failed');
                 },
                 function(err) {
-                    expect(err).to.be.an(Error);
-                    expect(err.code).to.equal('ENOTFOUND');
-                    expect(err.message).to.contain('bleh@xxx.com:foo/bar');
+                    ext_expect_expect(err).to.be.an(Error);
+                    ext_expect_expect(err.code).to.equal('ENOTFOUND');
+                    ext_expect_expect(err.message).to.contain('bleh@xxx.com:foo/bar');
                     next();
                 }
             )
@@ -795,9 +800,9 @@ describe('resolverFactory', function() {
                     throw new Error('Should have failed');
                 },
                 function(err) {
-                    expect(err).to.be.an(Error);
-                    expect(err.code).to.be('ENORESOLVER');
-                    expect(err.message).to.contain('appropriate resolver');
+                    ext_expect_expect(err).to.be.an(Error);
+                    ext_expect_expect(err.code).to.be('ENORESOLVER');
+                    ext_expect_expect(err.message).to.contain('appropriate resolver');
                     next();
                 }
             )
@@ -807,13 +812,13 @@ describe('resolverFactory', function() {
     it.skip('should use config.cwd when resolving relative paths');
 
     it('should not swallow constructor errors when instantiating resolvers', function(next) {
-        var promise = Q.resolve();
+        var promise = ext_q_Q.resolve();
         var endpoints;
 
         // TODO: test with others
         endpoints = [
             'http://bower.io/foo.js',
-            path.resolve(__dirname, '../assets/test-temp-dir')
+            ext_path_path.resolve(__dirname, '../assets/test-temp-dir')
         ];
 
         endpoints.forEach(function(source) {
@@ -826,9 +831,9 @@ describe('resolverFactory', function() {
                         throw new Error('Should have failed');
                     },
                     function(err) {
-                        expect(err).to.be.an(Error);
-                        expect(err.message).to.match(/can't resolve targets/i);
-                        expect(err.code).to.equal('ENORESTARGET');
+                        ext_expect_expect(err).to.be.an(Error);
+                        ext_expect_expect(err.message).to.match(/can't resolve targets/i);
+                        ext_expect_expect(err.code).to.equal('ENORESTARGET');
                     }
                 );
         });
@@ -842,7 +847,7 @@ describe('resolverFactory', function() {
             var called = [];
             var error;
 
-            mout.object.forOwn(resolvers, function(ConcreteResolver, key) {
+            ext_mout_mout.object.forOwn(libcoreindex_indexjsjs, function(ConcreteResolver, key) {
                 originalMethods[key] = ConcreteResolver.clearRuntimeCache;
                 ConcreteResolver.clearRuntimeCache = function() {
                     called.push(key);
@@ -851,11 +856,11 @@ describe('resolverFactory', function() {
             });
 
             try {
-                resolverFactory.clearRuntimeCache();
+                resolverFactoryjs_clearRuntimeCache();
             } catch (e) {
                 error = e;
             } finally {
-                mout.object.forOwn(resolvers, function(ConcreteResolver, key) {
+                ext_mout_mout.object.forOwn(libcoreindex_indexjsjs, function(ConcreteResolver, key) {
                     ConcreteResolver.clearRuntimeCache = originalMethods[key];
                 });
             }
@@ -864,7 +869,7 @@ describe('resolverFactory', function() {
                 throw error;
             }
 
-            expect(called.sort()).to.eql(Object.keys(resolvers).sort());
+            ext_expect_expect(called.sort()).to.eql(Object.keys(libcoreindex_indexjsjs).sort());
         });
     });
 });

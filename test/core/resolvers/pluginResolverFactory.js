@@ -1,17 +1,17 @@
-var expect = require('expect.js');
-var path = require('path');
-var Logger = require('bower-logger');
-var createError = require('../../../lib/util/createError');
-var pluginResolverFactory = require('../../../lib/core/resolvers/pluginResolverFactory');
-var defaultConfig = require('../../../lib/config');
-var Q = require('q');
+import ext_expect_expect from "expect.js";
+import ext_path_path from "path";
+import ext_bowerlogger_Logger from "bower-logger";
+import { createError as libutilcreateError_createErrorjs } from "../../../lib/util/createError";
+import {     pluginResolverFactory as libcoreresolverspluginResolverFactory_pluginResolverFactoryjs, } from "../../../lib/core/resolvers/pluginResolverFactory";
+import { defaultConfig as libconfig_defaultConfigjs } from "../../../lib/config";
+import ext_q_Q from "q";
 
 describe('pluginResolverFactory', function() {
-    var testPackage = path.resolve(__dirname, '../../assets/package-a');
+    var testPackage = ext_path_path.resolve(__dirname, '../../assets/package-a');
     var logger;
 
     before(function() {
-        logger = new Logger();
+        logger = new ext_bowerlogger_Logger();
     });
 
     afterEach(function() {
@@ -52,9 +52,9 @@ describe('pluginResolverFactory', function() {
         if (typeof decEndpoint === 'string') {
             decEndpoint = { source: decEndpoint };
         }
-        var PluginResolver = pluginResolverFactory(
+        var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
             mockPluginResolver,
-            defaultConfig()
+            libconfig_defaultConfigjs()
         );
         return new PluginResolver(decEndpoint);
     }
@@ -63,17 +63,17 @@ describe('pluginResolverFactory', function() {
         it('should internally add decEndpoint', function() {
             var resolver;
             resolver = create('file://' + testPackage);
-            expect(typeof resolver._decEndpoint).to.equal('object');
-            expect(resolver._decEndpoint.source).to.equal(
+            ext_expect_expect(typeof resolver._decEndpoint).to.equal('object');
+            ext_expect_expect(resolver._decEndpoint.source).to.equal(
                 'file://' + testPackage
             );
         });
 
         it('should throw when invalid resolverFactory is provided', function() {
-            expect(function() {
-                pluginResolverFactory('not-a-function', defaultConfig());
+            ext_expect_expect(function() {
+                libcoreresolverspluginResolverFactory_pluginResolverFactoryjs('not-a-function', libconfig_defaultConfigjs());
             }).to.throwException(
-                createError(
+                libutilcreateError_createErrorjs(
                     'Resolver has "string" type instead of "function" type.',
                     'ERESOLERAPI'
                 )
@@ -86,12 +86,12 @@ describe('pluginResolverFactory', function() {
             var resolver, endPoint;
             resolver = create('file://' + testPackage);
             endPoint = resolver.getEndpoint();
-            expect(endPoint).to.have.property('source');
-            expect(endPoint.source).to.equal('file://' + testPackage);
-            expect(endPoint).to.have.property('name');
-            expect(endPoint.name).to.equal('package-a');
-            expect(endPoint).to.have.property('target');
-            expect(endPoint.target).to.equal('*');
+            ext_expect_expect(endPoint).to.have.property('source');
+            ext_expect_expect(endPoint.source).to.equal('file://' + testPackage);
+            ext_expect_expect(endPoint).to.have.property('name');
+            ext_expect_expect(endPoint.name).to.equal('package-a');
+            ext_expect_expect(endPoint).to.have.property('target');
+            ext_expect_expect(endPoint.target).to.equal('*');
         });
     });
 
@@ -100,7 +100,7 @@ describe('pluginResolverFactory', function() {
             var resolver, source;
             resolver = create('file://' + testPackage);
             source = resolver.getSource();
-            expect(source).to.equal('file://' + testPackage);
+            ext_expect_expect(source).to.equal('file://' + testPackage);
         });
     });
 
@@ -112,13 +112,13 @@ describe('pluginResolverFactory', function() {
                 target: 'some-target'
             });
             source = resolver.getTarget();
-            expect(source).to.equal('some-target');
+            ext_expect_expect(source).to.equal('some-target');
         });
         it('should return * when no target is specified', function() {
             var resolver, source;
             resolver = create('file://' + testPackage);
             source = resolver.getTarget();
-            expect(source).to.equal('*');
+            ext_expect_expect(source).to.equal('*');
         });
     });
 
@@ -133,8 +133,8 @@ describe('pluginResolverFactory', function() {
             resolver._pkgMeta = { version: 'v1.0.1' };
             pkgMeta = resolver.getPkgMeta();
             console.log(pkgMeta);
-            expect(pkgMeta).to.have.property('version');
-            expect(pkgMeta.version).to.equal('v1.0.1');
+            ext_expect_expect(pkgMeta).to.have.property('version');
+            ext_expect_expect(pkgMeta.version).to.equal('v1.0.1');
         });
     });
 
@@ -143,7 +143,7 @@ describe('pluginResolverFactory', function() {
             var resolver, isCacheable;
             resolver = create('file://' + testPackage);
             isCacheable = resolver.isCacheable();
-            expect(isCacheable).to.be.ok();
+            ext_expect_expect(isCacheable).to.be.ok();
         });
     });
 
@@ -151,11 +151,11 @@ describe('pluginResolverFactory', function() {
         it('should return existing hasNewPromise if its set', function() {
             var resolver;
             resolver = create('file://' + testPackage);
-            resolver.hasNewPromise = Q.fcall(function() {
+            resolver.hasNewPromise = ext_q_Q.fcall(function() {
                 return 'some-dummy-value';
             });
             resolver.hasNew().then(function(resolvedtestValue) {
-                expect(resolvedtestValue).to.be('some-dummy-value');
+                ext_expect_expect(resolvedtestValue).to.be('some-dummy-value');
             });
         });
         it('should return target', function() {});
@@ -186,14 +186,14 @@ describe('pluginResolverFactory', function() {
                 };
             };
 
-            var PluginResolver = pluginResolverFactory(
+            var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
                 mockPluginResolverWithEmptyReleases,
-                defaultConfig()
+                libconfig_defaultConfigjs()
             );
             var path = 'file://' + testPackage;
             var resolver = new PluginResolver(path);
             resolver.resolve().catch(function(e) {
-                expect(e.message).to.equal(
+                ext_expect_expect(e.message).to.equal(
                     'Resolver did not provide releases of package.'
                 );
                 next();
@@ -226,17 +226,17 @@ describe('pluginResolverFactory', function() {
                 };
             };
 
-            var PluginResolver = pluginResolverFactory(
+            var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
                 mockPluginResolverWithNoMatchingTarget,
-                defaultConfig()
+                libconfig_defaultConfigjs()
             );
             var path = 'file://' + testPackage;
             var resolver = new PluginResolver(path);
             resolver.resolve().catch(function(e) {
-                expect(e.message).to.equal(
+                ext_expect_expect(e.message).to.equal(
                     'No version found that was able to satisfy *'
                 );
-                expect(e.code).to.equal('ENORESTARGET');
+                ext_expect_expect(e.code).to.equal('ENORESTARGET');
                 next();
             });
         });
@@ -260,9 +260,9 @@ describe('pluginResolverFactory', function() {
                 };
             };
 
-            var PluginResolver = pluginResolverFactory(
+            var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
                 mockPluginResolverWithInvalidTarget,
-                defaultConfig()
+                libconfig_defaultConfigjs()
             );
             var path = 'file://' + testPackage;
             var resolver = new PluginResolver({
@@ -270,7 +270,7 @@ describe('pluginResolverFactory', function() {
                 target: '2.0.0'
             });
             resolver.resolve().catch(function(e) {
-                expect(e.message).to.equal(
+                ext_expect_expect(e.message).to.equal(
                     'Resolver does not accept version ranges (2.0.0)'
                 );
                 next();
@@ -292,14 +292,14 @@ describe('pluginResolverFactory', function() {
                     fetch: null
                 };
             };
-            var PluginResolver = pluginResolverFactory(
+            var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
                 mockPluginResolverWithoutFetch,
-                defaultConfig()
+                libconfig_defaultConfigjs()
             );
             var path = 'file://' + testPackage;
             var resolver = new PluginResolver(path);
             resolver.resolve().catch(function(e) {
-                expect(e.message).to.equal(
+                ext_expect_expect(e.message).to.equal(
                     'Resolver does not implement the "fetch" method.'
                 );
                 next();
@@ -332,14 +332,14 @@ describe('pluginResolverFactory', function() {
                     }
                 };
             };
-            var PluginResolver = pluginResolverFactory(
+            var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
                 mockPluginResolverWithoutTempPath,
-                defaultConfig()
+                libconfig_defaultConfigjs()
             );
             var path = 'file://' + testPackage;
             var resolver = new PluginResolver(path);
             resolver.resolve().catch(function(e) {
-                expect(e.message).to.equal(
+                ext_expect_expect(e.message).to.equal(
                     'Resolver did not provide path to extracted contents of package.'
                 );
                 next();
@@ -349,11 +349,11 @@ describe('pluginResolverFactory', function() {
 
     describe('.isTargetable', function() {
         it('should accept mockPluginResolverWithReleasesFn', function() {
-            var PluginResolver = pluginResolverFactory(
+            var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
                 mockPluginResolver,
-                defaultConfig()
+                libconfig_defaultConfigjs()
             );
-            expect(PluginResolver.isTargetable()).to.be.ok();
+            ext_expect_expect(PluginResolver.isTargetable()).to.be.ok();
         });
         it('should reject mockPluginResolverWithoutReleasesFn', function() {
             var mockPluginResolverWithoutReleasesFn = function resolver(bower) {
@@ -376,11 +376,11 @@ describe('pluginResolverFactory', function() {
                     }
                 };
             };
-            var PluginResolver = pluginResolverFactory(
+            var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
                 mockPluginResolverWithoutReleasesFn,
-                defaultConfig()
+                libconfig_defaultConfigjs()
             );
-            expect(PluginResolver.isTargetable()).to.not.be.ok();
+            ext_expect_expect(PluginResolver.isTargetable()).to.not.be.ok();
         });
     });
 
@@ -414,15 +414,15 @@ describe('pluginResolverFactory', function() {
                 };
             };
 
-            var PluginResolver = pluginResolverFactory(
+            var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
                 mockPluginResolverWithoutMatch,
-                defaultConfig()
+                libconfig_defaultConfigjs()
             );
             var source = 'git://github.com/jquery/jquery.git';
-            expect(function() {
+            ext_expect_expect(function() {
                 PluginResolver.match(source);
             }).to.throwException(
-                createError(
+                libutilcreateError_createErrorjs(
                     'Resolver is missing "match"' + 'method.',
                     'ERESOLVERAPI'
                 )
@@ -430,13 +430,13 @@ describe('pluginResolverFactory', function() {
         });
 
         it('should match given source', function() {
-            var PluginResolver = pluginResolverFactory(
+            var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
                 mockPluginResolver,
-                defaultConfig()
+                libconfig_defaultConfigjs()
             );
             var source = 'git://github.com/jquery/jquery.git';
             PluginResolver.match(source).then(function(result) {
-                expect(result).to.be.ok();
+                ext_expect_expect(result).to.be.ok();
             });
         });
     });
@@ -469,22 +469,22 @@ describe('pluginResolverFactory', function() {
                 };
             };
 
-            var PluginResolver = pluginResolverFactory(
+            var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
                 mockPluginResolverWithoutLocate,
-                defaultConfig()
+                libconfig_defaultConfigjs()
             );
             var path = 'file://' + testPackage;
-            expect(PluginResolver.locate(path)).to.be(path);
+            ext_expect_expect(PluginResolver.locate(path)).to.be(path);
         });
 
         it('should locate the source', function() {
-            var PluginResolver = pluginResolverFactory(
+            var PluginResolver = libcoreresolverspluginResolverFactory_pluginResolverFactoryjs(
                 mockPluginResolver,
-                defaultConfig()
+                libconfig_defaultConfigjs()
             );
             var source = 'jquery/jquery';
             PluginResolver.locate(source).then(function(result) {
-                expect(result).to.be(source);
+                ext_expect_expect(result).to.be(source);
             });
         });
     });

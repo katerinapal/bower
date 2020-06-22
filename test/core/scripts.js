@@ -1,15 +1,15 @@
-var path = require('path');
-var bower = require('../../lib/index.js');
-var mkdirp = require('mkdirp');
-var rimraf = require('../../lib/util/rimraf');
-var fs = require('../../lib/util/fs');
-var expect = require('expect.js');
-var scripts = require('../../lib/core/scripts.js');
+import ext_path_path from "path";
+import { indexjs as libindex_indexjsjs } from "../../lib/index.js";
+import ext_mkdirp_mkdirp from "mkdirp";
+import { rimrafjs as libutilrimraf_rimrafjsjs } from "../../lib/util/rimraf";
+import { fs as libutilfs_fsjs } from "../../lib/util/fs";
+import ext_expect_expect from "expect.js";
+import { scriptsjs as libcorescripts_scriptsjsjs } from "../../lib/core/scripts.js";
 
 describe('scripts', function() {
-    var tempDir = path.join(__dirname, '../tmp/temp-scripts');
+    var tempDir = ext_path_path.join(__dirname, '../tmp/temp-scripts');
     var packageName = 'package-zip';
-    var packageDir = path.join(__dirname, '../assets/' + packageName + '.zip');
+    var packageDir = ext_path_path.join(__dirname, '../assets/' + packageName + '.zip');
 
     // We cannot use pure touch, because Windows
     var touch = function(file) {
@@ -40,28 +40,28 @@ describe('scripts', function() {
     };
 
     before(function(next) {
-        mkdirp(tempDir, next);
+        ext_mkdirp_mkdirp(tempDir, next);
     });
 
     after(function(next) {
-        rimraf(tempDir, next);
+        libutilrimraf_rimrafjsjs(tempDir, next);
     });
 
     it('should run preinstall and postinstall hooks.', function(next) {
-        bower.commands
+        libindex_indexjsjs.commands
             .install([packageDir], undefined, config)
             .on('end', function(installed) {
-                expect(
-                    fs.existsSync(
-                        path.join(
+                ext_expect_expect(
+                    libutilfs_fsjs.existsSync(
+                        ext_path_path.join(
                             tempDir,
                             'preinstall_' + packageName + '_' + packageName
                         )
                     )
                 ).to.be(true);
-                expect(
-                    fs.existsSync(
-                        path.join(
+                ext_expect_expect(
+                    libutilfs_fsjs.existsSync(
+                        ext_path_path.join(
                             tempDir,
                             'postinstall_' + packageName + '_' + packageName
                         )
@@ -73,12 +73,12 @@ describe('scripts', function() {
     });
 
     it('should run preuninstall hook.', function(next) {
-        bower.commands
+        libindex_indexjsjs.commands
             .uninstall([packageName], undefined, config)
             .on('end', function(installed) {
-                expect(
-                    fs.existsSync(
-                        path.join(
+                ext_expect_expect(
+                    libutilfs_fsjs.existsSync(
+                        ext_path_path.join(
                             tempDir,
                             'preuninstall_' + packageName + '_' + packageName
                         )
@@ -90,12 +90,12 @@ describe('scripts', function() {
     });
 
     it('should run postuninstall hook.', function(next) {
-        bower.commands
+        libindex_indexjsjs.commands
             .uninstall([packageName], undefined, config)
             .on('end', function(installed) {
-                expect(
-                    fs.existsSync(
-                        path.join(
+                ext_expect_expect(
+                    libutilfs_fsjs.existsSync(
+                        ext_path_path.join(
                             tempDir,
                             'postuninstall_' + packageName + '_' + packageName
                         )
@@ -107,7 +107,7 @@ describe('scripts', function() {
     });
 
     it('should not break anything when no hooks configured.', function(next) {
-        bower.commands
+        libindex_indexjsjs.commands
             .uninstall([packageName], undefined, { cwd: tempDir })
             .on('end', function(installed) {
                 //no exception then we're good
@@ -163,12 +163,12 @@ describe('scripts', function() {
             }
         };
 
-        var ordered = scripts._orderByDependencies(
+        var ordered = libcorescripts_scriptsjsjs._orderByDependencies(
             packages,
             installed,
             mockBowerJson
         );
-        expect(ordered).to.eql([
+        ext_expect_expect(ordered).to.eql([
             'jquery',
             'select2',
             'angular',
@@ -181,12 +181,12 @@ describe('scripts', function() {
     it('should process scripts with quotes and vars in the cmd properly.', function(next) {
         config.scripts.preinstall = touchWithPid(' %');
 
-        bower.commands
+        libindex_indexjsjs.commands
             .install([packageDir], undefined, config)
             .on('end', function(installed) {
-                expect(
-                    fs.existsSync(
-                        path.join(tempDir, process.pid + ' ' + packageName)
+                ext_expect_expect(
+                    libutilfs_fsjs.existsSync(
+                        ext_path_path.join(tempDir, process.pid + ' ' + packageName)
                     )
                 ).to.be(true);
 

@@ -1,5 +1,6 @@
-var expect = require('expect.js');
-var runBin = require('../helpers').runBin;
+import ext_expect_expect from "expect.js";
+import * as helpers_runBin from "../helpers";
+var runBin = helpers_runBin.runBin;
 
 describe('bower', function() {
     process.env.CI = '1';
@@ -8,8 +9,8 @@ describe('bower', function() {
         var result = runBin();
         var text = result.stdout.toString();
 
-        expect(text).to.contain('Usage:');
-        expect(text).to.contain('Commands:');
+        ext_expect_expect(text).to.contain('Usage:');
+        ext_expect_expect(text).to.contain('Commands:');
     });
 });
 
@@ -18,6 +19,6 @@ describe('abbreviations', function() {
         var abbr = runBin(['install']);
         var full = runBin(['i']);
 
-        expect(abbr.stdout.toString()).to.be.equal(full.stdout.toString());
+        ext_expect_expect(abbr.stdout.toString()).to.be.equal(full.stdout.toString());
     });
 });

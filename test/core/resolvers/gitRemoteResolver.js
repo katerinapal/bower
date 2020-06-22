@@ -1,20 +1,21 @@
-var expect = require('expect.js');
-var path = require('path');
-var fs = require('../../../lib/util/fs');
-var Logger = require('bower-logger');
-var helpers = require('../../helpers');
-var Q = require('q');
-var mout = require('mout');
-var multiline = require('multiline').stripIndent;
-var GitRemoteResolver = require('../../../lib/core/resolvers/GitRemoteResolver');
-var defaultConfig = require('../../../lib/config');
+import ext_expect_expect from "expect.js";
+import ext_path_path from "path";
+import { fs as libutilfs_fsjs } from "../../../lib/util/fs";
+import ext_bowerlogger_Logger from "bower-logger";
+import * as helpers_requirejs from "../../helpers";
+import ext_q_Q from "q";
+import ext_mout_mout from "mout";
+import ext_multiline_multiline from "multiline";
+import { GitRemoteResolver as libcoreresolversGitRemoteResolver_GitRemoteResolverjs } from "../../../lib/core/resolvers/GitRemoteResolver";
+import { defaultConfig as libconfig_defaultConfigjs } from "../../../lib/config";
+var multiline = ext_multiline_multiline.stripIndent;
 
 describe('GitRemoteResolver', function() {
-    var testPackage = path.resolve(__dirname, '../../assets/package-a');
+    var testPackage = ext_path_path.resolve(__dirname, '../../assets/package-a');
     var logger;
 
     before(function() {
-        logger = new Logger();
+        logger = new ext_bowerlogger_Logger();
     });
 
     afterEach(function() {
@@ -22,7 +23,7 @@ describe('GitRemoteResolver', function() {
     });
 
     function clearResolverRuntimeCache() {
-        GitRemoteResolver.clearRuntimeCache();
+        libcoreresolversGitRemoteResolver_GitRemoteResolverjs.clearRuntimeCache();
     }
 
     function create(decEndpoint) {
@@ -30,7 +31,7 @@ describe('GitRemoteResolver', function() {
             decEndpoint = { source: decEndpoint };
         }
 
-        return new GitRemoteResolver(decEndpoint, defaultConfig(), logger);
+        return new libcoreresolversGitRemoteResolver_GitRemoteResolverjs(decEndpoint, libconfig_defaultConfigjs(), logger);
     }
 
     describe('.constructor', function() {
@@ -38,16 +39,16 @@ describe('GitRemoteResolver', function() {
             var resolver;
 
             resolver = create('file://' + testPackage);
-            expect(resolver.getName()).to.equal('package-a');
+            ext_expect_expect(resolver.getName()).to.equal('package-a');
 
             resolver = create('git://github.com/twitter/bower.git');
-            expect(resolver.getName()).to.equal('bower');
+            ext_expect_expect(resolver.getName()).to.equal('bower');
 
             resolver = create('git://github.com/twitter/bower');
-            expect(resolver.getName()).to.equal('bower');
+            ext_expect_expect(resolver.getName()).to.equal('bower');
 
             resolver = create('git://github.com');
-            expect(resolver.getName()).to.equal('github.com');
+            ext_expect_expect(resolver.getName()).to.equal('github.com');
         });
     });
 
@@ -61,19 +62,19 @@ describe('GitRemoteResolver', function() {
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(dir).to.be.a('string');
+                    ext_expect_expect(dir).to.be.a('string');
 
-                    var files = fs.readdirSync(dir);
+                    var files = libutilfs_fsjs.readdirSync(dir);
                     var fooContents;
 
-                    expect(files).to.contain('foo');
-                    expect(files).to.contain('baz');
-                    expect(files).to.contain('baz');
+                    ext_expect_expect(files).to.contain('foo');
+                    ext_expect_expect(files).to.contain('baz');
+                    ext_expect_expect(files).to.contain('baz');
 
-                    fooContents = fs
-                        .readFileSync(path.join(dir, 'foo'))
+                    fooContents = libutilfs_fsjs
+                        .readFileSync(ext_path_path.join(dir, 'foo'))
                         .toString();
-                    expect(fooContents).to.equal('foo foo');
+                    ext_expect_expect(fooContents).to.equal('foo foo');
 
                     next();
                 })
@@ -89,13 +90,13 @@ describe('GitRemoteResolver', function() {
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(dir).to.be.a('string');
+                    ext_expect_expect(dir).to.be.a('string');
 
-                    var files = fs.readdirSync(dir);
+                    var files = libutilfs_fsjs.readdirSync(dir);
 
-                    expect(files).to.contain('foo');
-                    expect(files).to.contain('bar');
-                    expect(files).to.not.contain('baz');
+                    ext_expect_expect(files).to.contain('foo');
+                    ext_expect_expect(files).to.contain('bar');
+                    ext_expect_expect(files).to.not.contain('baz');
 
                     next();
                 })
@@ -111,14 +112,14 @@ describe('GitRemoteResolver', function() {
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(dir).to.be.a('string');
+                    ext_expect_expect(dir).to.be.a('string');
 
-                    var files = fs.readdirSync(dir);
+                    var files = libutilfs_fsjs.readdirSync(dir);
 
-                    expect(files).to.not.contain('foo');
-                    expect(files).to.not.contain('bar');
-                    expect(files).to.not.contain('baz');
-                    expect(files).to.contain('.master');
+                    ext_expect_expect(files).to.not.contain('foo');
+                    ext_expect_expect(files).to.not.contain('bar');
+                    ext_expect_expect(files).to.not.contain('baz');
+                    ext_expect_expect(files).to.contain('.master');
                     next();
                 })
                 .done();
@@ -129,7 +130,7 @@ describe('GitRemoteResolver', function() {
 
             beforeEach(function() {
                 gitRemoteResolverFactory = function(handler) {
-                    return helpers.require(
+                    return helpers_requirejs.require(
                         'lib/core/resolvers/GitRemoteResolver',
                         {
                             '../../util/cmd': handler
@@ -147,7 +148,7 @@ describe('GitRemoteResolver', function() {
                 ) {
                     // The first git call fetches the tags for the provided source
                     if (
-                        mout.array.equals(args, [
+                        ext_mout_mout.array.equals(args, [
                             'ls-remote',
                             '--tags',
                             '--heads',
@@ -156,7 +157,7 @@ describe('GitRemoteResolver', function() {
                     ) {
                         // Return list of commits, including one tag.
                         // The tag will be used for the clone call.
-                        return Q.all([
+                        return ext_q_Q.all([
                             multiline(function() {
                                 /*
                          e4655d250f2a3f64ef2d712f25dafa60652bb93e refs/heads/some-branch
@@ -167,7 +168,7 @@ describe('GitRemoteResolver', function() {
                     } else if (args[0] === 'clone') {
                         // Verify parameters of the clone call.
                         // In this case, the arguments need to contain "--depth 1".
-                        expect(args).to.eql([
+                        ext_expect_expect(args).to.eql([
                             'clone',
                             'http://foo/bar.git',
                             '-b',
@@ -180,18 +181,18 @@ describe('GitRemoteResolver', function() {
 
                         // In this case, only the stderr content is evaluated. Everything's fine as long as it
                         // does not contain any error description.
-                        return Q.all(['stdout', 'stderr']);
+                        return ext_q_Q.all(['stdout', 'stderr']);
                     }
                 });
 
                 // Mock the call, return true for this test.
                 MyGitRemoteResolver.prototype._supportsShallowCloning = function() {
-                    return Q.resolve(true);
+                    return ext_q_Q.resolve(true);
                 };
 
                 var resolver = new MyGitRemoteResolver(
                     { source: testSource },
-                    defaultConfig(),
+                    libconfig_defaultConfigjs(),
                     logger
                 );
 
@@ -209,7 +210,7 @@ describe('GitRemoteResolver', function() {
                 ) {
                     // The first git call fetches the tags for the provided source
                     if (
-                        mout.array.equals(args, [
+                        ext_mout_mout.array.equals(args, [
                             'ls-remote',
                             '--tags',
                             '--heads',
@@ -218,7 +219,7 @@ describe('GitRemoteResolver', function() {
                     ) {
                         // Return list of commits, including one tag.
                         // The tag will be used for the clone call.
-                        return Q.all([
+                        return ext_q_Q.all([
                             multiline(function() {
                                 /*
                          e4655d250f2a3f64ef2d712f25dafa60652bb93e refs/heads/some-branch
@@ -229,7 +230,7 @@ describe('GitRemoteResolver', function() {
                     } else if (args[0] === 'clone') {
                         // Verify parameters of the clone call.
                         // In this case, the arguments should not contain "--depth 1".
-                        expect(args).to.eql([
+                        ext_expect_expect(args).to.eql([
                             'clone',
                             'http://foo/bar.git',
                             '-b',
@@ -240,18 +241,18 @@ describe('GitRemoteResolver', function() {
 
                         // In this case, only the stderr content is evaluated. Everything's fine as long as it
                         // does not contain any error description.
-                        return Q.all(['stdout', 'stderr']);
+                        return ext_q_Q.all(['stdout', 'stderr']);
                     }
                 });
 
                 // Mock the call, return false for this test.
                 MyGitRemoteResolver.prototype._supportsShallowCloning = function() {
-                    return Q.resolve(false);
+                    return ext_q_Q.resolve(false);
                 };
 
                 var resolver = new MyGitRemoteResolver(
                     { source: testSource },
-                    defaultConfig(),
+                    libconfig_defaultConfigjs(),
                     logger
                 );
 
@@ -271,12 +272,12 @@ describe('GitRemoteResolver', function() {
         afterEach(clearResolverRuntimeCache);
 
         it('should resolve to the references of the remote repository', function(next) {
-            GitRemoteResolver.refs('file://' + testPackage)
+            libcoreresolversGitRemoteResolver_GitRemoteResolverjs.refs('file://' + testPackage)
                 .then(function(refs) {
                     // Remove master and test only for the first 7 refs
                     refs = refs.slice(1, 8);
 
-                    expect(refs).to.eql([
+                    ext_expect_expect(refs).to.eql([
                         'e4655d250f2a3f64ef2d712f25dafa60652bb93e refs/heads/some-branch',
                         '0a7daf646d4fd743b6ef701d63bdbe20eee422de refs/tags/0.0.1',
                         '0791865e6f4b88f69fc35167a09a6f0626627765 refs/tags/0.0.2',
@@ -293,19 +294,19 @@ describe('GitRemoteResolver', function() {
         it('should cache the results', function(next) {
             var source = 'file://' + testPackage;
 
-            GitRemoteResolver.refs(source)
+            libcoreresolversGitRemoteResolver_GitRemoteResolverjs.refs(source)
                 .then(function() {
                     // Manipulate the cache and check if it resolves for the cached ones
-                    GitRemoteResolver._cache.refs.get(source).splice(0, 1);
+                    libcoreresolversGitRemoteResolver_GitRemoteResolverjs._cache.refs.get(source).splice(0, 1);
 
                     // Check if it resolver to the same array
-                    return GitRemoteResolver.refs('file://' + testPackage);
+                    return libcoreresolversGitRemoteResolver_GitRemoteResolverjs.refs('file://' + testPackage);
                 })
                 .then(function(refs) {
                     // Test only for the first 7 refs
                     refs = refs.slice(0, 7);
 
-                    expect(refs).to.eql([
+                    ext_expect_expect(refs).to.eql([
                         'e4655d250f2a3f64ef2d712f25dafa60652bb93e refs/heads/some-branch',
                         '0a7daf646d4fd743b6ef701d63bdbe20eee422de refs/tags/0.0.1',
                         '0791865e6f4b88f69fc35167a09a6f0626627765 refs/tags/0.0.2',
@@ -325,7 +326,7 @@ describe('GitRemoteResolver', function() {
 
         beforeEach(function() {
             gitRemoteResolverFactory = function(handler) {
-                return helpers.require('lib/core/resolvers/GitRemoteResolver', {
+                return helpers_requirejs.require('lib/core/resolvers/GitRemoteResolver', {
                     '../../util/cmd': handler
                 });
             };
@@ -333,11 +334,11 @@ describe('GitRemoteResolver', function() {
 
         function createCmdHandlerFn(testSource, stderr) {
             return function(cmd, args, options) {
-                expect(cmd).to.be('git');
-                expect(args).to.eql(['ls-remote', '--heads', testSource]);
-                expect(options.env.GIT_CURL_VERBOSE).to.be('2');
+                ext_expect_expect(cmd).to.be('git');
+                ext_expect_expect(args).to.eql(['ls-remote', '--heads', testSource]);
+                ext_expect_expect(options.env.GIT_CURL_VERBOSE).to.be('2');
 
-                return Q.all(['stdout', stderr]);
+                return ext_q_Q.all(['stdout', stderr]);
             };
         }
 
@@ -359,12 +360,12 @@ describe('GitRemoteResolver', function() {
 
             var resolver = new MyGitRemoteResolver(
                 { source: testSource },
-                defaultConfig({ shallowCloneHosts: ['foo'] }),
+                libconfig_defaultConfigjs({ shallowCloneHosts: ['foo'] }),
                 logger
             );
 
             resolver._shallowClone().then(function(shallowCloningSupported) {
-                expect(shallowCloningSupported).to.be(false);
+                ext_expect_expect(shallowCloningSupported).to.be(false);
 
                 next();
             });
@@ -388,12 +389,12 @@ describe('GitRemoteResolver', function() {
 
             var resolver = new MyGitRemoteResolver(
                 { source: testSource },
-                defaultConfig({ shallowCloneHosts: ['foo'] }),
+                libconfig_defaultConfigjs({ shallowCloneHosts: ['foo'] }),
                 logger
             );
 
             resolver._shallowClone().then(function(shallowCloningSupported) {
-                expect(shallowCloningSupported).to.be(false);
+                ext_expect_expect(shallowCloningSupported).to.be(false);
 
                 next();
             });
@@ -417,13 +418,13 @@ describe('GitRemoteResolver', function() {
 
             var resolver = new MyGitRemoteResolver(
                 { source: testSource },
-                defaultConfig(),
+                libconfig_defaultConfigjs(),
                 logger
             );
 
             resolver._shallowClone().then(
                 function(shallowCloningSupported) {
-                    expect(shallowCloningSupported).to.be(false);
+                    ext_expect_expect(shallowCloningSupported).to.be(false);
 
                     next();
                 },
@@ -451,12 +452,12 @@ describe('GitRemoteResolver', function() {
 
             var resolver = new MyGitRemoteResolver(
                 { source: testSource },
-                defaultConfig({ shallowCloneHosts: ['foo'] }),
+                libconfig_defaultConfigjs({ shallowCloneHosts: ['foo'] }),
                 logger
             );
 
             resolver._shallowClone().then(function(shallowCloningSupported) {
-                expect(shallowCloningSupported).to.be(true);
+                ext_expect_expect(shallowCloningSupported).to.be(true);
 
                 next();
             });
@@ -480,12 +481,12 @@ describe('GitRemoteResolver', function() {
 
             var resolver = new MyGitRemoteResolver(
                 { source: testSource },
-                defaultConfig({ shallowCloneHosts: ['foo'] }),
+                libconfig_defaultConfigjs({ shallowCloneHosts: ['foo'] }),
                 logger
             );
 
             resolver._shallowClone().then(function(shallowCloningSupported) {
-                expect(shallowCloningSupported).to.be(true);
+                ext_expect_expect(shallowCloningSupported).to.be(true);
 
                 next();
             });
@@ -504,11 +505,11 @@ describe('GitRemoteResolver', function() {
                 counter++;
 
                 if (counter === 1) {
-                    expect(cmd).to.be('git');
-                    expect(args).to.eql(['ls-remote', '--heads', testSource]);
-                    expect(options.env.GIT_CURL_VERBOSE).to.be('2');
+                    ext_expect_expect(cmd).to.be('git');
+                    ext_expect_expect(args).to.eql(['ls-remote', '--heads', testSource]);
+                    ext_expect_expect(options.env.GIT_CURL_VERBOSE).to.be('2');
 
-                    return Q.all([
+                    return ext_q_Q.all([
                         'stdout',
                         multiline(function() {
                             /*
@@ -519,28 +520,28 @@ describe('GitRemoteResolver', function() {
                         })
                     ]);
                 } else {
-                    return Q.reject(new Error('More calls than expected'));
+                    return ext_q_Q.reject(new Error('More calls than expected'));
                 }
             });
 
             var resolver = new MyGitRemoteResolver(
                 { source: testSource },
-                defaultConfig({ shallowCloneHosts: ['foo'] }),
+                libconfig_defaultConfigjs({ shallowCloneHosts: ['foo'] }),
                 logger
             );
 
             resolver._shallowClone().then(function(shallowCloningSupported) {
-                expect(shallowCloningSupported).to.be(true);
+                ext_expect_expect(shallowCloningSupported).to.be(true);
 
                 var resolver2 = new MyGitRemoteResolver(
                     { source: testSource },
-                    defaultConfig({ shallowCloneHosts: ['foo'] }),
+                    libconfig_defaultConfigjs({ shallowCloneHosts: ['foo'] }),
                     logger
                 );
 
                 resolver2._shallowClone().then(
                     function(shallowCloningSupported) {
-                        expect(shallowCloningSupported).to.be(true);
+                        ext_expect_expect(shallowCloningSupported).to.be(true);
 
                         next();
                     },
@@ -565,11 +566,11 @@ describe('GitRemoteResolver', function() {
                 counter++;
 
                 if (counter === 1) {
-                    expect(cmd).to.be('git');
-                    expect(args).to.eql(['ls-remote', '--heads', testSource1]);
-                    expect(options.env.GIT_CURL_VERBOSE).to.be('2');
+                    ext_expect_expect(cmd).to.be('git');
+                    ext_expect_expect(args).to.eql(['ls-remote', '--heads', testSource1]);
+                    ext_expect_expect(options.env.GIT_CURL_VERBOSE).to.be('2');
 
-                    return Q.all([
+                    return ext_q_Q.all([
                         'stdout',
                         multiline(function() {
                             /*
@@ -580,28 +581,28 @@ describe('GitRemoteResolver', function() {
                         })
                     ]);
                 } else {
-                    return Q.reject(new Error('More calls than expected'));
+                    return ext_q_Q.reject(new Error('More calls than expected'));
                 }
             });
 
             var resolver = new MyGitRemoteResolver(
                 { source: testSource1 },
-                defaultConfig({ shallowCloneHosts: ['foo'] }),
+                libconfig_defaultConfigjs({ shallowCloneHosts: ['foo'] }),
                 logger
             );
 
             resolver._shallowClone().then(function(shallowCloningSupported) {
-                expect(shallowCloningSupported).to.be(true);
+                ext_expect_expect(shallowCloningSupported).to.be(true);
 
                 var resolver2 = new MyGitRemoteResolver(
                     { source: testSource2 },
-                    defaultConfig({ shallowCloneHosts: ['foo'] }),
+                    libconfig_defaultConfigjs({ shallowCloneHosts: ['foo'] }),
                     logger
                 );
 
                 resolver2._shallowClone().then(
                     function(shallowCloningSupported) {
-                        expect(shallowCloningSupported).to.be(true);
+                        ext_expect_expect(shallowCloningSupported).to.be(true);
 
                         next();
                     },
@@ -626,11 +627,11 @@ describe('GitRemoteResolver', function() {
                 counter++;
 
                 if (counter === 1) {
-                    expect(cmd).to.be('git');
-                    expect(args).to.eql(['ls-remote', '--heads', testSource1]);
-                    expect(options.env.GIT_CURL_VERBOSE).to.be('2');
+                    ext_expect_expect(cmd).to.be('git');
+                    ext_expect_expect(args).to.eql(['ls-remote', '--heads', testSource1]);
+                    ext_expect_expect(options.env.GIT_CURL_VERBOSE).to.be('2');
 
-                    return Q.all([
+                    return ext_q_Q.all([
                         'stdout',
                         multiline(function() {
                             /*
@@ -641,11 +642,11 @@ describe('GitRemoteResolver', function() {
                         })
                     ]);
                 } else {
-                    expect(cmd).to.be('git');
-                    expect(args).to.eql(['ls-remote', '--heads', testSource2]);
-                    expect(options.env.GIT_CURL_VERBOSE).to.be('2');
+                    ext_expect_expect(cmd).to.be('git');
+                    ext_expect_expect(args).to.eql(['ls-remote', '--heads', testSource2]);
+                    ext_expect_expect(options.env.GIT_CURL_VERBOSE).to.be('2');
 
-                    return Q.all([
+                    return ext_q_Q.all([
                         'stdout',
                         multiline(function() {
                             /*
@@ -660,16 +661,16 @@ describe('GitRemoteResolver', function() {
 
             var resolver = new MyGitRemoteResolver(
                 { source: testSource1 },
-                defaultConfig({ shallowCloneHosts: ['foo', 'foo.bar.baz'] }),
+                libconfig_defaultConfigjs({ shallowCloneHosts: ['foo', 'foo.bar.baz'] }),
                 logger
             );
 
             resolver._shallowClone().then(function(shallowCloningSupported) {
-                expect(shallowCloningSupported).to.be(true);
+                ext_expect_expect(shallowCloningSupported).to.be(true);
 
                 var resolver2 = new MyGitRemoteResolver(
                     { source: testSource2 },
-                    defaultConfig({
+                    libconfig_defaultConfigjs({
                         shallowCloneHosts: ['foo', 'foo.bar.baz']
                     }),
                     logger
@@ -677,7 +678,7 @@ describe('GitRemoteResolver', function() {
 
                 resolver2._shallowClone().then(
                     function(shallowCloningSupported) {
-                        expect(shallowCloningSupported).to.be(true);
+                        ext_expect_expect(shallowCloningSupported).to.be(true);
 
                         next();
                     },

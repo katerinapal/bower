@@ -1,7 +1,6 @@
-describe('util', function() {
-    require('./removeIgnores');
-    require('./download');
-    require('./isPathAbsolute');
-    require('./relativeToBaseDir');
-    require('./createLink');
-});
+import "./removeIgnores";
+import "./download";
+import "./isPathAbsolute";
+import "./relativeToBaseDir";
+import "./createLink";
+describe('util', function() {});

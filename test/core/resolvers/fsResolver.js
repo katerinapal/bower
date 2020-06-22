@@ -1,26 +1,25 @@
-var expect = require('expect.js');
-var path = require('path');
-var fs = require('../../../lib/util/fs');
-var path = require('path');
-var rimraf = require('../../../lib/util/rimraf');
-var mkdirp = require('mkdirp');
-var Q = require('q');
-var Logger = require('bower-logger');
-var cmd = require('../../../lib/util/cmd');
-var copy = require('../../../lib/util/copy');
-var FsResolver = require('../../../lib/core/resolvers/FsResolver');
-var defaultConfig = require('../../../lib/config');
+import ext_expect_expect from "expect.js";
+import ext_path_path from "path";
+import { fs as libutilfs_fsjs } from "../../../lib/util/fs";
+import { rimrafjs as libutilrimraf_rimrafjsjs } from "../../../lib/util/rimraf";
+import ext_mkdirp_mkdirp from "mkdirp";
+import ext_q_Q from "q";
+import ext_bowerlogger_Logger from "bower-logger";
+import { cmd as libutilcmd_cmdjs } from "../../../lib/util/cmd";
+import * as libutilcopy_copyjsjs from "../../../lib/util/copy";
+import { FsResolver as libcoreresolversFsResolver_FsResolverjs } from "../../../lib/core/resolvers/FsResolver";
+import { defaultConfig as libconfig_defaultConfigjs } from "../../../lib/config";
 
 describe('FsResolver', function() {
     var tempSource;
     var logger;
-    var testPackage = path.resolve(__dirname, '../../assets/package-a');
+    var testPackage = ext_path_path.resolve(__dirname, '../../assets/package-a');
 
     before(function(next) {
-        logger = new Logger();
+        logger = new ext_bowerlogger_Logger();
         // Checkout test package version 0.2.1 which has a bower.json
         // with ignores
-        cmd('git', ['checkout', '0.2.1'], { cwd: testPackage }).then(
+        libutilcmd_cmdjs('git', ['checkout', '0.2.1'], { cwd: testPackage }).then(
             next.bind(next, null),
             next
         );
@@ -30,7 +29,7 @@ describe('FsResolver', function() {
         logger.removeAllListeners();
 
         if (tempSource) {
-            rimraf(tempSource, next);
+            libutilrimraf_rimrafjsjs(tempSource, next);
             tempSource = null;
         } else {
             next();
@@ -42,24 +41,24 @@ describe('FsResolver', function() {
             decEndpoint = { source: decEndpoint };
         }
 
-        return new FsResolver(decEndpoint, defaultConfig(), logger);
+        return new libcoreresolversFsResolver_FsResolverjs(decEndpoint, libconfig_defaultConfigjs(), logger);
     }
 
     describe('.constructor', function() {
         it('should guess the name from the path', function() {
-            var resolver = create(path.resolve('../../assets/package-zip.zip'));
+            var resolver = create(ext_path_path.resolve('../../assets/package-zip.zip'));
 
-            expect(resolver.getName()).to.equal('package-zip');
+            ext_expect_expect(resolver.getName()).to.equal('package-zip');
         });
 
         it('should make paths absolute and normalized', function() {
             var resolver;
 
-            resolver = create(path.relative(process.cwd(), testPackage));
-            expect(resolver.getSource()).to.equal(testPackage);
+            resolver = create(ext_path_path.relative(process.cwd(), testPackage));
+            ext_expect_expect(resolver.getSource()).to.equal(testPackage);
 
             resolver = create(testPackage + '/something/..');
-            expect(resolver.getSource()).to.equal(testPackage);
+            ext_expect_expect(resolver.getSource()).to.equal(testPackage);
         });
 
         it.skip('should use config.cwd for resolving relative paths');
@@ -70,9 +69,9 @@ describe('FsResolver', function() {
             try {
                 resolver = create({ source: testPackage, target: '0.0.1' });
             } catch (err) {
-                expect(err).to.be.an(Error);
-                expect(err.message).to.match(/can\'t resolve targets/i);
-                expect(err.code).to.equal('ENORESTARGET');
+                ext_expect_expect(err).to.be.an(Error);
+                ext_expect_expect(err.message).to.match(/can\'t resolve targets/i);
+                ext_expect_expect(err.code).to.equal('ENORESTARGET');
                 return next();
             }
 
@@ -91,7 +90,7 @@ describe('FsResolver', function() {
             resolver
                 .hasNew(pkgMeta)
                 .then(function(hasNew) {
-                    expect(hasNew).to.be(true);
+                    ext_expect_expect(hasNew).to.be(true);
                     next();
                 })
                 .done();
@@ -109,11 +108,11 @@ describe('FsResolver', function() {
         // package meta of a canonical dir is set to the
         // expected value
         function assertMain(dir, singleFile) {
-            return Q.nfcall(fs.readFile, path.join(dir, '.bower.json')).then(
+            return ext_q_Q.nfcall(libutilfs_fsjs.readFile, ext_path_path.join(dir, '.bower.json')).then(
                 function(contents) {
                     var pkgMeta = JSON.parse(contents.toString());
 
-                    expect(pkgMeta.main).to.equal(singleFile);
+                    ext_expect_expect(pkgMeta.main).to.equal(singleFile);
 
                     return pkgMeta;
                 }
@@ -126,15 +125,15 @@ describe('FsResolver', function() {
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'foo'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'bar'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'baz'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'README.md'))).to.be(
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'foo'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'bar'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'baz'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'README.md'))).to.be(
                         true
                     );
-                    expect(fs.existsSync(path.join(dir, 'more'))).to.be(true);
-                    expect(
-                        fs.existsSync(path.join(dir, 'more', 'more-foo'))
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'more'))).to.be(true);
+                    ext_expect_expect(
+                        libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'more', 'more-foo'))
                     ).to.be(true);
                     next();
                 })
@@ -142,25 +141,25 @@ describe('FsResolver', function() {
         });
 
         it('should copy the source file, renaming it to index', function(next) {
-            var resolver = create(path.join(testPackage, 'foo'));
+            var resolver = create(ext_path_path.join(testPackage, 'foo'));
 
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'index'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'foo'))).to.be(false);
-                    expect(fs.existsSync(path.join(dir, 'bar'))).to.be(false);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'index'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'foo'))).to.be(false);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'bar'))).to.be(false);
                 })
                 .then(function() {
                     // Test with extension
-                    var resolver = create(path.join(testPackage, 'README.md'));
+                    var resolver = create(ext_path_path.join(testPackage, 'README.md'));
                     return resolver.resolve();
                 })
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'index.md'))).to.be(
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'index.md'))).to.be(
                         true
                     );
-                    expect(fs.existsSync(path.join(dir, 'README.md'))).to.be(
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'README.md'))).to.be(
                         false
                     );
 
@@ -174,20 +173,20 @@ describe('FsResolver', function() {
         it('should rename to index if source is a folder with just one file in it', function(next) {
             var resolver;
 
-            tempSource = path.resolve(__dirname, '../../tmp/tmp');
+            tempSource = ext_path_path.resolve(__dirname, '../../tmp/tmp');
 
-            mkdirp.sync(tempSource);
+            ext_mkdirp_mkdirp.sync(tempSource);
             resolver = create(tempSource);
 
-            copy
+            libutilcopy_copyjsjs
                 .copyFile(
-                    path.join(testPackage, 'foo'),
-                    path.join(tempSource, 'foo')
+                    ext_path_path.join(testPackage, 'foo'),
+                    ext_path_path.join(tempSource, 'foo')
                 )
                 .then(resolver.resolve.bind(resolver))
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'index'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'foo'))).to.be(false);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'index'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'foo'))).to.be(false);
 
                     return assertMain(dir, 'index').then(next.bind(next, null));
                 })
@@ -197,40 +196,40 @@ describe('FsResolver', function() {
         it('should not rename to index if source is a folder with just bower.json/component.json file in it', function(next) {
             var resolver;
 
-            tempSource = path.resolve(__dirname, '../../tmp/tmp');
+            tempSource = ext_path_path.resolve(__dirname, '../../tmp/tmp');
 
-            mkdirp.sync(tempSource);
+            ext_mkdirp_mkdirp.sync(tempSource);
             resolver = create(tempSource);
 
-            copy
+            libutilcopy_copyjsjs
                 .copyFile(
-                    path.join(testPackage, 'bower.json'),
-                    path.join(tempSource, 'bower.json')
+                    ext_path_path.join(testPackage, 'bower.json'),
+                    ext_path_path.join(tempSource, 'bower.json')
                 )
                 .then(resolver.resolve.bind(resolver))
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'bower.json'))).to.be(
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'bower.json'))).to.be(
                         true
                     );
 
-                    rimraf.sync(tempSource);
-                    mkdirp.sync(tempSource);
+                    libutilrimraf_rimrafjsjs.sync(tempSource);
+                    ext_mkdirp_mkdirp.sync(tempSource);
 
                     resolver = create(tempSource);
                 })
                 .then(
-                    copy.copyFile.bind(
-                        copy,
-                        path.join(testPackage, 'bower.json'),
-                        path.join(tempSource, 'component.json')
+                    libutilcopy_copyjsjs.copyFile.bind(
+                        libutilcopy_copyjsjs,
+                        ext_path_path.join(testPackage, 'bower.json'),
+                        ext_path_path.join(tempSource, 'component.json')
                     )
                 )
                 .then(function() {
                     return resolver.resolve();
                 })
                 .then(function(dir) {
-                    expect(
-                        fs.existsSync(path.join(dir, 'component.json'))
+                    ext_expect_expect(
+                        libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'component.json'))
                     ).to.be(true);
                     next();
                 })
@@ -241,22 +240,22 @@ describe('FsResolver', function() {
             var mode0777;
             var resolver;
 
-            tempSource = path.resolve(__dirname, '../../assets/package-a-copy');
+            tempSource = ext_path_path.resolve(__dirname, '../../assets/package-a-copy');
             resolver = create(tempSource);
 
-            copy
+            libutilcopy_copyjsjs
                 .copyDir(testPackage, tempSource)
                 .then(function() {
                     // Change tempSource dir to 0777
-                    fs.chmodSync(tempSource, 0o777);
+                    libutilfs_fsjs.chmodSync(tempSource, 0o777);
                     // Get the mode to a variable
-                    mode0777 = fs.statSync(tempSource).mode;
+                    mode0777 = libutilfs_fsjs.statSync(tempSource).mode;
                 })
                 .then(resolver.resolve.bind(resolver))
                 .then(function(dir) {
                     // Check if temporary dir is 0777 instead of default 0777 & ~process.umask()
-                    var stat = fs.statSync(dir);
-                    expect(stat.mode).to.equal(mode0777);
+                    var stat = libutilfs_fsjs.statSync(dir);
+                    ext_expect_expect(stat.mode).to.equal(mode0777);
                     next();
                 })
                 .done();
@@ -266,22 +265,22 @@ describe('FsResolver', function() {
             var mode0777;
             var resolver;
 
-            tempSource = path.resolve(__dirname, '../../tmp/temp-source');
+            tempSource = ext_path_path.resolve(__dirname, '../../tmp/temp-source');
             resolver = create(tempSource);
 
-            copy
-                .copyFile(path.join(testPackage, 'foo'), tempSource)
+            libutilcopy_copyjsjs
+                .copyFile(ext_path_path.join(testPackage, 'foo'), tempSource)
                 .then(function() {
                     // Change tempSource dir to 0777
-                    fs.chmodSync(tempSource, 0o777);
+                    libutilfs_fsjs.chmodSync(tempSource, 0o777);
                     // Get the mode to a variable
-                    mode0777 = fs.statSync(tempSource).mode;
+                    mode0777 = libutilfs_fsjs.statSync(tempSource).mode;
                 })
                 .then(resolver.resolve.bind(resolver))
                 .then(function(dir) {
                     // Check if file is 0777
-                    var stat = fs.statSync(path.join(dir, 'index'));
-                    expect(stat.mode).to.equal(mode0777);
+                    var stat = libutilfs_fsjs.statSync(ext_path_path.join(dir, 'index'));
+                    ext_expect_expect(stat.mode).to.equal(mode0777);
                     next();
                 })
                 .done();
@@ -292,14 +291,14 @@ describe('FsResolver', function() {
 
             // Override the _applyPkgMeta function to prevent it from deleting ignored files
             resolver._applyPkgMeta = function() {
-                return Q.resolve();
+                return ext_q_Q.resolve();
             };
 
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'foo'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'test'))).to.be(false);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'foo'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'test'))).to.be(false);
                     next();
                 })
                 .done();
@@ -307,16 +306,16 @@ describe('FsResolver', function() {
 
         it('should extract if source is an archive', function(next) {
             var resolver = create(
-                path.resolve(__dirname, '../../assets/package-zip.zip')
+                ext_path_path.resolve(__dirname, '../../assets/package-zip.zip')
             );
 
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'foo.js'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'bar.js'))).to.be(true);
-                    expect(
-                        fs.existsSync(path.join(dir, 'package-zip.zip'))
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'foo.js'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'bar.js'))).to.be(true);
+                    ext_expect_expect(
+                        libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'package-zip.zip'))
                     ).to.be(false);
                     next();
                 })
@@ -325,22 +324,22 @@ describe('FsResolver', function() {
 
         it('should copy extracted folder contents if archive contains only a folder inside', function(next) {
             var resolver = create(
-                path.resolve(__dirname, '../../assets/package-zip-folder.zip')
+                ext_path_path.resolve(__dirname, '../../assets/package-zip-folder.zip')
             );
 
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'foo.js'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'bar.js'))).to.be(true);
-                    expect(fs.existsSync(path.join(dir, 'package-zip'))).to.be(
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'foo.js'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'bar.js'))).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'package-zip'))).to.be(
                         false
                     );
-                    expect(
-                        fs.existsSync(path.join(dir, 'package-zip-folder'))
+                    ext_expect_expect(
+                        libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'package-zip-folder'))
                     ).to.be(false);
-                    expect(
-                        fs.existsSync(path.join(dir, 'package-zip-folder.zip'))
+                    ext_expect_expect(
+                        libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'package-zip-folder.zip'))
                     ).to.be(false);
                     next();
                 })
@@ -349,7 +348,7 @@ describe('FsResolver', function() {
 
         it("should extract if source is an archive and rename to index if it's only one file inside", function(next) {
             var resolver = create(
-                path.resolve(
+                ext_path_path.resolve(
                     __dirname,
                     '../../assets/package-zip-single-file.zip'
                 )
@@ -358,18 +357,18 @@ describe('FsResolver', function() {
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'index.js'))).to.be(
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'index.js'))).to.be(
                         true
                     );
-                    expect(fs.existsSync(path.join(dir, 'package-zip'))).to.be(
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'package-zip'))).to.be(
                         false
                     );
-                    expect(
-                        fs.existsSync(path.join(dir, 'package-zip-single-file'))
+                    ext_expect_expect(
+                        libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'package-zip-single-file'))
                     ).to.be(false);
-                    expect(
-                        fs.existsSync(
-                            path.join(dir, 'package-zip-single-file.zip')
+                    ext_expect_expect(
+                        libutilfs_fsjs.existsSync(
+                            ext_path_path.join(dir, 'package-zip-single-file.zip')
                         )
                     ).to.be(false);
 
@@ -382,7 +381,7 @@ describe('FsResolver', function() {
 
         it('should rename single file from a single folder to index when source is an archive', function(next) {
             var resolver = create(
-                path.resolve(
+                ext_path_path.resolve(
                     __dirname,
                     '../../assets/package-zip-folder-single-file.zip'
                 )
@@ -391,20 +390,20 @@ describe('FsResolver', function() {
             resolver
                 .resolve()
                 .then(function(dir) {
-                    expect(fs.existsSync(path.join(dir, 'index.js'))).to.be(
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'index.js'))).to.be(
                         true
                     );
-                    expect(fs.existsSync(path.join(dir, 'package-zip'))).to.be(
+                    ext_expect_expect(libutilfs_fsjs.existsSync(ext_path_path.join(dir, 'package-zip'))).to.be(
                         false
                     );
-                    expect(
-                        fs.existsSync(
-                            path.join(dir, 'package-zip-folder-single-file')
+                    ext_expect_expect(
+                        libutilfs_fsjs.existsSync(
+                            ext_path_path.join(dir, 'package-zip-folder-single-file')
                         )
                     ).to.be(false);
-                    expect(
-                        fs.existsSync(
-                            path.join(dir, 'package-zip-folder-single-file.zip')
+                    ext_expect_expect(
+                        libutilfs_fsjs.existsSync(
+                            ext_path_path.join(dir, 'package-zip-folder-single-file.zip')
                         )
                     ).to.be(false);
 
@@ -418,7 +417,7 @@ describe('FsResolver', function() {
 
     describe('#isTargetable', function() {
         it('should return false', function() {
-            expect(FsResolver.isTargetable()).to.be(false);
+            ext_expect_expect(libcoreresolversFsResolver_FsResolverjs.isTargetable()).to.be(false);
         });
     });
 });

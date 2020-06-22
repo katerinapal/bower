@@ -1,32 +1,27 @@
-var helpers = require('./helpers');
+import * as helpers_hasSvnjs from "./helpers";
+import "../lib/core/resolvers/Resolver";
+import "./core/resolvers/resolver";
+import "./core/resolvers/urlResolver";
+import "./core/resolvers/fsResolver";
+import "./core/resolvers/gitResolver";
+import "./core/resolvers/gitFsResolver";
+import "./core/resolvers/gitRemoteResolver";
+import "./core/resolvers/gitHubResolver";
+import "./core/resolvers/svnResolver";
+import "./core/resolverFactory";
+import "./core/resolveCache";
+import "./core/packageRepository";
+import "./core/scripts";
+import "./core/Manager";
+import "./renderers/StandardRenderer.js";
+import "./renderers/JsonRenderer.js";
+import "./commands/index.js";
+import "./util/index.js";
 
-if (!helpers.hasSvn()) {
+if (!helpers_hasSvnjs.hasSvn()) {
     console.warn('#######################################################');
     console.warn('It is recommended you install svn for complete testing!');
     console.warn('#######################################################');
 }
 
-// Cleanup the uncaughtException added by the tmp module
-// It messes with the mocha uncaughtException event to caught errors
-// Please note that is the Resolver that calls tmp.setGracefulCleanup()
-// so we need to require that before
-require('../lib/core/resolvers/Resolver');
 process.removeAllListeners('uncaughtException');
-
-require('./core/resolvers/resolver');
-require('./core/resolvers/urlResolver');
-require('./core/resolvers/fsResolver');
-require('./core/resolvers/gitResolver');
-require('./core/resolvers/gitFsResolver');
-require('./core/resolvers/gitRemoteResolver');
-require('./core/resolvers/gitHubResolver');
-require('./core/resolvers/svnResolver');
-require('./core/resolverFactory');
-require('./core/resolveCache');
-require('./core/packageRepository');
-require('./core/scripts');
-require('./core/Manager');
-require('./renderers/StandardRenderer.js');
-require('./renderers/JsonRenderer.js');
-require('./commands/index.js');
-require('./util/index.js');

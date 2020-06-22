@@ -1,30 +1,30 @@
-var expect = require('expect.js');
-var util = require('util');
-var path = require('path');
-var fs = require('../../../lib/util/fs');
-var rimraf = require('../../../lib/util/rimraf');
-var mkdirp = require('mkdirp');
-var Q = require('q');
-var mout = require('mout');
-var Logger = require('bower-logger');
-var SvnResolver = require('../../../lib/core/resolvers/SvnResolver');
-var defaultConfig = require('../../../lib/config');
-var helpers = require('../../helpers');
+import ext_expect_expect from "expect.js";
+import ext_util_util from "util";
+import ext_path_path from "path";
+import { fs as libutilfs_fsjs } from "../../../lib/util/fs";
+import { rimrafjs as libutilrimraf_rimrafjsjs } from "../../../lib/util/rimraf";
+import ext_mkdirp_mkdirp from "mkdirp";
+import ext_q_Q from "q";
+import ext_mout_mout from "mout";
+import ext_bowerlogger_Logger from "bower-logger";
+import { SvnResolver as libcoreresolversSvnResolver_SvnResolverjs } from "../../../lib/core/resolvers/SvnResolver";
+import { defaultConfig as libconfig_defaultConfigjs } from "../../../lib/config";
+import * as helpers_helpersjsjs from "../../helpers";
 
-if (!helpers.hasSvn()) describe.skip('SvnResolver', function() {});
+if (!helpers_helpersjsjs.hasSvn()) describe.skip('SvnResolver', function() {});
 else
     describe('SvnResolver', function() {
-        var tempDir = path.resolve(__dirname, '../../tmp/tmp');
-        var testPackage = path.resolve(
+        var tempDir = ext_path_path.resolve(__dirname, '../../tmp/tmp');
+        var testPackage = ext_path_path.resolve(
             __dirname,
             '../../assets/package-svn/repo'
         );
         // var testPackageAdmin = path.resolve(__dirname, '../../assets/package-svn/admin');
-        var originaltags = SvnResolver.tags;
+        var originaltags = libcoreresolversSvnResolver_SvnResolverjs.tags;
         var logger;
 
         before(function() {
-            logger = new Logger();
+            logger = new ext_bowerlogger_Logger();
         });
 
         afterEach(function() {
@@ -32,8 +32,8 @@ else
         });
 
         function clearResolverRuntimeCache() {
-            SvnResolver.tags = originaltags;
-            SvnResolver.clearRuntimeCache();
+            libcoreresolversSvnResolver_SvnResolverjs.tags = originaltags;
+            libcoreresolversSvnResolver_SvnResolverjs.clearRuntimeCache();
         }
 
         function create(decEndpoint) {
@@ -41,7 +41,7 @@ else
                 decEndpoint = { source: decEndpoint };
             }
 
-            return new SvnResolver(decEndpoint, defaultConfig(), logger);
+            return new libcoreresolversSvnResolver_SvnResolverjs(decEndpoint, libconfig_defaultConfigjs(), logger);
         }
 
         describe('misc', function() {
@@ -51,16 +51,16 @@ else
 
         describe('.hasNew', function() {
             before(function() {
-                mkdirp.sync(tempDir);
+                ext_mkdirp_mkdirp.sync(tempDir);
             });
 
             afterEach(function(next) {
                 clearResolverRuntimeCache();
-                rimraf(path.join(tempDir, '.bower.json'), next);
+                libutilrimraf_rimrafjsjs(ext_path_path.join(tempDir, '.bower.json'), next);
             });
 
             after(function(next) {
-                rimraf(tempDir, next);
+                libutilrimraf_rimrafjsjs(tempDir, next);
             });
 
             it('should be true when the resolution type is different', function(next) {
@@ -76,14 +76,14 @@ else
                     }
                 };
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         boo: 123 // same commit hash on purpose
                     });
                 };
 
-                SvnResolver.branches = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.branches = function() {
+                    return ext_q_Q.resolve({
                         trunk: '*'
                     });
                 };
@@ -92,7 +92,7 @@ else
                 resolver
                     .hasNew(pkgMeta)
                     .then(function(hasNew) {
-                        expect(hasNew).to.be(true);
+                        ext_expect_expect(hasNew).to.be(true);
                         next();
                     })
                     .done();
@@ -111,8 +111,8 @@ else
                     }
                 };
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '1.0.0': 2,
                         '1.0.1': 2 // same commit hash on purpose
                     });
@@ -122,7 +122,7 @@ else
                 resolver
                     .hasNew(pkgMeta)
                     .then(function(hasNew) {
-                        expect(hasNew).to.be(true);
+                        ext_expect_expect(hasNew).to.be(true);
                         next();
                     })
                     .done();
@@ -141,8 +141,8 @@ else
                     }
                 };
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '1.0.0': 2
                     });
                 };
@@ -151,7 +151,7 @@ else
                 resolver
                     .hasNew(pkgMeta)
                     .then(function(hasNew) {
-                        expect(hasNew).to.be(true);
+                        ext_expect_expect(hasNew).to.be(true);
                         next();
                     })
                     .done();
@@ -170,8 +170,8 @@ else
                     }
                 };
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '1.0.0': 1,
                         '1.0.1': 2
                     });
@@ -181,7 +181,7 @@ else
                 resolver
                     .hasNew(pkgMeta)
                     .then(function(hasNew) {
-                        expect(hasNew).to.be(false);
+                        ext_expect_expect(hasNew).to.be(false);
                         next();
                     })
                     .done();
@@ -200,8 +200,8 @@ else
                     }
                 };
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '1.0.0': 2,
                         '1.0.1': 4
                     });
@@ -211,7 +211,7 @@ else
                 resolver
                     .hasNew(pkgMeta)
                     .then(function(hasNew) {
-                        expect(hasNew).to.be(true);
+                        ext_expect_expect(hasNew).to.be(true);
                         next();
                     })
                     .done();
@@ -228,8 +228,8 @@ else
                     }
                 };
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '1.0.0': 2
                     });
                 };
@@ -238,7 +238,7 @@ else
                 resolver
                     .hasNew(pkgMeta)
                     .then(function(hasNew) {
-                        expect(hasNew).to.be(true);
+                        ext_expect_expect(hasNew).to.be(true);
                         next();
                     })
                     .done();
@@ -252,31 +252,31 @@ else
                 var resolver;
 
                 function DummyResolver() {
-                    SvnResolver.apply(this, arguments);
+                    libcoreresolversSvnResolver_SvnResolverjs.apply(this, arguments);
                     this._stack = [];
                 }
 
-                util.inherits(DummyResolver, SvnResolver);
-                mout.object.mixIn(DummyResolver, SvnResolver);
+                ext_util_util.inherits(DummyResolver, libcoreresolversSvnResolver_SvnResolverjs);
+                ext_mout_mout.object.mixIn(DummyResolver, libcoreresolversSvnResolver_SvnResolverjs);
 
                 DummyResolver.prototype.getStack = function() {
                     return this._stack;
                 };
 
                 DummyResolver.tags = function() {
-                    return Q.resolve({
+                    return ext_q_Q.resolve({
                         '1.0.0': 1
                     });
                 };
 
                 DummyResolver.prototype.resolve = function() {
                     this._stack = [];
-                    return SvnResolver.prototype.resolve.apply(this, arguments);
+                    return libcoreresolversSvnResolver_SvnResolverjs.prototype.resolve.apply(this, arguments);
                 };
 
                 DummyResolver.prototype._findResolution = function() {
                     this._stack.push('before _findResolution');
-                    return SvnResolver.prototype._findResolution
+                    return libcoreresolversSvnResolver_SvnResolverjs.prototype._findResolution
                         .apply(this, arguments)
                         .then(
                             function(val) {
@@ -288,7 +288,7 @@ else
 
                 DummyResolver.prototype._export = function() {
                     this._stack.push('before _export');
-                    return Q.resolve().then(
+                    return ext_q_Q.resolve().then(
                         function(val) {
                             this._stack.push('after _export');
                             return val;
@@ -298,14 +298,14 @@ else
 
                 resolver = new DummyResolver(
                     { source: 'foo', target: '1.0.0' },
-                    defaultConfig(),
+                    libconfig_defaultConfigjs(),
                     logger
                 );
 
                 resolver
                     .resolve()
                     .then(function() {
-                        expect(resolver.getStack()).to.eql([
+                        ext_expect_expect(resolver.getStack()).to.eql([
                             'before _findResolution',
                             'after _findResolution',
                             'before _export',
@@ -323,15 +323,15 @@ else
             it('should resolve to an object', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({});
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({});
                 };
 
                 resolver = create('foo');
                 resolver
                     ._findResolution('*')
                     .then(function(resolution) {
-                        expect(resolution).to.be.an('object');
+                        ext_expect_expect(resolution).to.be.an('object');
                         next();
                     })
                     .done();
@@ -340,8 +340,8 @@ else
             it('should resolve "*" to the trunk if a repository has no valid semver tags', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         'some-tag': 1
                     });
                 };
@@ -350,7 +350,7 @@ else
                 resolver
                     ._findResolution('*')
                     .then(function(resolution) {
-                        expect(resolution).to.eql({
+                        ext_expect_expect(resolution).to.eql({
                             type: 'branch',
                             branch: 'trunk',
                             commit: '*'
@@ -363,8 +363,8 @@ else
             it('should resolve "*" to the latest version if a repository has valid semver tags, ignoring pre-releases', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '0.1.0': 1,
                         'v0.1.1': 2,
                         '0.2.0-rc.1': 3 // Should ignore release candidates
@@ -375,7 +375,7 @@ else
                 resolver
                     ._findResolution('*')
                     .then(function(resolution) {
-                        expect(resolution).to.eql({
+                        ext_expect_expect(resolution).to.eql({
                             type: 'version',
                             tag: 'v0.1.1',
                             commit: 2
@@ -388,8 +388,8 @@ else
             it('should resolve "*" to the latest version if a repository has valid semver tags, not ignoring pre-releases if they are the only versions', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '0.1.0-rc.1': 1,
                         '0.1.0-rc.2': 2
                     });
@@ -399,7 +399,7 @@ else
                 resolver
                     ._findResolution('*')
                     .then(function(resolution) {
-                        expect(resolution).to.eql({
+                        ext_expect_expect(resolution).to.eql({
                             type: 'version',
                             tag: '0.1.0-rc.2',
                             commit: 2
@@ -412,8 +412,8 @@ else
             it('should resolve to the latest version that matches a range/version', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '0.1.0': 1,
                         'v0.1.1': 2,
                         '0.2.0': 3,
@@ -425,7 +425,7 @@ else
                 resolver
                     ._findResolution('~0.2.0')
                     .then(function(resolution) {
-                        expect(resolution).to.eql({
+                        ext_expect_expect(resolution).to.eql({
                             type: 'version',
                             tag: 'v0.2.1',
                             commit: 4
@@ -438,8 +438,8 @@ else
             it('should resolve to a tag even if target is a range that does not exist', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '1.0': 1
                     });
                 };
@@ -448,7 +448,7 @@ else
                 resolver
                     ._findResolution('1.0')
                     .then(function(resolution) {
-                        expect(resolution).to.eql({
+                        ext_expect_expect(resolution).to.eql({
                             type: 'tag',
                             tag: '1.0',
                             commit: 1
@@ -461,8 +461,8 @@ else
             it('should resolve to the latest pre-release version that matches a range/version', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '0.1.0': 1,
                         'v0.1.1': 2,
                         '0.2.0': 3,
@@ -474,7 +474,7 @@ else
                 resolver
                     ._findResolution('~0.2.1')
                     .then(function(resolution) {
-                        expect(resolution).to.eql({
+                        ext_expect_expect(resolution).to.eql({
                             type: 'version',
                             tag: 'v0.2.1-rc.1',
                             commit: 4
@@ -487,8 +487,8 @@ else
             it('should resolve to the exact version if exists', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '0.8.1': 1,
                         '0.8.1+build.1': 2,
                         '0.8.1+build.2': 3,
@@ -500,7 +500,7 @@ else
                 resolver
                     ._findResolution('0.8.1+build.2')
                     .then(function(resolution) {
-                        expect(resolution).to.eql({
+                        ext_expect_expect(resolution).to.eql({
                             type: 'version',
                             tag: '0.8.1+build.2',
                             commit: 3
@@ -513,8 +513,8 @@ else
             it('should fail to resolve if none of the versions matched a range/version', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '0.1.0': 1,
                         'v0.1.1': 2
                     });
@@ -528,14 +528,14 @@ else
                             next(new Error('Should have failed'));
                         },
                         function(err) {
-                            expect(err).to.be.an(Error);
-                            expect(err.message).to.match(
+                            ext_expect_expect(err).to.be.an(Error);
+                            ext_expect_expect(err.message).to.match(
                                 /was able to satisfy ~0.2.0/i
                             );
-                            expect(err.details).to.match(
+                            ext_expect_expect(err.details).to.match(
                                 /available versions in foo: 0\.1\.1, 0\.1\.0/i
                             );
-                            expect(err.code).to.equal('ENORESTARGET');
+                            ext_expect_expect(err.code).to.equal('ENORESTARGET');
                             next();
                         }
                     )
@@ -545,8 +545,8 @@ else
             it('should fail to resolve if there are no versions to match a range/version', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         foo: 1
                     });
                 };
@@ -560,14 +560,14 @@ else
                             next(new Error('Should have failed'));
                         },
                         function(err) {
-                            expect(err).to.be.an(Error);
-                            expect(err.message).to.match(
+                            ext_expect_expect(err).to.be.an(Error);
+                            ext_expect_expect(err.message).to.match(
                                 /was able to satisfy ~0.2.0/i
                             );
-                            expect(err.details).to.match(
+                            ext_expect_expect(err.details).to.match(
                                 /no versions found in foo/i
                             );
-                            expect(err.code).to.equal('ENORESTARGET');
+                            ext_expect_expect(err.code).to.equal('ENORESTARGET');
                             next();
                         }
                     )
@@ -577,8 +577,8 @@ else
             it('should resolve to the specified commit', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         'some-tag': 1
                     });
                 };
@@ -587,7 +587,7 @@ else
                 resolver
                     ._findResolution('r1')
                     .then(function(resolution) {
-                        expect(resolution).to.eql({
+                        ext_expect_expect(resolution).to.eql({
                             type: 'commit',
                             commit: 1
                         });
@@ -599,8 +599,8 @@ else
             it('should resolve to the specified tag if it exists', function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         'some-tag': 1
                     });
                 };
@@ -609,7 +609,7 @@ else
                 resolver
                     ._findResolution('some-tag')
                     .then(function(resolution) {
-                        expect(resolution).to.eql({
+                        ext_expect_expect(resolution).to.eql({
                             type: 'tag',
                             tag: 'some-tag',
                             commit: 1
@@ -622,8 +622,8 @@ else
             it("should fail to resolve to the specified tag if it doesn't exists", function(next) {
                 var resolver;
 
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         'some-tag': 2
                     });
                 };
@@ -636,14 +636,14 @@ else
                             next(new Error('Should have failed'));
                         },
                         function(err) {
-                            expect(err).to.be.an(Error);
-                            expect(err.message).to.match(
+                            ext_expect_expect(err).to.be.an(Error);
+                            ext_expect_expect(err.message).to.match(
                                 /target some-branch does not exist/i
                             );
-                            expect(err.details).to.match(
+                            ext_expect_expect(err.details).to.match(
                                 /available tags: some-tag/i
                             );
-                            expect(err.code).to.equal('ENORESTARGET');
+                            ext_expect_expect(err.code).to.equal('ENORESTARGET');
                             next();
                         }
                     )
@@ -653,15 +653,15 @@ else
 
         describe('._savePkgMeta', function() {
             before(function() {
-                mkdirp.sync(tempDir);
+                ext_mkdirp_mkdirp.sync(tempDir);
             });
 
             afterEach(function(next) {
-                rimraf(path.join(tempDir, '.bower.json'), next);
+                libutilrimraf_rimrafjsjs(ext_path_path.join(tempDir, '.bower.json'), next);
             });
 
             after(function(next) {
-                rimraf(tempDir, next);
+                libutilrimraf_rimrafjsjs(tempDir, next);
             });
 
             it('should save the resolution to the .bower.json to be used later by .hasNew', function(next) {
@@ -673,15 +673,15 @@ else
                 resolver
                     ._savePkgMeta({ name: 'foo', version: '0.0.1' })
                     .then(function() {
-                        return Q.nfcall(
-                            fs.readFile,
-                            path.join(tempDir, '.bower.json')
+                        return ext_q_Q.nfcall(
+                            libutilfs_fsjs.readFile,
+                            ext_path_path.join(tempDir, '.bower.json')
                         );
                     })
                     .then(function(contents) {
                         var json = JSON.parse(contents.toString());
 
-                        expect(json._resolution).to.eql(resolver._resolution);
+                        ext_expect_expect(json._resolution).to.eql(resolver._resolution);
                         next();
                     })
                     .done();
@@ -689,7 +689,7 @@ else
 
             it('should save the release in the package meta', function(next) {
                 var resolver = create('foo');
-                var metaFile = path.join(tempDir, '.bower.json');
+                var metaFile = ext_path_path.join(tempDir, '.bower.json');
 
                 // Test with type 'version'
                 resolver._resolution = {
@@ -702,11 +702,11 @@ else
                 resolver
                     ._savePkgMeta({ name: 'foo', version: '0.0.1' })
                     .then(function() {
-                        return Q.nfcall(fs.readFile, metaFile);
+                        return ext_q_Q.nfcall(libutilfs_fsjs.readFile, metaFile);
                     })
                     .then(function(contents) {
                         var json = JSON.parse(contents.toString());
-                        expect(json._release).to.equal('0.0.1');
+                        ext_expect_expect(json._release).to.equal('0.0.1');
                     })
                     // Test with type 'version' + build metadata
                     .then(function() {
@@ -718,11 +718,11 @@ else
                         return resolver._savePkgMeta({ name: 'foo' });
                     })
                     .then(function() {
-                        return Q.nfcall(fs.readFile, metaFile);
+                        return ext_q_Q.nfcall(libutilfs_fsjs.readFile, metaFile);
                     })
                     .then(function(contents) {
                         var json = JSON.parse(contents.toString());
-                        expect(json._release).to.equal('0.0.1+build.5');
+                        ext_expect_expect(json._release).to.equal('0.0.1+build.5');
                     })
                     // Test with type 'tag'
                     .then(function() {
@@ -734,11 +734,11 @@ else
                         return resolver._savePkgMeta({ name: 'foo' });
                     })
                     .then(function() {
-                        return Q.nfcall(fs.readFile, metaFile);
+                        return ext_q_Q.nfcall(libutilfs_fsjs.readFile, metaFile);
                     })
                     .then(function(contents) {
                         var json = JSON.parse(contents.toString());
-                        expect(json._release).to.equal('0.0.1');
+                        ext_expect_expect(json._release).to.equal('0.0.1');
                     })
                     // Test with type 'branch'
                     // In this case, it should be the commit
@@ -751,11 +751,11 @@ else
                         return resolver._savePkgMeta({ name: 'foo' });
                     })
                     .then(function() {
-                        return Q.nfcall(fs.readFile, metaFile);
+                        return ext_q_Q.nfcall(libutilfs_fsjs.readFile, metaFile);
                     })
                     .then(function(contents) {
                         var json = JSON.parse(contents.toString());
-                        expect(json._release).to.equal('1');
+                        ext_expect_expect(json._release).to.equal('1');
                     })
                     // Test with type 'commit'
                     .then(function() {
@@ -763,11 +763,11 @@ else
                         return resolver._savePkgMeta({ name: 'foo' });
                     })
                     .then(function() {
-                        return Q.nfcall(fs.readFile, metaFile);
+                        return ext_q_Q.nfcall(libutilfs_fsjs.readFile, metaFile);
                     })
                     .then(function(contents) {
                         var json = JSON.parse(contents.toString());
-                        expect(json._release).to.equal('1');
+                        ext_expect_expect(json._release).to.equal('1');
                         next();
                     })
                     .done();
@@ -782,14 +782,14 @@ else
                 resolver
                     ._savePkgMeta({ name: 'foo' })
                     .then(function() {
-                        return Q.nfcall(
-                            fs.readFile,
-                            path.join(tempDir, '.bower.json')
+                        return ext_q_Q.nfcall(
+                            libutilfs_fsjs.readFile,
+                            ext_path_path.join(tempDir, '.bower.json')
                         );
                     })
                     .then(function(contents) {
                         var json = JSON.parse(contents.toString());
-                        expect(json.version).to.equal('0.0.1');
+                        ext_expect_expect(json.version).to.equal('0.0.1');
 
                         next();
                     })
@@ -805,14 +805,14 @@ else
                 resolver
                     ._savePkgMeta({ name: 'foo', version: '0.0.1' })
                     .then(function() {
-                        return Q.nfcall(
-                            fs.readFile,
-                            path.join(tempDir, '.bower.json')
+                        return ext_q_Q.nfcall(
+                            libutilfs_fsjs.readFile,
+                            ext_path_path.join(tempDir, '.bower.json')
                         );
                     })
                     .then(function(contents) {
                         var json = JSON.parse(contents.toString());
-                        expect(json).to.not.have.property('version');
+                        ext_expect_expect(json).to.not.have.property('version');
 
                         next();
                     })
@@ -827,10 +827,10 @@ else
                 resolver._tempDir = tempDir;
 
                 logger.on('log', function(log) {
-                    expect(log).to.be.an('object');
+                    ext_expect_expect(log).to.be.an('object');
 
                     if (log.level === 'warn' && log.id === 'mismatch') {
-                        expect(log.message).to.match(
+                        ext_expect_expect(log.message).to.match(
                             /\(0\.0\.0\).*different.*\(0\.0\.1\)/
                         );
                         notified = true;
@@ -840,15 +840,15 @@ else
                 resolver
                     ._savePkgMeta({ name: 'foo', version: '0.0.0' })
                     .then(function() {
-                        return Q.nfcall(
-                            fs.readFile,
-                            path.join(tempDir, '.bower.json')
+                        return ext_q_Q.nfcall(
+                            libutilfs_fsjs.readFile,
+                            ext_path_path.join(tempDir, '.bower.json')
                         );
                     })
                     .then(function(contents) {
                         var json = JSON.parse(contents.toString());
-                        expect(json.version).to.equal('0.0.1');
-                        expect(notified).to.be(true);
+                        ext_expect_expect(json.version).to.equal('0.0.1');
+                        ext_expect_expect(notified).to.be(true);
 
                         next();
                     })
@@ -865,15 +865,15 @@ else
                 resolver
                     ._savePkgMeta({ name: 'foo', version: '0.0.1' })
                     .then(function() {
-                        return Q.nfcall(
-                            fs.readFile,
-                            path.join(tempDir, '.bower.json')
+                        return ext_q_Q.nfcall(
+                            libutilfs_fsjs.readFile,
+                            ext_path_path.join(tempDir, '.bower.json')
                         );
                     }, null)
                     .then(function(contents) {
                         var json = JSON.parse(contents.toString());
-                        expect(json.version).to.equal('0.0.1');
-                        expect(notified).to.be(false);
+                        ext_expect_expect(json.version).to.equal('0.0.1');
+                        ext_expect_expect(notified).to.be(false);
 
                         next();
                     })
@@ -885,19 +885,19 @@ else
             // Use a class that inherit the SvnResolver to see if it uses
             // late binding when clearing the cache
             function CustomSvnResolver() {}
-            util.inherits(CustomSvnResolver, SvnResolver);
-            mout.object.mixIn(CustomSvnResolver, SvnResolver);
+            ext_util_util.inherits(CustomSvnResolver, libcoreresolversSvnResolver_SvnResolverjs);
+            ext_mout_mout.object.mixIn(CustomSvnResolver, libcoreresolversSvnResolver_SvnResolverjs);
 
             it('should clear tags cache', function() {
                 CustomSvnResolver._cache.tags.set('foo', {});
                 CustomSvnResolver.clearRuntimeCache();
-                expect(CustomSvnResolver._cache.tags.has('foo')).to.be(false);
+                ext_expect_expect(CustomSvnResolver._cache.tags.has('foo')).to.be(false);
             });
 
             it('should clear versions cache', function() {
                 CustomSvnResolver._cache.versions.set('foo', {});
                 CustomSvnResolver.clearRuntimeCache();
-                expect(CustomSvnResolver._cache.versions.has('foo')).to.be(
+                ext_expect_expect(CustomSvnResolver._cache.versions.has('foo')).to.be(
                     false
                 );
             });
@@ -907,40 +907,40 @@ else
             afterEach(clearResolverRuntimeCache);
 
             it('should resolve to an empty array if no tags are found', function(next) {
-                SvnResolver.tags = function() {
-                    return Q.resolve({});
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({});
                 };
 
-                SvnResolver.versions('foo')
+                libcoreresolversSvnResolver_SvnResolverjs.versions('foo')
                     .then(function(versions) {
-                        expect(versions).to.be.an('array');
-                        expect(versions).to.eql([]);
+                        ext_expect_expect(versions).to.be.an('array');
+                        ext_expect_expect(versions).to.eql([]);
                         next();
                     })
                     .done();
             });
 
             it('should resolve to an empty array if no valid semver tags', function(next) {
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         foo: 1,
                         bar: 2,
                         baz: 3
                     });
                 };
 
-                SvnResolver.versions('foo')
+                libcoreresolversSvnResolver_SvnResolverjs.versions('foo')
                     .then(function(versions) {
-                        expect(versions).to.be.an('array');
-                        expect(versions).to.eql([]);
+                        ext_expect_expect(versions).to.be.an('array');
+                        ext_expect_expect(versions).to.eql([]);
                         next();
                     })
                     .done();
             });
 
             it('should resolve to an array of versions, ignoring invalid semver tags', function(next) {
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '0.2.1': 1,
                         'v0.1.1': 2,
                         '0.1.0': 3,
@@ -950,27 +950,27 @@ else
                     });
                 };
 
-                SvnResolver.versions('foo', true)
+                libcoreresolversSvnResolver_SvnResolverjs.versions('foo', true)
                     .then(function(versions) {
-                        expect(versions).to.eql([
+                        ext_expect_expect(versions).to.eql([
                             { version: '0.2.1', tag: '0.2.1', commit: 1 },
                             { version: '0.1.1', tag: 'v0.1.1', commit: 2 },
                             { version: '0.1.0', tag: '0.1.0', commit: 3 }
                         ]);
                     })
                     .then(function() {
-                        return SvnResolver.versions('foo');
+                        return libcoreresolversSvnResolver_SvnResolverjs.versions('foo');
                     })
                     .then(function(versions) {
-                        expect(versions).to.eql(['0.2.1', '0.1.1', '0.1.0']);
+                        ext_expect_expect(versions).to.eql(['0.2.1', '0.1.1', '0.1.0']);
                         next();
                     })
                     .done();
             });
 
             it('should order the versions according to the semver spec', function(next) {
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '0.1.0': 1,
                         '0.1.1+build.11': 2,
                         '0.1.1+build.100': 3,
@@ -981,9 +981,9 @@ else
                     });
                 };
 
-                SvnResolver.versions('foo', true)
+                libcoreresolversSvnResolver_SvnResolverjs.versions('foo', true)
                     .then(function(versions) {
-                        expect(versions).to.eql([
+                        ext_expect_expect(versions).to.eql([
                             { version: '0.2.1', tag: 'v0.2.1', commit: '7' },
                             {
                                 version: '0.1.1+build.11',
@@ -1014,62 +1014,62 @@ else
             });
 
             it('should cache the result for each source', function(next) {
-                SvnResolver.tags = function(source) {
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function(source) {
                     if (source === 'foo') {
-                        return Q.resolve({
+                        return ext_q_Q.resolve({
                             '0.2.1': 123,
                             '0.1.0': 456
                         });
                     }
 
-                    return Q.resolve({
+                    return ext_q_Q.resolve({
                         '0.3.1': 7,
                         '0.3.0': 8
                     });
                 };
 
-                SvnResolver.versions('foo')
+                libcoreresolversSvnResolver_SvnResolverjs.versions('foo')
                     .then(function(versions) {
-                        expect(versions).to.eql(['0.2.1', '0.1.0']);
+                        ext_expect_expect(versions).to.eql(['0.2.1', '0.1.0']);
 
-                        return SvnResolver.versions('bar');
+                        return libcoreresolversSvnResolver_SvnResolverjs.versions('bar');
                     })
                     .then(function(versions) {
-                        expect(versions).to.eql(['0.3.1', '0.3.0']);
+                        ext_expect_expect(versions).to.eql(['0.3.1', '0.3.0']);
 
                         // Manipulate the cache and check if it resolves for the cached ones
-                        SvnResolver._cache.versions.get('foo').splice(1, 1);
-                        SvnResolver._cache.versions.get('bar').splice(1, 1);
+                        libcoreresolversSvnResolver_SvnResolverjs._cache.versions.get('foo').splice(1, 1);
+                        libcoreresolversSvnResolver_SvnResolverjs._cache.versions.get('bar').splice(1, 1);
 
-                        return SvnResolver.versions('foo');
+                        return libcoreresolversSvnResolver_SvnResolverjs.versions('foo');
                     })
                     .then(function(versions) {
-                        expect(versions).to.eql(['0.2.1']);
+                        ext_expect_expect(versions).to.eql(['0.2.1']);
 
-                        return SvnResolver.versions('bar');
+                        return libcoreresolversSvnResolver_SvnResolverjs.versions('bar');
                     })
                     .then(function(versions) {
-                        expect(versions).to.eql(['0.3.1']);
+                        ext_expect_expect(versions).to.eql(['0.3.1']);
                         next();
                     })
                     .done();
             });
 
             it('should work if requested in parallel for the same source', function(next) {
-                SvnResolver.tags = function() {
-                    return Q.resolve({
+                libcoreresolversSvnResolver_SvnResolverjs.tags = function() {
+                    return ext_q_Q.resolve({
                         '0.2.1': 123,
                         '0.1.0': 456
                     });
                 };
 
-                Q.all([
-                    SvnResolver.versions('foo'),
-                    SvnResolver.versions('foo')
+                ext_q_Q.all([
+                    libcoreresolversSvnResolver_SvnResolverjs.versions('foo'),
+                    libcoreresolversSvnResolver_SvnResolverjs.versions('foo')
                 ])
                     .spread(function(versions1, versions2) {
-                        expect(versions1).to.eql(['0.2.1', '0.1.0']);
-                        expect(versions2).to.eql(versions1);
+                        ext_expect_expect(versions1).to.eql(['0.2.1', '0.1.0']);
+                        ext_expect_expect(versions2).to.eql(versions1);
 
                         next();
                     })
@@ -1087,15 +1087,15 @@ else
             ].join('\r\n');
 
             it('should not include the . (dot)path', function() {
-                var actual = SvnResolver.parseSubversionListOutput(list);
+                var actual = libcoreresolversSvnResolver_SvnResolverjs.parseSubversionListOutput(list);
 
-                expect(actual).to.not.have.keys('.');
+                ext_expect_expect(actual).to.not.have.keys('.');
             });
 
             it('should parse path names with alphanumerics, dashes, dots and underscores', function() {
-                var actual = SvnResolver.parseSubversionListOutput(list);
+                var actual = libcoreresolversSvnResolver_SvnResolverjs.parseSubversionListOutput(list);
 
-                expect(actual).to.eql({
+                ext_expect_expect(actual).to.eql({
                     'branch-name': '12346',
                     branch_name: '12347',
                     'branch.1.2.3': '12348',
@@ -1109,11 +1109,11 @@ else
             it('should guess the name from the path', function() {
                 var resolver;
 
-                resolver = create(helpers.localSource(testPackage));
-                expect(resolver.getName()).to.equal('repo');
+                resolver = create(helpers_helpersjsjs.localSource(testPackage));
+                ext_expect_expect(resolver.getName()).to.equal('repo');
 
                 resolver = create('svn+http://yii.googlecode.com/svn');
-                expect(resolver.getName()).to.equal('svn');
+                ext_expect_expect(resolver.getName()).to.equal('svn');
             });
         });
 
@@ -1124,12 +1124,12 @@ else
                 resolver
                     .resolve()
                     .then(function(dir) {
-                        expect(dir).to.be.a('string');
+                        ext_expect_expect(dir).to.be.a('string');
 
-                        var files = fs.readdirSync(dir);
+                        var files = libutilfs_fsjs.readdirSync(dir);
 
-                        expect(files).to.contain('foo');
-                        expect(files).to.not.contain('bar');
+                        ext_expect_expect(files).to.contain('foo');
+                        ext_expect_expect(files).to.not.contain('bar');
                         next();
                     })
                     .done();
@@ -1141,13 +1141,13 @@ else
                 resolver
                     .resolve()
                     .then(function(dir) {
-                        expect(dir).to.be.a('string');
+                        ext_expect_expect(dir).to.be.a('string');
 
-                        var files = fs.readdirSync(dir);
+                        var files = libutilfs_fsjs.readdirSync(dir);
 
-                        expect(files).to.not.contain('foo');
-                        expect(files).to.not.contain('bar');
-                        expect(files).to.not.contain('baz');
+                        ext_expect_expect(files).to.not.contain('foo');
+                        ext_expect_expect(files).to.not.contain('bar');
+                        ext_expect_expect(files).to.not.contain('baz');
                         next();
                     })
                     .done();

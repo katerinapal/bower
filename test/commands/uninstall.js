@@ -1,13 +1,12 @@
-var path = require('path');
-var mkdirp = require('mkdirp');
-var expect = require('expect.js');
-var fs = require('../../lib/util/fs');
-
-var helpers = require('../helpers');
-var uninstall = helpers.command('uninstall');
+import ext_path_path from "path";
+import ext_mkdirp_mkdirp from "mkdirp";
+import ext_expect_expect from "expect.js";
+import { fs as libutilfs_fsjs } from "../../lib/util/fs";
+import * as helpers_helpersjsjs from "../helpers";
+var uninstall = helpers_helpersjsjs.command('uninstall');
 
 describe('bower uninstall', function() {
-    var tempDir = new helpers.TempDir({
+    var tempDir = new helpers_helpersjsjs.TempDir({
         'bower.json': {
             name: 'hello-world',
             dependencies: {
@@ -20,10 +19,10 @@ describe('bower uninstall', function() {
         tempDir.prepare();
     });
 
-    var bowerJsonPath = path.join(tempDir.path, 'bower.json');
+    var bowerJsonPath = ext_path_path.join(tempDir.path, 'bower.json');
 
     function bowerJson() {
-        return JSON.parse(fs.readFileSync(bowerJsonPath));
+        return JSON.parse(libutilfs_fsjs.readFileSync(bowerJsonPath));
     }
 
     var config = {
@@ -32,31 +31,31 @@ describe('bower uninstall', function() {
     };
 
     it('correctly reads arguments', function() {
-        expect(uninstall.readOptions(['jquery', '-S', '-D'])).to.eql([
+        ext_expect_expect(uninstall.readOptions(['jquery', '-S', '-D'])).to.eql([
             ['jquery'],
             { save: true, saveDev: true }
         ]);
     });
 
     it('correctly reads long arguments', function() {
-        expect(
+        ext_expect_expect(
             uninstall.readOptions(['jquery', '--save', '--save-dev'])
         ).to.eql([['jquery'], { save: true, saveDev: true }]);
     });
 
     it('does not remove anything from dependencies by default', function() {
-        return helpers
+        return helpers_helpersjsjs
             .run(uninstall, [['underscore'], undefined, config])
             .then(function() {
-                expect(bowerJson().dependencies).to.eql({ underscore: '*' });
+                ext_expect_expect(bowerJson().dependencies).to.eql({ underscore: '*' });
             });
     });
 
     it('removes dependency from bower.json if --save flag is used', function() {
-        return helpers
+        return helpers_helpersjsjs
             .run(uninstall, [['underscore'], { save: true }, config])
             .then(function() {
-                expect(bowerJson().dependencies).to.eql({});
+                ext_expect_expect(bowerJson().dependencies).to.eql({});
             });
     });
 
@@ -66,25 +65,25 @@ describe('bower uninstall', function() {
             interactive: true,
             save: true
         };
-        return helpers
+        return helpers_helpersjsjs
             .run(uninstall, [['underscore'], {}, configWithSave])
             .then(function() {
-                expect(bowerJson().dependencies).to.eql({});
+                ext_expect_expect(bowerJson().dependencies).to.eql({});
             });
     });
 
     it('removes dependency from relative config.directory', function() {
-        var targetPath = path.resolve(
+        var targetPath = ext_path_path.resolve(
             tempDir.path,
             'other_directory/underscore'
         );
-        mkdirp.sync(targetPath);
-        fs.writeFileSync(
-            path.join(targetPath, '.bower.json'),
+        ext_mkdirp_mkdirp.sync(targetPath);
+        libutilfs_fsjs.writeFileSync(
+            ext_path_path.join(targetPath, '.bower.json'),
             '{ "name": "underscore" }'
         );
 
-        return helpers
+        return helpers_helpersjsjs
             .run(uninstall, [
                 ['underscore'],
                 undefined,
@@ -95,64 +94,64 @@ describe('bower uninstall', function() {
                 }
             ])
             .then(function() {
-                expect(function() {
-                    fs.statSync(targetPath);
+                ext_expect_expect(function() {
+                    libutilfs_fsjs.statSync(targetPath);
                 }).to.throwException(/no such file or directory/);
             });
     });
 
     it('removes dependency from absolute config.directory', function() {
-        var targetPath = path.resolve(
+        var targetPath = ext_path_path.resolve(
             tempDir.path,
             'other_directory/underscore'
         );
-        mkdirp.sync(targetPath);
-        fs.writeFileSync(
-            path.join(targetPath, '.bower.json'),
+        ext_mkdirp_mkdirp.sync(targetPath);
+        libutilfs_fsjs.writeFileSync(
+            ext_path_path.join(targetPath, '.bower.json'),
             '{ "name": "underscore" }'
         );
 
-        return helpers
+        return helpers_helpersjsjs
             .run(uninstall, [
                 ['underscore'],
                 undefined,
                 {
                     cwd: tempDir.path,
-                    directory: path.resolve(tempDir.path, 'other_directory'),
+                    directory: ext_path_path.resolve(tempDir.path, 'other_directory'),
                     interactive: true
                 }
             ])
             .then(function() {
-                expect(function() {
-                    fs.statSync(targetPath);
+                ext_expect_expect(function() {
+                    libutilfs_fsjs.statSync(targetPath);
                 }).to.throwException(/no such file or directory/);
             });
     });
 
     it('removes a project with url from absolute path', function() {
-        var targetPath = path.resolve(
+        var targetPath = ext_path_path.resolve(
             tempDir.path,
             'other_directory/underscore'
         );
-        mkdirp.sync(targetPath);
-        fs.writeFileSync(
-            path.join(targetPath, '.bower.json'),
+        ext_mkdirp_mkdirp.sync(targetPath);
+        libutilfs_fsjs.writeFileSync(
+            ext_path_path.join(targetPath, '.bower.json'),
             '{ "name": "underscore", "_source": "git://github.com/user/repo.git" }'
         );
 
-        return helpers
+        return helpers_helpersjsjs
             .run(uninstall, [
                 ['git://github.com/user/repo.git'],
                 undefined,
                 {
                     cwd: tempDir.path,
-                    directory: path.resolve(tempDir.path, 'other_directory'),
+                    directory: ext_path_path.resolve(tempDir.path, 'other_directory'),
                     interactive: true
                 }
             ])
             .then(function() {
-                expect(function() {
-                    fs.statSync(targetPath);
+                ext_expect_expect(function() {
+                    libutilfs_fsjs.statSync(targetPath);
                 }).to.throwException(/no such file or directory/);
             });
     });

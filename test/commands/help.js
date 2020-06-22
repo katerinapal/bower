@@ -1,17 +1,17 @@
-var expect = require('expect.js');
-var helpers = require('../helpers');
-var help = helpers.command('help');
+import ext_expect_expect from "expect.js";
+import * as helpers_helpersjsjs from "../helpers";
+var help = helpers_helpersjsjs.command('help');
 
 describe('bower help', function() {
     it('correctly reads arguments', function() {
-        expect(help.readOptions(['foo'])).to.eql(['foo']);
+        ext_expect_expect(help.readOptions(['foo'])).to.eql(['foo']);
     });
 
     it('shows general help', function() {
-        return helpers.run(help).spread(function(result) {
-            expect(result.usage[0]).to.be.a('string');
-            expect(result.commands).to.be.a('object');
-            expect(result.options).to.be.a('object');
+        return helpers_helpersjsjs.run(help).spread(function(result) {
+            ext_expect_expect(result.usage[0]).to.be.a('string');
+            ext_expect_expect(result.commands).to.be.a('object');
+            ext_expect_expect(result.options).to.be.a('object');
         });
     });
 
@@ -35,19 +35,19 @@ describe('bower help', function() {
 
     commands.forEach(function(command) {
         it('shows help for ' + command + ' command', function() {
-            return helpers.run(help, [command]).spread(function(result) {
-                expect(result.command).to.be(command);
-                expect(result.description).to.be.a('string');
-                expect(result.usage[0]).to.be.a('string');
+            return helpers_helpersjsjs.run(help, [command]).spread(function(result) {
+                ext_expect_expect(result.command).to.be(command);
+                ext_expect_expect(result.description).to.be.a('string');
+                ext_expect_expect(result.usage[0]).to.be.a('string');
             });
         });
     });
 
     it('displays error for non-existing command', function() {
-        return helpers.run(help, ['fuu']).fail(function(e) {
-            expect(e.message).to.be('Unknown command: fuu');
-            expect(e.command).to.be('fuu');
-            expect(e.code).to.be('EUNKNOWNCMD');
+        return helpers_helpersjsjs.run(help, ['fuu']).fail(function(e) {
+            ext_expect_expect(e.message).to.be('Unknown command: fuu');
+            ext_expect_expect(e.command).to.be('fuu');
+            ext_expect_expect(e.code).to.be('EUNKNOWNCMD');
         });
     });
 });

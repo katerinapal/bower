@@ -1,5 +1,5 @@
-var expect = require('expect.js');
-var helpers = require('../helpers');
+import ext_expect_expect from "expect.js";
+import * as helpers_helpersjsjs from "../helpers";
 
 var fakeRepositoryFactory = function() {
     function FakeRepository() {}
@@ -15,33 +15,33 @@ var fakeRepositoryFactory = function() {
     return FakeRepository;
 };
 
-var unregister = helpers.command('unregister');
+var unregister = helpers_helpersjsjs.command('unregister');
 
 var unregisterFactory = function() {
-    return helpers.command('unregister', {
+    return helpers_helpersjsjs.command('unregister', {
         '../core/PackageRepository': fakeRepositoryFactory()
     });
 };
 
 describe('bower unregister', function() {
     it('correctly reads arguments', function() {
-        expect(unregister.readOptions(['jquery'])).to.eql(['jquery']);
+        ext_expect_expect(unregister.readOptions(['jquery'])).to.eql(['jquery']);
     });
 
     it('errors if name is not provided', function() {
-        return helpers.run(unregister).fail(function(reason) {
-            expect(reason.message).to.be(
+        return helpers_helpersjsjs.run(unregister).fail(function(reason) {
+            ext_expect_expect(reason.message).to.be(
                 'Usage: bower unregister <name> <url>'
             );
-            expect(reason.code).to.be('EINVFORMAT');
+            ext_expect_expect(reason.code).to.be('EINVFORMAT');
         });
     });
 
     it('should call registry client with name', function() {
         var unregister = unregisterFactory();
 
-        return helpers.run(unregister, ['some-name']).spread(function(result) {
-            expect(result).to.eql({
+        return helpers_helpersjsjs.run(unregister, ['some-name']).spread(function(result) {
+            ext_expect_expect(result).to.eql({
                 // Result from register action on stub
                 name: 'some-name'
             });
@@ -51,7 +51,7 @@ describe('bower unregister', function() {
     it('should confirm in interactive mode', function() {
         var register = unregisterFactory();
 
-        var promise = helpers.run(register, [
+        var promise = helpers_helpersjsjs.run(register, [
             'some-name',
             {
                 interactive: true,
@@ -59,21 +59,21 @@ describe('bower unregister', function() {
             }
         ]);
 
-        return helpers
+        return helpers_helpersjsjs
             .expectEvent(promise.logger, 'confirm')
             .spread(function(e) {
-                expect(e.type).to.be('confirm');
-                expect(e.message).to.be(
+                ext_expect_expect(e.type).to.be('confirm');
+                ext_expect_expect(e.message).to.be(
                     'You are about to remove component "some-name" from the bower registry (http://localhost). It is generally considered bad behavior to remove versions of a library that others are depending on. Are you really sure?'
                 );
-                expect(e.default).to.be(false);
+                ext_expect_expect(e.default).to.be(false);
             });
     });
 
     it('should skip confirming when forcing', function() {
         var register = unregisterFactory();
 
-        return helpers.run(register, [
+        return helpers_helpersjsjs.run(register, [
             'some-name',
             { interactive: true, force: true }
         ]);

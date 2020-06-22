@@ -1,12 +1,11 @@
-var expect = require('expect.js');
-var helpers = require('../helpers');
-var glob = require('glob');
-var Q = require('q');
-
-var removeIgnores = require('../../lib/util/removeIgnores');
+import ext_expect_expect from "expect.js";
+import * as helpers_TempDirjs from "../helpers";
+import ext_glob_glob from "glob";
+import ext_q_Q from "q";
+import { removeIgnores as libutilremoveIgnores_removeIgnoresjs } from "../../lib/util/removeIgnores";
 
 describe('removeIgnores', function() {
-    var tempDir = new helpers.TempDir({
+    var tempDir = new helpers_TempDirjs.TempDir({
         'bower.json': {},
         'index.js': 'Not to ignore',
         'node_modules/underscore/index.js': 'Should be ignored'
@@ -15,11 +14,11 @@ describe('removeIgnores', function() {
     var ignoreTest = function(dir, meta, leftovers) {
         tempDir.prepare();
 
-        var deferred = Q.defer();
+        var deferred = ext_q_Q.defer();
 
-        removeIgnores(dir, meta).then(function() {
-            glob('**/*.*', { cwd: dir }, function(cb, files) {
-                expect(files).to.eql(leftovers);
+        libutilremoveIgnores_removeIgnoresjs(dir, meta).then(function() {
+            ext_glob_glob('**/*.*', { cwd: dir }, function(cb, files) {
+                ext_expect_expect(files).to.eql(leftovers);
                 deferred.resolve();
             });
         });

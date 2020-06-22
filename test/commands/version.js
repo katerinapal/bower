@@ -1,10 +1,9 @@
-var expect = require('expect.js');
-
-var helpers = require('../helpers');
-var version = helpers.require('lib/commands').version;
+import ext_expect_expect from "expect.js";
+import * as helpers_helpersjsjs from "../helpers";
+var version = helpers_helpersjsjs.require('lib/commands').version;
 
 describe('bower version', function() {
-    var mainPackage = new helpers.TempDir({
+    var mainPackage = new helpers_helpersjsjs.TempDir({
         'v0.0.0': {
             'bower.json': {
                 name: 'foobar'
@@ -15,50 +14,50 @@ describe('bower version', function() {
     it('bumps patch version', function() {
         mainPackage.prepareGit();
 
-        return helpers
+        return helpers_helpersjsjs
             .run(version, ['patch', {}, { cwd: mainPackage.path }])
             .then(function() {
-                expect(mainPackage.latestGitTag()).to.be('0.0.1');
+                ext_expect_expect(mainPackage.latestGitTag()).to.be('0.0.1');
             });
     });
 
     it('bumps minor version', function() {
         mainPackage.prepareGit();
 
-        return helpers
+        return helpers_helpersjsjs
             .run(version, ['minor', {}, { cwd: mainPackage.path }])
             .then(function() {
-                expect(mainPackage.latestGitTag()).to.be('0.1.0');
+                ext_expect_expect(mainPackage.latestGitTag()).to.be('0.1.0');
             });
     });
 
     it('bumps major version', function() {
         mainPackage.prepareGit();
 
-        return helpers
+        return helpers_helpersjsjs
             .run(version, ['major', {}, { cwd: mainPackage.path }])
             .then(function() {
-                expect(mainPackage.latestGitTag()).to.be('1.0.0');
+                ext_expect_expect(mainPackage.latestGitTag()).to.be('1.0.0');
             });
     });
 
     it('changes version', function() {
         mainPackage.prepareGit();
 
-        return helpers
+        return helpers_helpersjsjs
             .run(version, ['1.2.3', {}, { cwd: mainPackage.path }])
             .then(function() {
-                expect(mainPackage.latestGitTag()).to.be('1.2.3');
+                ext_expect_expect(mainPackage.latestGitTag()).to.be('1.2.3');
             });
     });
 
     it('returns the new version', function() {
         mainPackage.prepareGit();
 
-        return helpers
+        return helpers_helpersjsjs
             .run(version, ['major', {}, { cwd: mainPackage.path }])
             .then(function(results) {
-                expect(results[0]).to.be('v1.0.0');
+                ext_expect_expect(results[0]).to.be('v1.0.0');
             });
     });
 
@@ -68,40 +67,40 @@ describe('bower version', function() {
             'dirty.txt': 'This file has not been committed'
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .run(version, ['patch', {}, { cwd: mainPackage.path }])
             .then(null, function(err) {
-                expect(err).to.be.an(Error);
-                expect(err.code).to.be('ENOTGITREPOSITORY');
+                ext_expect_expect(err).to.be.an(Error);
+                ext_expect_expect(err.code).to.be('ENOTGITREPOSITORY');
             });
     });
 
     it('fails when the version already exists', function() {
         mainPackage.prepareGit();
 
-        return helpers
+        return helpers_helpersjsjs
             .run(version, ['0.0.0', {}, { cwd: mainPackage.path }])
             .then(null, function(err) {
-                expect(err).to.be.an(Error);
-                expect(err.code).to.be('EVERSIONEXISTS');
+                ext_expect_expect(err).to.be.an(Error);
+                ext_expect_expect(err.code).to.be('EVERSIONEXISTS');
             });
     });
 
     it('fails with an invalid argument', function() {
         mainPackage.prepareGit();
 
-        return helpers
+        return helpers_helpersjsjs
             .run(version, ['lol', {}, { cwd: mainPackage.path }])
             .then(null, function(err) {
-                expect(err).to.be.an(Error);
-                expect(err.code).to.be('EINVALIDVERSION');
+                ext_expect_expect(err).to.be.an(Error);
+                ext_expect_expect(err.code).to.be('EINVALIDVERSION');
             });
     });
 
     it('bumps with custom commit message', function() {
         mainPackage.prepareGit();
 
-        return helpers
+        return helpers_helpersjsjs
             .run(version, [
                 'patch',
                 { message: 'Bumping %s, because what' },
@@ -109,35 +108,35 @@ describe('bower version', function() {
             ])
             .then(function() {
                 var tags = mainPackage.git('tag');
-                expect(tags).to.be('v0.0.0\nv0.0.1\n');
+                ext_expect_expect(tags).to.be('v0.0.0\nv0.0.1\n');
                 var message = mainPackage.git(
                     'log',
                     '--pretty=format:%s',
                     '-n1'
                 );
-                expect(message).to.be('Bumping v0.0.1, because what');
+                ext_expect_expect(message).to.be('Bumping v0.0.1, because what');
             });
     });
 
     it('creates commit and tags', function() {
         mainPackage.prepareGit();
 
-        return helpers
+        return helpers_helpersjsjs
             .run(version, ['patch', {}, { cwd: mainPackage.path }])
             .then(function() {
                 var tags = mainPackage.git('tag');
-                expect(tags).to.be('v0.0.0\nv0.0.1\n');
+                ext_expect_expect(tags).to.be('v0.0.0\nv0.0.1\n');
                 var message = mainPackage.git(
                     'log',
                     '--pretty=format:%s',
                     '-n1'
                 );
-                expect(message).to.be('v0.0.1');
+                ext_expect_expect(message).to.be('v0.0.1');
             });
     });
 
     it('assumes v0.0.0 when no tags exist', function() {
-        var packageWithoutTags = new helpers.TempDir({});
+        var packageWithoutTags = new helpers_helpersjsjs.TempDir({});
 
         packageWithoutTags.prepareGit();
         packageWithoutTags.create({
@@ -146,10 +145,10 @@ describe('bower version', function() {
         packageWithoutTags.git('add', '-A');
         packageWithoutTags.git('commit', '-m"commit"');
 
-        return helpers
+        return helpers_helpersjsjs
             .run(version, ['major', {}, { cwd: packageWithoutTags.path }])
             .then(function() {
-                expect(packageWithoutTags.latestGitTag()).to.be('1.0.0');
+                ext_expect_expect(packageWithoutTags.latestGitTag()).to.be('1.0.0');
             });
     });
 });

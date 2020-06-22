@@ -1,14 +1,14 @@
-var fs = require('../../../lib/util/fs');
-var path = require('path');
-var Logger = require('bower-logger');
-var Resolver = require('../../../lib/core/resolvers/Resolver');
-var defaultConfig = require('../../../lib/config');
+import { fs as libutilfs_fsjs } from "../../../lib/util/fs";
+import ext_path_path from "path";
+import ext_bowerlogger_Logger from "bower-logger";
+import { Resolver as libcoreresolversResolver_Resolverjs } from "../../../lib/core/resolvers/Resolver";
+import { defaultConfig as libconfig_defaultConfigjs } from "../../../lib/config";
 
-var resolver = new Resolver({ source: 'foo' }, defaultConfig(), new Logger());
+var resolver = new libcoreresolversResolver_Resolverjs({ source: 'foo' }, libconfig_defaultConfigjs(), new ext_bowerlogger_Logger());
 resolver._createTempDir()
 .then(function (dir) {
     // Need to write something to prevent tmp to automatically
     // remove the temp dir (it removes if empty)
-    fs.writeFileSync(path.join(dir, 'some_file'), 'foo');
+    libutilfs_fsjs.writeFileSync(ext_path_path.join(dir, 'some_file'), 'foo');
 })
 .done();

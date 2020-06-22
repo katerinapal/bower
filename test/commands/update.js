@@ -1,22 +1,23 @@
-var expect = require('expect.js');
-var object = require('mout').object;
+import ext_expect_expect from "expect.js";
+import ext_mout_mout from "mout";
+import * as helpers_helpersjsjs from "../helpers";
+var object = ext_mout_mout.object;
 
-var helpers = require('../helpers');
-var updateCmd = helpers.command('update');
-var commands = helpers.require('lib/index').commands;
+var updateCmd = helpers_helpersjsjs.command('update');
+var commands = helpers_helpersjsjs.require('lib/index').commands;
 
 describe('bower update', function() {
     this.timeout(10000);
 
-    var tempDir = new helpers.TempDir();
+    var tempDir = new helpers_helpersjsjs.TempDir();
 
-    var subPackage = new helpers.TempDir({
+    var subPackage = new helpers_helpersjsjs.TempDir({
         'bower.json': {
             name: 'subPackage'
         }
     }).prepare();
 
-    var gitPackage = new helpers.TempDir();
+    var gitPackage = new helpers_helpersjsjs.TempDir();
 
     gitPackage.prepareGit({
         '1.0.0': {
@@ -36,7 +37,7 @@ describe('bower update', function() {
         }
     });
 
-    var mainPackage = new helpers.TempDir({
+    var mainPackage = new helpers_helpersjsjs.TempDir({
         'bower.json': {
             name: 'package'
         }
@@ -53,7 +54,7 @@ describe('bower update', function() {
     var update = function(packages, options, config) {
         var logger = updateLogger(packages, options, config);
 
-        return helpers.expectEvent(logger, 'end');
+        return helpers_helpersjsjs.expectEvent(logger, 'end');
     };
 
     var install = function(packages, options, config) {
@@ -63,11 +64,11 @@ describe('bower update', function() {
 
         var logger = commands.install(packages, options, config);
 
-        return helpers.expectEvent(logger, 'end');
+        return helpers_helpersjsjs.expectEvent(logger, 'end');
     };
 
     it('correctly reads arguments', function() {
-        expect(updateCmd.readOptions(['jquery', '-F', '-p'])).to.eql([
+        ext_expect_expect(updateCmd.readOptions(['jquery', '-F', '-p'])).to.eql([
             ['jquery'],
             { forceLatest: true, production: true }
         ]);
@@ -86,23 +87,23 @@ describe('bower update', function() {
         });
 
         return update().then(function() {
-            expect(
+            ext_expect_expect(
                 tempDir.exists('bower_components/package/bower.json')
             ).to.equal(true);
-            expect(
+            ext_expect_expect(
                 tempDir.read('bower_components/package/bower.json')
             ).to.contain('"name": "package"');
         });
     });
 
     it('does not install ignored dependencies', function() {
-        var package3 = new helpers.TempDir({
+        var package3 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package3'
             }
         }).prepare();
 
-        var package2 = new helpers.TempDir({
+        var package2 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package2',
                 dependencies: {
@@ -124,21 +125,21 @@ describe('bower update', function() {
         });
 
         return update().then(function() {
-            expect(
+            ext_expect_expect(
                 tempDir.exists('bower_components/package2/bower.json')
             ).to.equal(true);
-            expect(tempDir.exists('bower_components/package3')).to.equal(false);
+            ext_expect_expect(tempDir.exists('bower_components/package3')).to.equal(false);
         });
     });
 
     it('does not install ignored dependencies if run multiple times', function() {
-        var package3 = new helpers.TempDir({
+        var package3 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package3'
             }
         }).prepare();
 
-        var package2 = new helpers.TempDir({
+        var package2 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package2',
                 dependencies: {
@@ -161,10 +162,10 @@ describe('bower update', function() {
 
         return update().then(function() {
             return update().then(function() {
-                expect(
+                ext_expect_expect(
                     tempDir.exists('bower_components/package2/bower.json')
                 ).to.equal(true);
-                expect(tempDir.exists('bower_components/package3')).to.equal(
+                ext_expect_expect(tempDir.exists('bower_components/package3')).to.equal(
                     false
                 );
             });
@@ -190,7 +191,7 @@ describe('bower update', function() {
         });
 
         return update().then(function() {
-            expect(tempDir.read('preinstall.txt')).to.be('package');
+            ext_expect_expect(tempDir.read('preinstall.txt')).to.be('package');
         });
     });
 
@@ -213,7 +214,7 @@ describe('bower update', function() {
         });
 
         return update().then(function() {
-            expect(tempDir.read('postinstall.txt')).to.be('package');
+            ext_expect_expect(tempDir.read('postinstall.txt')).to.be('package');
         });
     });
 
@@ -239,7 +240,7 @@ describe('bower update', function() {
             tempDir.prepare();
 
             return update().then(function() {
-                expect(tempDir.exists('postinstall.txt')).to.be(false);
+                ext_expect_expect(tempDir.exists('postinstall.txt')).to.be(false);
             });
         });
     });
@@ -255,7 +256,7 @@ describe('bower update', function() {
         });
 
         return install().then(function() {
-            expect(
+            ext_expect_expect(
                 tempDir.read('bower_components/package/version.txt')
             ).to.contain('1.0.0');
 
@@ -269,7 +270,7 @@ describe('bower update', function() {
             });
 
             return update().then(function() {
-                expect(
+                ext_expect_expect(
                     tempDir.read('bower_components/package/version.txt')
                 ).to.contain('1.0.1');
             });
@@ -279,13 +280,13 @@ describe('bower update', function() {
     it('does not install ignored dependencies when updating a package', function() {
         this.timeout(15000);
 
-        var package3 = new helpers.TempDir({
+        var package3 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package3'
             }
         }).prepare();
 
-        var package2 = new helpers.TempDir().prepareGit({
+        var package2 = new helpers_helpersjsjs.TempDir().prepareGit({
             '1.0.0': {
                 'bower.json': {
                     name: 'package2',
@@ -319,10 +320,10 @@ describe('bower update', function() {
         });
 
         return install().then(function() {
-            expect(
+            ext_expect_expect(
                 tempDir.readJson('bower_components/package2/bower.json').version
             ).to.equal('1.0.0');
-            expect(tempDir.exists('bower_components/package3')).to.equal(false);
+            ext_expect_expect(tempDir.exists('bower_components/package3')).to.equal(false);
 
             tempDir.prepare({
                 'bower.json': {
@@ -337,11 +338,11 @@ describe('bower update', function() {
             });
 
             return update().then(function() {
-                expect(
+                ext_expect_expect(
                     tempDir.readJson('bower_components/package2/bower.json')
                         .version
                 ).to.equal('1.0.1');
-                expect(tempDir.exists('bower_components/package3')).to.equal(
+                ext_expect_expect(tempDir.exists('bower_components/package3')).to.equal(
                     false
                 );
             });
@@ -374,9 +375,9 @@ describe('bower update', function() {
                 }
             });
 
-            expect(tempDir.exists('preinstall.txt')).to.be(false);
+            ext_expect_expect(tempDir.exists('preinstall.txt')).to.be(false);
             return update().then(function() {
-                expect(tempDir.read('preinstall.txt')).to.be(
+                ext_expect_expect(tempDir.read('preinstall.txt')).to.be(
                     'subPackage package'
                 );
             });
@@ -411,9 +412,9 @@ describe('bower update', function() {
                 }
             });
 
-            expect(tempDir.exists('postinstall.txt')).to.be(false);
+            ext_expect_expect(tempDir.exists('postinstall.txt')).to.be(false);
             return update().then(function() {
-                expect(tempDir.read('postinstall.txt')).to.be(
+                ext_expect_expect(tempDir.read('postinstall.txt')).to.be(
                     'subPackage package'
                 );
             });

@@ -1,36 +1,36 @@
-var expect = require('expect.js');
-var path = require('path');
-var rimraf = require('../../lib/util/rimraf');
-var Logger = require('bower-logger');
-var Manager = require('../../lib/core/Manager');
-var defaultConfig = require('../../lib/config');
+import ext_expect_expect from "expect.js";
+import ext_path_path from "path";
+import { rimrafjs as libutilrimraf_rimrafjsjs } from "../../lib/util/rimraf";
+import ext_bowerlogger_Logger from "bower-logger";
+import { Manager as libcoreManager_Managerjs } from "../../lib/core/Manager";
+import { defaultConfig as libconfig_defaultConfigjs } from "../../lib/config";
 
 describe('Manager', function() {
     var manager;
 
-    var packagesCacheDir = path.join(__dirname, '../assets/temp-resolve-cache');
+    var packagesCacheDir = ext_path_path.join(__dirname, '../assets/temp-resolve-cache');
 
-    var registryCacheDir = path.join(
+    var registryCacheDir = ext_path_path.join(
         __dirname,
         '../assets/temp-registry-cache'
     );
 
     after(function() {
-        rimraf.sync(registryCacheDir);
-        rimraf.sync(packagesCacheDir);
+        libutilrimraf_rimrafjsjs.sync(registryCacheDir);
+        libutilrimraf_rimrafjsjs.sync(packagesCacheDir);
     });
 
     beforeEach(function(next) {
-        var logger = new Logger();
+        var logger = new ext_bowerlogger_Logger();
 
-        var config = defaultConfig({
+        var config = libconfig_defaultConfigjs({
             storage: {
                 packages: packagesCacheDir,
                 registry: registryCacheDir
             }
         });
 
-        manager = new Manager(config, logger);
+        manager = new libcoreManager_Managerjs(config, logger);
 
         next();
     });
@@ -51,7 +51,7 @@ describe('Manager', function() {
             };
 
             return manager.resolve().then(function() {
-                expect(manager._dissected).to.eql({
+                ext_expect_expect(manager._dissected).to.eql({
                     ember: {
                         target: '2.7.0',
                         pkgMeta: { version: '2.7.0' }
@@ -64,7 +64,7 @@ describe('Manager', function() {
     describe('_areCompatible', function() {
         describe('resolved is being fetched', function() {
             it('accepts endpoints with same targets', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: 'xxx' },
                         { name: 'bar', target: 'xxx' }
@@ -73,7 +73,7 @@ describe('Manager', function() {
             });
 
             it('rejects endpoints with different targets', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: 'xxx' },
                         { name: 'bar', target: 'yyy' }
@@ -82,7 +82,7 @@ describe('Manager', function() {
             });
 
             it('accepts with version and matching range', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: '0.1.2' },
                         { name: 'bar', target: '~0.1.0' }
@@ -91,7 +91,7 @@ describe('Manager', function() {
             });
 
             it('rejects with version and non-matching range', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: '0.1.2' },
                         { name: 'bar', target: '~0.1.3' }
@@ -100,7 +100,7 @@ describe('Manager', function() {
             });
 
             it('accepts with matching range and version', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: '~0.1.0' },
                         { name: 'bar', target: '0.1.2' }
@@ -109,7 +109,7 @@ describe('Manager', function() {
             });
 
             it('accepts with non-matching range and version', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: '~0.1.3' },
                         { name: 'bar', target: '0.1.2' }
@@ -118,7 +118,7 @@ describe('Manager', function() {
             });
 
             it('accepts with matching ranges', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: '~0.1.0' },
                         { name: 'bar', target: '~0.1.3' }
@@ -127,7 +127,7 @@ describe('Manager', function() {
             });
 
             it('rejects with non-matching ranges', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: '~0.1.0' },
                         { name: 'bar', target: '~0.2.3' }
@@ -136,7 +136,7 @@ describe('Manager', function() {
             });
 
             it('rejects with non-matching ranges', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: '~0.1.0' },
                         { name: 'bar', target: 'xxx' }
@@ -155,7 +155,7 @@ describe('Manager', function() {
             };
 
             it('accepts if the same version as resolved', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: '1.2.3' },
                         resolved
@@ -164,7 +164,7 @@ describe('Manager', function() {
             });
 
             it('rejects if different version than resolved', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: '1.2.4' },
                         resolved
@@ -173,7 +173,7 @@ describe('Manager', function() {
             });
 
             it('accepts if range matches resolved version', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: '~1.2.1' },
                         resolved
@@ -182,7 +182,7 @@ describe('Manager', function() {
             });
 
             it('rejects if range does not match', function() {
-                expect(
+                ext_expect_expect(
                     manager._areCompatible(
                         { name: 'foo', target: '~1.2.4' },
                         resolved
@@ -199,7 +199,7 @@ describe('Manager', function() {
                 'highest'
             );
 
-            expect(highest).to.eql({
+            ext_expect_expect(highest).to.eql({
                 version: '3.2.0',
                 comparator: '<'
             });
@@ -211,7 +211,7 @@ describe('Manager', function() {
                 'lowest'
             );
 
-            expect(highest).to.eql({
+            ext_expect_expect(highest).to.eql({
                 version: '2.1.1-0',
                 comparator: ''
             });
@@ -220,7 +220,7 @@ describe('Manager', function() {
         it('defaults to highest bound', function() {
             var highest = manager._getCap(['1.0.0', '2.0.0']);
 
-            expect(highest).to.eql({
+            ext_expect_expect(highest).to.eql({
                 version: '2.0.0',
                 comparator: ''
             });
@@ -229,7 +229,7 @@ describe('Manager', function() {
         it('ignores non-semver elements', function() {
             var highest = manager._getCap(['0.9', '>1.0.1', ['<1.0.0', 'lol']]);
 
-            expect(highest).to.eql({
+            ext_expect_expect(highest).to.eql({
                 version: '1.0.1',
                 comparator: '>'
             });
@@ -240,7 +240,7 @@ describe('Manager', function() {
                 ['0.9'] // Not a semver
             );
 
-            expect(highest).to.eql({});
+            ext_expect_expect(highest).to.eql({});
         });
     });
 
@@ -250,7 +250,7 @@ describe('Manager', function() {
                 { name: 'foo', id: 1 },
                 { name: 'foo', id: 2 }
             ]);
-            expect(unique).to.eql([{ name: 'foo', id: 2 }]);
+            ext_expect_expect(unique).to.eql([{ name: 'foo', id: 2 }]);
         });
 
         it('compares by name first', function() {
@@ -259,7 +259,7 @@ describe('Manager', function() {
                 { name: 'foo', source: 'facebook.com' }
             ]);
 
-            expect(unique).to.eql([{ name: 'foo', source: 'facebook.com' }]);
+            ext_expect_expect(unique).to.eql([{ name: 'foo', source: 'facebook.com' }]);
         });
 
         it('compares by source if name is not available', function() {
@@ -268,7 +268,7 @@ describe('Manager', function() {
                 { source: 'facebook.com' }
             ]);
 
-            expect(unique).to.eql([{ source: 'facebook.com' }]);
+            ext_expect_expect(unique).to.eql([{ source: 'facebook.com' }]);
         });
 
         it('leaves different targets intact', function() {
@@ -277,7 +277,7 @@ describe('Manager', function() {
                 { source: 'facebook.com', target: 'ffffff' }
             ]);
 
-            expect(unique).to.eql([
+            ext_expect_expect(unique).to.eql([
                 { source: 'facebook.com', target: 'a1b2c3' },
                 { source: 'facebook.com', target: 'ffffff' }
             ]);
@@ -289,7 +289,7 @@ describe('Manager', function() {
                 { source: 'facebook.com', target: 'ffffff' }
             ]);
 
-            expect(unique).to.eql([
+            ext_expect_expect(unique).to.eql([
                 { source: 'facebook.com', target: 'ffffff' }
             ]);
         });
@@ -300,7 +300,7 @@ describe('Manager', function() {
                 { source: 'facebook.com', bar: 13 }
             ]);
 
-            expect(unique).to.eql([{ source: 'facebook.com', bar: 13 }]);
+            ext_expect_expect(unique).to.eql([{ source: 'facebook.com', bar: 13 }]);
         });
     });
 });

@@ -1,22 +1,23 @@
-var expect = require('expect.js');
-var path = require('path');
-var helpers = require('../helpers');
-var nock = require('nock');
-var rimraf = require('rimraf');
-var fs = require('../../lib/util/fs');
-var tar = require('tar-fs');
-var destroy = require('destroy');
-var Q = require('q');
+import ext_expect_expect from "expect.js";
+import ext_path_path from "path";
+import * as helpers_helpersjsjs from "../helpers";
+import ext_nock_nock from "nock";
+import ext_rimraf_rimraf from "rimraf";
+import { fs as libutilfs_fsjs } from "../../lib/util/fs";
+import ext_tarfs_tar from "tar-fs";
+import ext_destroy_destroy from "destroy";
+import ext_q_Q from "q";
+import ext_fs_fs from "fs";
 
 describe('bower install', function() {
-    var tempDir = new helpers.TempDir();
+    var tempDir = new helpers_helpersjsjs.TempDir();
 
-    var install = helpers.command('install', {
+    var install = helpers_helpersjsjs.command('install', {
         cwd: tempDir.path
     });
 
     it('correctly reads arguments', function() {
-        expect(
+        ext_expect_expect(
             install.readOptions([
                 'jquery',
                 'angular',
@@ -39,7 +40,7 @@ describe('bower install', function() {
     });
 
     it('correctly reads long arguments', function() {
-        expect(
+        ext_expect_expect(
             install.readOptions([
                 'jquery',
                 'angular',
@@ -61,13 +62,13 @@ describe('bower install', function() {
         ]);
     });
 
-    var mainPackage = new helpers.TempDir({
+    var mainPackage = new helpers_helpersjsjs.TempDir({
         'bower.json': {
             name: 'package'
         }
     }).prepare();
 
-    var gitPackage = new helpers.TempDir();
+    var gitPackage = new helpers_helpersjsjs.TempDir();
 
     gitPackage.prepareGit({
         '1.0.0': {
@@ -93,7 +94,7 @@ describe('bower install', function() {
             }
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .run(install, [
                 [mainPackage.path],
                 {
@@ -101,7 +102,7 @@ describe('bower install', function() {
                 }
             ])
             .then(function() {
-                expect(tempDir.read('bower.json')).to.contain('dependencies');
+                ext_expect_expect(tempDir.read('bower.json')).to.contain('dependencies');
             });
     });
 
@@ -114,8 +115,8 @@ describe('bower install', function() {
             }
         });
 
-        return helpers.run(install, [[mainPackage.path], {}]).then(function() {
-            expect(tempDir.read('bower.json')).to.not.contain('dependencies');
+        return helpers_helpersjsjs.run(install, [[mainPackage.path], {}]).then(function() {
+            ext_expect_expect(tempDir.read('bower.json')).to.not.contain('dependencies');
         });
     });
 
@@ -128,7 +129,7 @@ describe('bower install', function() {
             }
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .run(install, [
                 [mainPackage.path],
                 {},
@@ -137,7 +138,7 @@ describe('bower install', function() {
                 }
             ])
             .then(function() {
-                expect(tempDir.read('bower.json')).to.contain('dependencies');
+                ext_expect_expect(tempDir.read('bower.json')).to.contain('dependencies');
             });
     });
 
@@ -155,7 +156,7 @@ describe('bower install', function() {
             }
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .run(install, [
                 [mainPackage.path],
                 {
@@ -164,7 +165,7 @@ describe('bower install', function() {
                 }
             ])
             .then(function() {
-                expect(
+                ext_expect_expect(
                     tempDir.readJson('bower.json').dependencies.package
                 ).to.equal(mainPackage.path + '#1.2.3');
             });
@@ -184,7 +185,7 @@ describe('bower install', function() {
             }
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .run(install, [
                 [mainPackage.path],
                 {},
@@ -194,7 +195,7 @@ describe('bower install', function() {
                 }
             ])
             .then(function() {
-                expect(
+                ext_expect_expect(
                     tempDir.readJson('bower.json').dependencies.package
                 ).to.equal(mainPackage.path + '#1.2.3');
             });
@@ -214,7 +215,7 @@ describe('bower install', function() {
             }
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .run(install, [
                 [mainPackage.path],
                 {
@@ -223,7 +224,7 @@ describe('bower install', function() {
                 }
             ])
             .then(function() {
-                expect(
+                ext_expect_expect(
                     tempDir.readJson('bower.json').devDependencies.package
                 ).to.equal(mainPackage.path + '#0.1.0');
             });
@@ -243,7 +244,7 @@ describe('bower install', function() {
             }
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .run(install, [
                 [mainPackage.path],
                 {
@@ -254,7 +255,7 @@ describe('bower install', function() {
                 }
             ])
             .then(function() {
-                expect(
+                ext_expect_expect(
                     tempDir.readJson('bower.json').devDependencies.package
                 ).to.equal(mainPackage.path + '#0.1.0');
             });
@@ -277,8 +278,8 @@ describe('bower install', function() {
             }
         });
 
-        return helpers.run(install).then(function() {
-            expect(tempDir.read('assets/package/foo')).to.be('bar');
+        return helpers_helpersjsjs.run(install).then(function() {
+            ext_expect_expect(tempDir.read('assets/package/foo')).to.be('bar');
         });
     });
 
@@ -299,17 +300,17 @@ describe('bower install', function() {
             }
         });
 
-        return helpers.run(install).then(function() {
-            expect(
-                require('fs')
+        return helpers_helpersjsjs.run(install).then(function() {
+            ext_expect_expect(
+                ext_fs_fs
                     .readFileSync(
                         '/tmp/bower-absolute-destination-directory/package/foo',
                         'utf8'
                     )
                     .toString()
             ).to.be('bar');
-            var deferred = Q.defer();
-            rimraf('/tmp/bower-absolute-destination-directory', function(err) {
+            var deferred = ext_q_Q.defer();
+            ext_rimraf_rimraf('/tmp/bower-absolute-destination-directory', function(err) {
                 if (err) {
                     deferred.reject(err);
                 } else {
@@ -338,8 +339,8 @@ describe('bower install', function() {
             }
         });
 
-        return helpers.run(install).then(function() {
-            expect(tempDir.read('preinstall.txt')).to.be('package');
+        return helpers_helpersjsjs.run(install).then(function() {
+            ext_expect_expect(tempDir.read('preinstall.txt')).to.be('package');
         });
     });
 
@@ -361,8 +362,8 @@ describe('bower install', function() {
             }
         });
 
-        return helpers.run(install).then(function() {
-            expect(tempDir.read('postinstall.txt')).to.be('package');
+        return helpers_helpersjsjs.run(install).then(function() {
+            ext_expect_expect(tempDir.read('postinstall.txt')).to.be('package');
         });
     });
 
@@ -382,8 +383,8 @@ describe('bower install', function() {
             }
         });
 
-        return helpers.run(install).then(function() {
-            expect(tempDir.exists('hooks.txt')).to.be(false);
+        return helpers_helpersjsjs.run(install).then(function() {
+            ext_expect_expect(tempDir.exists('hooks.txt')).to.be(false);
         });
     });
 
@@ -402,7 +403,7 @@ describe('bower install', function() {
             }
         });
 
-        return helpers
+        return helpers_helpersjsjs
             .run(install, [
                 [mainPackage.path],
                 {
@@ -410,7 +411,7 @@ describe('bower install', function() {
                 }
             ])
             .then(function() {
-                expect(tempDir.read('hook.txt')).to.contain('dependencies');
+                ext_expect_expect(tempDir.read('hook.txt')).to.contain('dependencies');
             });
     });
 
@@ -432,7 +433,7 @@ describe('bower install', function() {
         });
         var lastAction = null;
 
-        helpers
+        helpers_helpersjsjs
             .run(install)
             .logger.intercept(function(log) {
                 if (log.level === 'action') {
@@ -440,7 +441,7 @@ describe('bower install', function() {
                 }
             })
             .on('end', function() {
-                expect(lastAction.message).to.be('foobar');
+                ext_expect_expect(lastAction.message).to.be('foobar');
                 next();
             });
     });
@@ -459,10 +460,10 @@ describe('bower install', function() {
             }
         });
 
-        return helpers.run(install).then(function() {
-            var packageFiles = fs.readdirSync(mainPackage.path);
+        return helpers_helpersjsjs.run(install).then(function() {
+            var packageFiles = libutilfs_fsjs.readdirSync(mainPackage.path);
             //presence of .git file implies folder was not overwritten
-            expect(packageFiles).to.contain('.git');
+            ext_expect_expect(packageFiles).to.contain('.git');
         });
     });
 
@@ -491,15 +492,15 @@ describe('bower install', function() {
             }
         });
 
-        return helpers.run(install).then(function() {
-            expect(
+        return helpers_helpersjsjs.run(install).then(function() {
+            ext_expect_expect(
                 tempDir.read('bower_components/package/version.txt')
             ).to.contain('1.0.0');
         });
     });
 
     it('works for dependencies that point to tar files', function() {
-        var packageDir = path.join(__dirname, '../assets/package-tar.tar');
+        var packageDir = ext_path_path.join(__dirname, '../assets/package-tar.tar');
         tempDir.prepare({
             'bower.json': {
                 name: 'test',
@@ -509,8 +510,8 @@ describe('bower install', function() {
             }
         });
 
-        return helpers.run(install).then(function() {
-            expect(
+        return helpers_helpersjsjs.run(install).then(function() {
+            ext_expect_expect(
                 tempDir.read('bower_components/package/index.txt')
             ).to.contain('1.0.0');
         });
@@ -518,13 +519,13 @@ describe('bower install', function() {
 
     it('does not install ignored dependencies', function() {
         mainPackage.prepare();
-        var package2 = new helpers.TempDir({
+        var package2 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package2'
             }
         }).prepare();
 
-        var package3 = new helpers.TempDir({
+        var package3 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package3',
                 dependencies: {
@@ -546,21 +547,21 @@ describe('bower install', function() {
             }
         });
 
-        return helpers.run(install).then(function() {
-            expect(tempDir.exists('bower_components/package')).to.be(false);
-            expect(tempDir.exists('bower_components/package2')).to.be(true);
+        return helpers_helpersjsjs.run(install).then(function() {
+            ext_expect_expect(tempDir.exists('bower_components/package')).to.be(false);
+            ext_expect_expect(tempDir.exists('bower_components/package2')).to.be(true);
         });
     });
 
     it('does not install ignored dependencies if run multiple times', function() {
         mainPackage.prepare();
-        var package2 = new helpers.TempDir({
+        var package2 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package2'
             }
         }).prepare();
 
-        var package3 = new helpers.TempDir({
+        var package3 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package3',
                 dependencies: {
@@ -581,17 +582,17 @@ describe('bower install', function() {
                 ignoredDependencies: ['package']
             }
         });
-        return helpers.run(install).then(function() {
-            return helpers.run(install).then(function() {
-                expect(tempDir.exists('bower_components/package')).to.be(false);
-                expect(tempDir.exists('bower_components/package2')).to.be(true);
+        return helpers_helpersjsjs.run(install).then(function() {
+            return helpers_helpersjsjs.run(install).then(function() {
+                ext_expect_expect(tempDir.exists('bower_components/package')).to.be(false);
+                ext_expect_expect(tempDir.exists('bower_components/package2')).to.be(true);
             });
         });
     });
 
     it('works if packages reference each other locally', function() {
         mainPackage.prepare();
-        var package2 = new helpers.TempDir({
+        var package2 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package2',
                 dependencies: {
@@ -599,7 +600,7 @@ describe('bower install', function() {
                 }
             }
         }).prepare();
-        var package3 = new helpers.TempDir({
+        var package3 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package3',
                 dependencies: {
@@ -608,25 +609,25 @@ describe('bower install', function() {
             }
         }).prepare();
 
-        var installPackage = helpers.command('install', {
+        var installPackage = helpers_helpersjsjs.command('install', {
             cwd: mainPackage.path
         });
-        var installPackage2 = helpers.command('install', {
+        var installPackage2 = helpers_helpersjsjs.command('install', {
             cwd: package2.path
         });
-        var installPackage3 = helpers.command('install', {
+        var installPackage3 = helpers_helpersjsjs.command('install', {
             cwd: package3.path
         });
-        return helpers.run(installPackage).then(function() {
-            return helpers.run(installPackage2).then(function() {
-                return helpers.run(installPackage3).then(function() {
-                    expect(package2.exists('bower_components/package')).to.be(
+        return helpers_helpersjsjs.run(installPackage).then(function() {
+            return helpers_helpersjsjs.run(installPackage2).then(function() {
+                return helpers_helpersjsjs.run(installPackage3).then(function() {
+                    ext_expect_expect(package2.exists('bower_components/package')).to.be(
                         true
                     );
-                    expect(package3.exists('bower_components/package2')).to.be(
+                    ext_expect_expect(package3.exists('bower_components/package2')).to.be(
                         true
                     );
-                    expect(package3.exists('bower_components/package')).to.be(
+                    ext_expect_expect(package3.exists('bower_components/package')).to.be(
                         true
                     );
                 });
@@ -636,16 +637,16 @@ describe('bower install', function() {
 
     it('works if packages are nested and reference each other locally', function() {
         // root directory for nested components
-        var rootDir = new helpers.TempDir().prepare();
+        var rootDir = new helpers_helpersjsjs.TempDir().prepare();
 
-        var package1 = new helpers.TempDir({
+        var package1 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package'
             }
         });
-        package1.path = path.join(rootDir.path, 'src/a/b');
+        package1.path = ext_path_path.join(rootDir.path, 'src/a/b');
         package1.prepare();
-        var package2 = new helpers.TempDir({
+        var package2 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package2',
                 dependencies: {
@@ -653,9 +654,9 @@ describe('bower install', function() {
                 }
             }
         });
-        package2.path = path.join(rootDir.path, 'src/a');
+        package2.path = ext_path_path.join(rootDir.path, 'src/a');
         package2.create(); // run create to avoid deleting nested directories
-        var package3 = new helpers.TempDir({
+        var package3 = new helpers_helpersjsjs.TempDir({
             'bower.json': {
                 name: 'package3',
                 dependencies: {
@@ -666,25 +667,25 @@ describe('bower install', function() {
         package3.path = rootDir.path;
         package3.create(); // run create to avoid deleting nested directories
 
-        var installPackage = helpers.command('install', {
+        var installPackage = helpers_helpersjsjs.command('install', {
             cwd: package1.path
         });
-        var installPackage2 = helpers.command('install', {
+        var installPackage2 = helpers_helpersjsjs.command('install', {
             cwd: package2.path
         });
-        var installPackage3 = helpers.command('install', {
+        var installPackage3 = helpers_helpersjsjs.command('install', {
             cwd: package3.path
         });
-        return helpers.run(installPackage).then(function() {
-            return helpers.run(installPackage2).then(function() {
-                return helpers.run(installPackage3).then(function() {
-                    expect(package2.exists('bower_components/package')).to.be(
+        return helpers_helpersjsjs.run(installPackage).then(function() {
+            return helpers_helpersjsjs.run(installPackage2).then(function() {
+                return helpers_helpersjsjs.run(installPackage3).then(function() {
+                    ext_expect_expect(package2.exists('bower_components/package')).to.be(
                         true
                     );
-                    expect(package3.exists('bower_components/package2')).to.be(
+                    ext_expect_expect(package3.exists('bower_components/package2')).to.be(
                         true
                     );
-                    expect(package3.exists('bower_components/package')).to.be(
+                    ext_expect_expect(package3.exists('bower_components/package')).to.be(
                         true
                     );
                 });
@@ -704,22 +705,22 @@ describe('bower install', function() {
             }
         });
 
-        var install = helpers.command('install', {
+        var install = helpers_helpersjsjs.command('install', {
             cwd: tempDir.path
         });
 
-        nock('http://dummy.local')
+        ext_nock_nock('http://dummy.local')
             .get('http://github.com/yahoo/pure/archive/v0.6.0.tar.gz')
             .reply(500);
 
-        return helpers
+        return helpers_helpersjsjs
             .run(install, [
                 undefined,
                 undefined,
                 { proxy: 'http://dummy.local/' }
             ])
             .fail(function(error) {
-                expect(error.message).to.equal('Status code of 500');
+                ext_expect_expect(error.message).to.equal('Status code of 500');
                 done();
             });
     });
@@ -731,14 +732,14 @@ describe('bower install', function() {
             }
         });
 
-        return helpers.run(install).fail(function(error) {
-            expect(error.code).to.equal('ENOTDIR');
+        return helpers_helpersjsjs.run(install).fail(function(error) {
+            ext_expect_expect(error.code).to.equal('ENOTDIR');
         });
     });
 
     it('works if the package is a compressed single directory containing another directory with the same name', function() {
-        var mainPackageBaseName = path.basename(mainPackage.path);
-        var parentDir = path.dirname(mainPackage.path);
+        var mainPackageBaseName = ext_path_path.basename(mainPackage.path);
+        var parentDir = ext_path_path.dirname(mainPackage.path);
 
         // Setup the main package with a directory with the same name
         var mainPackageFiles = {};
@@ -746,13 +747,13 @@ describe('bower install', function() {
         mainPackage.prepare(mainPackageFiles);
 
         // Create an archive containing the main package
-        var archiveDeferred = Q.defer();
-        var archivePath = path.join(parentDir, mainPackageBaseName + '.tar');
-        var stream = tar.pack(parentDir, { entries: [mainPackageBaseName] });
+        var archiveDeferred = ext_q_Q.defer();
+        var archivePath = ext_path_path.join(parentDir, mainPackageBaseName + '.tar');
+        var stream = ext_tarfs_tar.pack(parentDir, { entries: [mainPackageBaseName] });
         stream
-            .pipe(fs.createWriteStream(archivePath))
+            .pipe(libutilfs_fsjs.createWriteStream(archivePath))
             .on('finish', function(result) {
-                destroy(stream);
+                ext_destroy_destroy(stream);
                 archiveDeferred.resolve(result);
             });
 
@@ -765,12 +766,12 @@ describe('bower install', function() {
 
         return archiveDeferred.promise
             .then(function() {
-                return helpers.run(install, [[archivePath]]);
+                return helpers_helpersjsjs.run(install, [[archivePath]]);
             })
             .then(function() {
-                expect(
+                ext_expect_expect(
                     tempDir.read(
-                        path.join(
+                        ext_path_path.join(
                             'bower_components',
                             'package',
                             mainPackageBaseName,
@@ -782,19 +783,19 @@ describe('bower install', function() {
     });
 
     it('works if the package is an archive containing a file with an identical name', function() {
-        var parentDir = path.dirname(mainPackage.path);
+        var parentDir = ext_path_path.dirname(mainPackage.path);
 
         mainPackage.prepare({
             'package.tar': 'test'
         });
 
-        var archiveDeferred = Q.defer();
-        var archivePath = path.join(parentDir, 'package.tar');
-        var stream = tar.pack(mainPackage.path);
+        var archiveDeferred = ext_q_Q.defer();
+        var archivePath = ext_path_path.join(parentDir, 'package.tar');
+        var stream = ext_tarfs_tar.pack(mainPackage.path);
         stream
-            .pipe(fs.createWriteStream(archivePath))
+            .pipe(libutilfs_fsjs.createWriteStream(archivePath))
             .on('finish', function(result) {
-                destroy(stream);
+                ext_destroy_destroy(stream);
                 archiveDeferred.resolve(result);
             });
 
@@ -806,18 +807,18 @@ describe('bower install', function() {
 
         return archiveDeferred.promise
             .then(function() {
-                return helpers.run(install, [[archivePath]]);
+                return helpers_helpersjsjs.run(install, [[archivePath]]);
             })
             .then(function() {
-                expect(
+                ext_expect_expect(
                     tempDir.read(
-                        path.join('bower_components', 'package', 'package.tar')
+                        ext_path_path.join('bower_components', 'package', 'package.tar')
                     )
                 ).to.contain('test');
             });
     });
     it('should handle @ as a divider', function() {
-        return helpers
+        return helpers_helpersjsjs
             .run(install, [
                 ['empty@1.0.1'],
                 {
@@ -825,7 +826,7 @@ describe('bower install', function() {
                 }
             ])
             .then(function() {
-                expect(tempDir.readJson('bower.json').dependencies).to.eql({
+                ext_expect_expect(tempDir.readJson('bower.json').dependencies).to.eql({
                     empty: '1.0.1'
                 });
             });

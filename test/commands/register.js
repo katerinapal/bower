@@ -1,14 +1,14 @@
-var Q = require('q');
-var expect = require('expect.js');
-var helpers = require('../helpers');
+import ext_q_Q from "q";
+import ext_expect_expect from "expect.js";
+import * as helpers_helpersjsjs from "../helpers";
 
-var register = helpers.command('register');
+var register = helpers_helpersjsjs.command('register');
 
 var fakeRepositoryFactory = function(canonicalDir, pkgMeta) {
     function FakeRepository() {}
 
     FakeRepository.prototype.fetch = function() {
-        return Q.fcall(function() {
+        return ext_q_Q.fcall(function() {
             return [canonicalDir, pkgMeta];
         });
     };
@@ -24,10 +24,10 @@ var fakeRepositoryFactory = function(canonicalDir, pkgMeta) {
     return FakeRepository;
 };
 
-var register = helpers.command('register');
+var register = helpers_helpersjsjs.command('register');
 
 var registerFactory = function(canonicalDir, pkgMeta) {
-    return helpers.command('register', {
+    return helpers_helpersjsjs.command('register', {
         '../core/PackageRepository': fakeRepositoryFactory(
             canonicalDir,
             pkgMeta
@@ -36,30 +36,30 @@ var registerFactory = function(canonicalDir, pkgMeta) {
 };
 
 describe('bower register', function() {
-    var mainPackage = new helpers.TempDir({
+    var mainPackage = new helpers_helpersjsjs.TempDir({
         'bower.json': {
             name: 'package'
         }
     });
 
     it('correctly reads arguments', function() {
-        expect(register.readOptions(['jquery', 'url'])).to.eql([
+        ext_expect_expect(register.readOptions(['jquery', 'url'])).to.eql([
             'jquery',
             'url'
         ]);
     });
 
     it('errors if name is not provided', function() {
-        return helpers.run(register).fail(function(reason) {
-            expect(reason.message).to.be('Usage: bower register <name> <url>');
-            expect(reason.code).to.be('EINVFORMAT');
+        return helpers_helpersjsjs.run(register).fail(function(reason) {
+            ext_expect_expect(reason.message).to.be('Usage: bower register <name> <url>');
+            ext_expect_expect(reason.code).to.be('EINVFORMAT');
         });
     });
 
     it('errors if url is not provided', function() {
-        return helpers.run(register, ['some-name']).fail(function(reason) {
-            expect(reason.message).to.be('Usage: bower register <name> <url>');
-            expect(reason.code).to.be('EINVFORMAT');
+        return helpers_helpersjsjs.run(register, ['some-name']).fail(function(reason) {
+            ext_expect_expect(reason.message).to.be('Usage: bower register <name> <url>');
+            ext_expect_expect(reason.code).to.be('EINVFORMAT');
         });
     });
 
@@ -67,13 +67,13 @@ describe('bower register', function() {
         mainPackage.prepare({ 'bower.json': { private: true } });
 
         var register = registerFactory(mainPackage.path, mainPackage.meta());
-        return helpers
+        return helpers_helpersjsjs
             .run(register, ['some-name', 'git://fake-url.git'])
             .fail(function(reason) {
-                expect(reason.message).to.be(
+                ext_expect_expect(reason.message).to.be(
                     'The package you are trying to register is marked as private'
                 );
-                expect(reason.code).to.be('EPRIV');
+                ext_expect_expect(reason.code).to.be('EPRIV');
             });
     });
 
@@ -81,10 +81,10 @@ describe('bower register', function() {
         mainPackage.prepare();
 
         var register = registerFactory(mainPackage.path, mainPackage.meta());
-        return helpers
+        return helpers_helpersjsjs
             .run(register, ['some-name', 'git://fake-url.git'])
             .spread(function(result) {
-                expect(result).to.eql({
+                ext_expect_expect(result).to.eql({
                     // Result from register action on stub
                     name: 'some-name',
                     url: 'git://fake-url.git'
@@ -96,10 +96,10 @@ describe('bower register', function() {
         mainPackage.prepare();
 
         var register = registerFactory(mainPackage.path, mainPackage.meta());
-        return helpers
+        return helpers_helpersjsjs
             .run(register, ['some-name', 'some-name/repo'])
             .spread(function(result) {
-                expect(result).to.eql({
+                ext_expect_expect(result).to.eql({
                     // Result from register action on stub
                     name: 'some-name',
                     url: 'git@github.com:some-name/repo.git'
@@ -111,10 +111,10 @@ describe('bower register', function() {
         mainPackage.prepare();
 
         var register = registerFactory(mainPackage.path, mainPackage.meta());
-        return helpers
+        return helpers_helpersjsjs
             .run(register, ['some-name', 'a/b'])
             .spread(function(result) {
-                expect(result).to.eql({
+                ext_expect_expect(result).to.eql({
                     // Result from register action on stub
                     name: 'some-name',
                     url: 'git@github.com:a/b.git'
@@ -127,20 +127,20 @@ describe('bower register', function() {
 
         var register = registerFactory(mainPackage.path, mainPackage.meta());
 
-        var promise = helpers.run(register, [
+        var promise = helpers_helpersjsjs.run(register, [
             'some-name',
             'git://fake-url.git',
             { interactive: true }
         ]);
 
-        return helpers
+        return helpers_helpersjsjs
             .expectEvent(promise.logger, 'confirm')
             .spread(function(e) {
-                expect(e.type).to.be('confirm');
-                expect(e.message).to.be(
+                ext_expect_expect(e.type).to.be('confirm');
+                ext_expect_expect(e.message).to.be(
                     'Registering a package will make it installable via the registry (https://registry.bower.io), continue?'
                 );
-                expect(e.default).to.be(true);
+                ext_expect_expect(e.default).to.be(true);
             });
     });
 
@@ -149,7 +149,7 @@ describe('bower register', function() {
 
         var register = registerFactory(mainPackage.path, mainPackage.meta());
 
-        return helpers.run(register, [
+        return helpers_helpersjsjs.run(register, [
             'some-name',
             'git://fake-url.git',
             { interactive: true, force: true }

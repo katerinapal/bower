@@ -1,43 +1,43 @@
-var expect = require('expect.js');
-var Q = require('q');
-var path = require('path');
-var mout = require('mout');
-var fs = require('../../lib/util/fs');
-var rimraf = require('../../lib/util/rimraf');
-var RegistryClient = require('bower-registry-client');
-var Logger = require('bower-logger');
-var proxyquire = require('proxyquire');
-var defaultConfig = require('../../lib/config');
-var ResolveCache = require('../../lib/core/ResolveCache');
-var resolvers = require('../../lib/core/resolvers');
-var copy = require('../../lib/util/copy');
-var helpers = require('../helpers');
+import ext_expect_expect from "expect.js";
+import ext_q_Q from "q";
+import ext_path_path from "path";
+import ext_mout_mout from "mout";
+import { fs as libutilfs_fsjs } from "../../lib/util/fs";
+import { rimrafjs as libutilrimraf_rimrafjsjs } from "../../lib/util/rimraf";
+import ext_bowerregistryclient_RegistryClient from "bower-registry-client";
+import ext_bowerlogger_Logger from "bower-logger";
+import ext_proxyquire_proxyquire from "proxyquire";
+import { defaultConfig as libconfig_defaultConfigjs } from "../../lib/config";
+import { ResolveCache as libcoreResolveCache_ResolveCachejs } from "../../lib/core/ResolveCache";
+import { indexjs as libcoreindex_indexjsjs } from "../../lib/core/resolvers";
+import { copyDir as libutilcopy_copyDirjs } from "../../lib/util/copy";
+import * as helpers_localSourcejs from "../helpers";
 
 describe('PackageRepository', function() {
     var packageRepository;
     var resolver;
     var resolverFactoryHook;
     var resolverFactoryClearHook;
-    var testPackage = path.resolve(__dirname, '../assets/package-a');
-    var tempPackage = path.resolve(__dirname, '../tmp/temp-package');
-    var packagesCacheDir = path.join(__dirname, '../tmp/temp-resolve-cache');
-    var registryCacheDir = path.join(__dirname, '../tmp/temp-registry-cache');
-    var mockSource = helpers.localSource(testPackage);
+    var testPackage = ext_path_path.resolve(__dirname, '../assets/package-a');
+    var tempPackage = ext_path_path.resolve(__dirname, '../tmp/temp-package');
+    var packagesCacheDir = ext_path_path.join(__dirname, '../tmp/temp-resolve-cache');
+    var registryCacheDir = ext_path_path.join(__dirname, '../tmp/temp-registry-cache');
+    var mockSource = helpers_localSourcejs.localSource(testPackage);
 
     var forceCaching = true;
 
     after(function() {
-        rimraf.sync(registryCacheDir);
-        rimraf.sync(packagesCacheDir);
+        libutilrimraf_rimrafjsjs.sync(registryCacheDir);
+        libutilrimraf_rimrafjsjs.sync(packagesCacheDir);
     });
 
     beforeEach(function(next) {
         var PackageRepository;
         var config;
-        var logger = new Logger();
+        var logger = new ext_bowerlogger_Logger();
 
         // Config
-        config = defaultConfig({
+        config = libconfig_defaultConfigjs({
             storage: {
                 packages: packagesCacheDir,
                 registry: registryCacheDir
@@ -49,14 +49,14 @@ describe('PackageRepository', function() {
             var _config = options.config;
             var _logger = options.logger;
 
-            expect(_config).to.eql(config);
-            expect(_logger).to.be.an(Logger);
-            expect(_registryClient).to.be.an(RegistryClient);
+            ext_expect_expect(_config).to.eql(config);
+            ext_expect_expect(_logger).to.be.an(ext_bowerlogger_Logger);
+            ext_expect_expect(_registryClient).to.be.an(ext_bowerregistryclient_RegistryClient);
 
-            decEndpoint = mout.object.deepMixIn({}, decEndpoint);
+            decEndpoint = ext_mout_mout.object.deepMixIn({}, decEndpoint);
             decEndpoint.source = mockSource;
 
-            resolver = new resolvers.GitRemote(decEndpoint, _config, _logger);
+            resolver = new libcoreindex_indexjsjs.GitRemote(decEndpoint, _config, _logger);
 
             if (forceCaching) {
                 // Force to use cache even for local resources
@@ -67,13 +67,13 @@ describe('PackageRepository', function() {
 
             resolverFactoryHook(resolver);
 
-            return Q.resolve(resolver);
+            return ext_q_Q.resolve(resolver);
         }
         resolverFactory.getConstructor = function() {
-            return Q.resolve([
-                resolvers.GitRemote,
+            return ext_q_Q.resolve([
+                libcoreindex_indexjsjs.GitRemote,
                 {
-                    source: helpers.localSource(testPackage)
+                    source: helpers_localSourcejs.localSource(testPackage)
                 }
             ]);
         };
@@ -81,7 +81,7 @@ describe('PackageRepository', function() {
             resolverFactoryClearHook();
         };
 
-        PackageRepository = proxyquire('../../lib/core/PackageRepository', {
+        PackageRepository = ext_proxyquire_proxyquire('../../lib/core/PackageRepository', {
             './resolverFactory': resolverFactory
         });
         packageRepository = new PackageRepository(config, logger);
@@ -90,7 +90,7 @@ describe('PackageRepository', function() {
         resolverFactoryHook = resolverFactoryClearHook = function() {};
 
         // Remove temp package
-        rimraf.sync(tempPackage);
+        libutilrimraf_rimrafjsjs.sync(tempPackage);
 
         // Clear the repository
         packageRepository.clear().then(next.bind(next, null), next);
@@ -98,7 +98,7 @@ describe('PackageRepository', function() {
 
     describe('.constructor', function() {
         it('should pass the config correctly to the registry client, including its cache folder', function() {
-            expect(packageRepository._registryClient._config.cache).to.equal(
+            ext_expect_expect(packageRepository._registryClient._config.cache).to.equal(
                 registryCacheDir
             );
         });
@@ -115,11 +115,11 @@ describe('PackageRepository', function() {
             packageRepository
                 .fetch({ name: '', source: 'foo', target: '~0.1.0' })
                 .spread(function(canonicalDir, pkgMeta) {
-                    expect(called).to.be(true);
-                    expect(fs.existsSync(canonicalDir)).to.be(true);
-                    expect(pkgMeta).to.be.an('object');
-                    expect(pkgMeta.name).to.be('package-a');
-                    expect(pkgMeta.version).to.be('0.1.1');
+                    ext_expect_expect(called).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(canonicalDir)).to.be(true);
+                    ext_expect_expect(pkgMeta).to.be.an('object');
+                    ext_expect_expect(pkgMeta.name).to.be('package-a');
+                    ext_expect_expect(pkgMeta.version).to.be('0.1.1');
                     next();
                 })
                 .done();
@@ -138,24 +138,24 @@ describe('PackageRepository', function() {
 
                 resolver.hasNew = function() {
                     called.push('hasNew');
-                    return Q.resolve(false);
+                    return ext_q_Q.resolve(false);
                 };
             };
 
             packageRepository._resolveCache.retrieve = function() {
                 called.push('retrieve');
-                return Q.resolve([]);
+                return ext_q_Q.resolve([]);
             };
 
             packageRepository._config.force = true;
             packageRepository
                 .fetch({ name: '', source: 'foo', target: ' ~0.1.0' })
                 .spread(function(canonicalDir, pkgMeta) {
-                    expect(called).to.eql(['resolve']);
-                    expect(fs.existsSync(canonicalDir)).to.be(true);
-                    expect(pkgMeta).to.be.an('object');
-                    expect(pkgMeta.name).to.be('package-a');
-                    expect(pkgMeta.version).to.be('0.1.1');
+                    ext_expect_expect(called).to.eql(['resolve']);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(canonicalDir)).to.be(true);
+                    ext_expect_expect(pkgMeta).to.be.an('object');
+                    ext_expect_expect(pkgMeta.name).to.be('package-a');
+                    ext_expect_expect(pkgMeta.version).to.be('0.1.1');
                     next();
                 })
                 .done();
@@ -167,18 +167,18 @@ describe('PackageRepository', function() {
 
             packageRepository._resolveCache.retrieve = function(source) {
                 called = true;
-                expect(source).to.be(mockSource);
+                ext_expect_expect(source).to.be(mockSource);
                 return originalRetrieve.apply(this, arguments);
             };
 
             packageRepository
                 .fetch({ name: '', source: 'foo', target: '~0.1.0' })
                 .spread(function(canonicalDir, pkgMeta) {
-                    expect(called).to.be(true);
-                    expect(fs.existsSync(canonicalDir)).to.be(true);
-                    expect(pkgMeta).to.be.an('object');
-                    expect(pkgMeta.name).to.be('package-a');
-                    expect(pkgMeta.version).to.be('0.1.1');
+                    ext_expect_expect(called).to.be(true);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(canonicalDir)).to.be(true);
+                    ext_expect_expect(pkgMeta).to.be.an('object');
+                    ext_expect_expect(pkgMeta.name).to.be('package-a');
+                    ext_expect_expect(pkgMeta.version).to.be('0.1.1');
                     next();
                 })
                 .done();
@@ -192,22 +192,22 @@ describe('PackageRepository', function() {
 
             packageRepository._resolveCache.retrieve = function(source) {
                 called = true;
-                expect(source).to.be(mockSource);
+                ext_expect_expect(source).to.be(mockSource);
                 return originalRetrieve.apply(this, arguments);
             };
 
             packageRepository
                 .fetch({
                     name: '',
-                    source: helpers.localSource(testPackage),
+                    source: helpers_localSourcejs.localSource(testPackage),
                     target: '~0.1.0'
                 })
                 .spread(function(canonicalDir, pkgMeta) {
-                    expect(called).to.be(false);
-                    expect(fs.existsSync(canonicalDir)).to.be(true);
-                    expect(pkgMeta).to.be.an('object');
-                    expect(pkgMeta.name).to.be('package-a');
-                    expect(pkgMeta.version).to.be('0.1.1');
+                    ext_expect_expect(called).to.be(false);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(canonicalDir)).to.be(true);
+                    ext_expect_expect(pkgMeta).to.be.an('object');
+                    ext_expect_expect(pkgMeta.name).to.be('package-a');
+                    ext_expect_expect(pkgMeta.version).to.be('0.1.1');
                     forceCaching = true;
                     next();
                 })
@@ -231,17 +231,17 @@ describe('PackageRepository', function() {
             };
 
             packageRepository._resolveCache.retrieve = function() {
-                return Q.resolve([]);
+                return ext_q_Q.resolve([]);
             };
 
             packageRepository
                 .fetch({ name: '', source: 'foo', target: ' ~0.1.0' })
                 .spread(function(canonicalDir, pkgMeta) {
-                    expect(called).to.eql(['resolve']);
-                    expect(fs.existsSync(canonicalDir)).to.be(true);
-                    expect(pkgMeta).to.be.an('object');
-                    expect(pkgMeta.name).to.be('package-a');
-                    expect(pkgMeta.version).to.be('0.1.1');
+                    ext_expect_expect(called).to.eql(['resolve']);
+                    ext_expect_expect(libutilfs_fsjs.existsSync(canonicalDir)).to.be(true);
+                    ext_expect_expect(pkgMeta).to.be.an('object');
+                    ext_expect_expect(pkgMeta.name).to.be('package-a');
+                    ext_expect_expect(pkgMeta.version).to.be('0.1.1');
                     next();
                 })
                 .done();
@@ -258,32 +258,31 @@ describe('PackageRepository', function() {
                 var originalHasNew = resolver.hasNew;
 
                 resolver.hasNew = function(pkgMeta) {
-                    expect(pkgMeta).to.eql(json);
+                    ext_expect_expect(pkgMeta).to.eql(json);
                     called = true;
                     return originalHasNew.apply(this, arguments);
                 };
             };
 
             packageRepository._resolveCache.retrieve = function() {
-                return Q.resolve([tempPackage, json]);
+                return ext_q_Q.resolve([tempPackage, json]);
             };
 
-            copy
-                .copyDir(testPackage, tempPackage, { ignore: ['.git'] })
+            libutilcopy_copyDirjs(testPackage, tempPackage, { ignore: ['.git'] })
                 .then(function() {
-                    fs.writeFileSync(
-                        path.join(tempPackage, '.bower.json'),
+                    libutilfs_fsjs.writeFileSync(
+                        ext_path_path.join(tempPackage, '.bower.json'),
                         JSON.stringify(json)
                     );
 
                     return packageRepository
                         .fetch({ name: '', source: 'foo', target: '~0.1.0' })
                         .spread(function(canonicalDir, pkgMeta) {
-                            expect(called).to.be(true);
-                            expect(fs.existsSync(canonicalDir)).to.be(true);
-                            expect(pkgMeta).to.be.an('object');
-                            expect(pkgMeta.name).to.be('package-a');
-                            expect(pkgMeta.version).to.be('0.1.1');
+                            ext_expect_expect(called).to.be(true);
+                            ext_expect_expect(libutilfs_fsjs.existsSync(canonicalDir)).to.be(true);
+                            ext_expect_expect(pkgMeta).to.be.an('object');
+                            ext_expect_expect(pkgMeta.name).to.be('package-a');
+                            ext_expect_expect(pkgMeta.version).to.be('0.1.1');
                             next();
                         });
                 })
@@ -306,32 +305,31 @@ describe('PackageRepository', function() {
                 };
 
                 resolver.hasNew = function(pkgMeta) {
-                    expect(pkgMeta).to.eql(json);
+                    ext_expect_expect(pkgMeta).to.eql(json);
                     called.push('hasNew');
-                    return Q.resolve(true);
+                    return ext_q_Q.resolve(true);
                 };
             };
 
             packageRepository._resolveCache.retrieve = function() {
-                return Q.resolve([tempPackage, json]);
+                return ext_q_Q.resolve([tempPackage, json]);
             };
 
-            copy
-                .copyDir(testPackage, tempPackage, { ignore: ['.git'] })
+            libutilcopy_copyDirjs(testPackage, tempPackage, { ignore: ['.git'] })
                 .then(function() {
-                    fs.writeFileSync(
-                        path.join(tempPackage, '.bower.json'),
+                    libutilfs_fsjs.writeFileSync(
+                        ext_path_path.join(tempPackage, '.bower.json'),
                         JSON.stringify(json)
                     );
 
                     return packageRepository
                         .fetch({ name: '', source: 'foo', target: '~0.2.0' })
                         .spread(function(canonicalDir, pkgMeta) {
-                            expect(called).to.eql(['hasNew', 'resolve']);
-                            expect(fs.existsSync(canonicalDir)).to.be(true);
-                            expect(pkgMeta).to.be.an('object');
-                            expect(pkgMeta.name).to.be('a');
-                            expect(pkgMeta.version).to.be('0.2.2');
+                            ext_expect_expect(called).to.eql(['hasNew', 'resolve']);
+                            ext_expect_expect(libutilfs_fsjs.existsSync(canonicalDir)).to.be(true);
+                            ext_expect_expect(pkgMeta).to.be.an('object');
+                            ext_expect_expect(pkgMeta.name).to.be('a');
+                            ext_expect_expect(pkgMeta.version).to.be('0.2.2');
                             next();
                         });
                 })
@@ -354,30 +352,29 @@ describe('PackageRepository', function() {
                 };
 
                 resolver.hasNew = function(pkgMeta) {
-                    expect(pkgMeta).to.eql(json);
+                    ext_expect_expect(pkgMeta).to.eql(json);
                     called.push('hasNew');
-                    return Q.resolve(false);
+                    return ext_q_Q.resolve(false);
                 };
             };
 
             packageRepository._resolveCache.retrieve = function() {
-                return Q.resolve([tempPackage, json]);
+                return ext_q_Q.resolve([tempPackage, json]);
             };
 
-            copy
-                .copyDir(testPackage, tempPackage, { ignore: ['.git'] })
+            libutilcopy_copyDirjs(testPackage, tempPackage, { ignore: ['.git'] })
                 .then(function() {
-                    fs.writeFileSync(
-                        path.join(tempPackage, '.bower.json'),
+                    libutilfs_fsjs.writeFileSync(
+                        ext_path_path.join(tempPackage, '.bower.json'),
                         JSON.stringify(json)
                     );
 
                     return packageRepository
                         .fetch({ name: '', source: 'foo', target: '~0.2.0' })
                         .spread(function(canonicalDir, pkgMeta) {
-                            expect(called).to.eql(['hasNew']);
-                            expect(canonicalDir).to.equal(tempPackage);
-                            expect(pkgMeta).to.eql(json);
+                            ext_expect_expect(called).to.eql(['hasNew']);
+                            ext_expect_expect(canonicalDir).to.equal(tempPackage);
+                            ext_expect_expect(pkgMeta).to.eql(json);
                             next();
                         });
                 })
@@ -395,26 +392,25 @@ describe('PackageRepository', function() {
                 var originalResolve = resolver.resolve;
 
                 resolver.hasNew = function(pkgMeta) {
-                    expect(pkgMeta).to.eql(json);
+                    ext_expect_expect(pkgMeta).to.eql(json);
                     called.push('resolve');
                     return originalResolve.apply(this, arguments);
                 };
 
                 resolver.hasNew = function() {
                     called.push('hasNew');
-                    return Q.resolve(false);
+                    return ext_q_Q.resolve(false);
                 };
             };
 
             packageRepository._resolveCache.retrieve = function() {
-                return Q.resolve([tempPackage, json]);
+                return ext_q_Q.resolve([tempPackage, json]);
             };
 
-            copy
-                .copyDir(testPackage, tempPackage, { ignore: ['.git'] })
+            libutilcopy_copyDirjs(testPackage, tempPackage, { ignore: ['.git'] })
                 .then(function() {
-                    fs.writeFileSync(
-                        path.join(tempPackage, '.bower.json'),
+                    libutilfs_fsjs.writeFileSync(
+                        ext_path_path.join(tempPackage, '.bower.json'),
                         JSON.stringify(json)
                     );
 
@@ -422,9 +418,9 @@ describe('PackageRepository', function() {
                     return packageRepository
                         .fetch({ name: '', source: 'foo', target: '~0.2.0' })
                         .spread(function(canonicalDir, pkgMeta) {
-                            expect(called.length).to.be(0);
-                            expect(canonicalDir).to.equal(tempPackage);
-                            expect(pkgMeta).to.eql(json);
+                            ext_expect_expect(called.length).to.be(0);
+                            ext_expect_expect(canonicalDir).to.equal(tempPackage);
+                            ext_expect_expect(pkgMeta).to.eql(json);
                             next();
                         });
                 })
@@ -440,8 +436,8 @@ describe('PackageRepository', function() {
                         throw new Error('Should have failed');
                     },
                     function(err) {
-                        expect(err).to.be.an(Error);
-                        expect(err.code).to.equal('ENOCACHE');
+                        ext_expect_expect(err).to.be.an(Error);
+                        ext_expect_expect(err.code).to.equal('ENOCACHE');
 
                         next();
                     }
@@ -453,61 +449,61 @@ describe('PackageRepository', function() {
     describe('.versions', function() {
         it('should call the versions method on the concrete resolver', function(next) {
             var called = [];
-            var originalVersions = resolvers.GitRemote.versions;
+            var originalVersions = libcoreindex_indexjsjs.GitRemote.versions;
 
-            resolvers.GitRemote.versions = function(source) {
-                expect(source).to.equal(mockSource);
+            libcoreindex_indexjsjs.GitRemote.versions = function(source) {
+                ext_expect_expect(source).to.equal(mockSource);
                 called.push('resolver');
-                return Q.resolve([]);
+                return ext_q_Q.resolve([]);
             };
 
             packageRepository._resolveCache.versions = function() {
                 called.push('resolve-cache');
-                return Q.resolve([]);
+                return ext_q_Q.resolve([]);
             };
 
             packageRepository
                 .versions('foo')
                 .then(function(versions) {
-                    expect(called).to.eql(['resolver']);
-                    expect(versions).to.be.an('array');
-                    expect(versions.length).to.be(0);
+                    ext_expect_expect(called).to.eql(['resolver']);
+                    ext_expect_expect(versions).to.be.an('array');
+                    ext_expect_expect(versions.length).to.be(0);
 
                     next();
                 })
                 .fin(function() {
-                    resolvers.GitRemote.versions = originalVersions;
+                    libcoreindex_indexjsjs.GitRemote.versions = originalVersions;
                 })
                 .done();
         });
 
         it('should call the versions method on the resolve cache if offline was specified', function(next) {
             var called = [];
-            var originalVersions = resolvers.GitRemote.versions;
+            var originalVersions = libcoreindex_indexjsjs.GitRemote.versions;
 
-            resolvers.GitRemote.versions = function() {
+            libcoreindex_indexjsjs.GitRemote.versions = function() {
                 called.push('resolver');
-                return Q.resolve([]);
+                return ext_q_Q.resolve([]);
             };
 
             packageRepository._resolveCache.versions = function(source) {
-                expect(source).to.equal(mockSource);
+                ext_expect_expect(source).to.equal(mockSource);
                 called.push('resolve-cache');
-                return Q.resolve([]);
+                return ext_q_Q.resolve([]);
             };
 
             packageRepository._config.offline = true;
             packageRepository
                 .versions('foo')
                 .then(function(versions) {
-                    expect(called).to.eql(['resolve-cache']);
-                    expect(versions).to.be.an('array');
-                    expect(versions.length).to.be(0);
+                    ext_expect_expect(called).to.eql(['resolve-cache']);
+                    ext_expect_expect(versions).to.be.an('array');
+                    ext_expect_expect(versions.length).to.be(0);
 
                     next();
                 })
                 .fin(function() {
-                    resolvers.GitRemote.versions = originalVersions;
+                    libcoreindex_indexjsjs.GitRemote.versions = originalVersions;
                 })
                 .done();
         });
@@ -523,15 +519,15 @@ describe('PackageRepository', function() {
             };
 
             packageRepository._resolveCache.eliminate = function(pkgMeta) {
-                expect(pkgMeta).to.eql(json);
+                ext_expect_expect(pkgMeta).to.eql(json);
                 called = true;
-                return Q.resolve();
+                return ext_q_Q.resolve();
             };
 
             packageRepository
                 .eliminate(json)
                 .then(function() {
-                    expect(called).to.be(true);
+                    ext_expect_expect(called).to.be(true);
                     next();
                 })
                 .done();
@@ -549,7 +545,7 @@ describe('PackageRepository', function() {
                 name,
                 callback
             ) {
-                expect(name).to.eql(json.name);
+                ext_expect_expect(name).to.eql(json.name);
                 called = true;
                 callback();
             };
@@ -557,7 +553,7 @@ describe('PackageRepository', function() {
             packageRepository
                 .eliminate(json)
                 .then(function() {
-                    expect(called).to.be(true);
+                    ext_expect_expect(called).to.be(true);
                     next();
                 })
                 .done();
@@ -577,8 +573,8 @@ describe('PackageRepository', function() {
             packageRepository
                 .list()
                 .then(function(entries) {
-                    expect(called).to.be(true);
-                    expect(entries).to.be.an('array');
+                    ext_expect_expect(called).to.be(true);
+                    ext_expect_expect(entries).to.be.an('array');
                     next();
                 })
                 .done();
@@ -591,13 +587,13 @@ describe('PackageRepository', function() {
 
             packageRepository._resolveCache.clear = function() {
                 called = true;
-                return Q.resolve();
+                return ext_q_Q.resolve();
             };
 
             packageRepository
                 .clear()
                 .then(function() {
-                    expect(called).to.be(true);
+                    ext_expect_expect(called).to.be(true);
                     next();
                 })
                 .done();
@@ -614,7 +610,7 @@ describe('PackageRepository', function() {
             packageRepository
                 .clear()
                 .then(function() {
-                    expect(called).to.be(true);
+                    ext_expect_expect(called).to.be(true);
                     next();
                 })
                 .done();
@@ -631,7 +627,7 @@ describe('PackageRepository', function() {
             };
 
             packageRepository.reset();
-            expect(called).to.be(true);
+            ext_expect_expect(called).to.be(true);
         });
 
         it('should call the resetCache method without name from the registry client', function() {
@@ -643,38 +639,38 @@ describe('PackageRepository', function() {
             };
 
             packageRepository.reset();
-            expect(called).to.be(true);
+            ext_expect_expect(called).to.be(true);
         });
     });
 
     describe('.getRegistryClient', function() {
         it('should return the underlying registry client', function() {
-            expect(packageRepository.getRegistryClient()).to.be.an(
-                RegistryClient
+            ext_expect_expect(packageRepository.getRegistryClient()).to.be.an(
+                ext_bowerregistryclient_RegistryClient
             );
         });
     });
 
     describe('.getResolveCache', function() {
         it('should return the underlying resolve cache', function() {
-            expect(packageRepository.getResolveCache()).to.be.an(ResolveCache);
+            ext_expect_expect(packageRepository.getResolveCache()).to.be.an(libcoreResolveCache_ResolveCachejs);
         });
     });
 
     describe('#clearRuntimeCache', function() {
         it('should clear the resolve cache runtime cache', function() {
             var called;
-            var originalClearRuntimeCache = ResolveCache.clearRuntimeCache;
+            var originalClearRuntimeCache = libcoreResolveCache_ResolveCachejs.clearRuntimeCache;
 
             // No need to restore the original method since the constructor
             // gets re-assigned every time in beforeEach
-            ResolveCache.clearRuntimeCache = function() {
+            libcoreResolveCache_ResolveCachejs.clearRuntimeCache = function() {
                 called = true;
-                return originalClearRuntimeCache.apply(ResolveCache, arguments);
+                return originalClearRuntimeCache.apply(libcoreResolveCache_ResolveCachejs, arguments);
             };
 
             packageRepository.constructor.clearRuntimeCache();
-            expect(called).to.be(true);
+            ext_expect_expect(called).to.be(true);
         });
 
         it('should clear the resolver factory runtime cache', function() {
@@ -685,25 +681,25 @@ describe('PackageRepository', function() {
             };
 
             packageRepository.constructor.clearRuntimeCache();
-            expect(called).to.be(true);
+            ext_expect_expect(called).to.be(true);
         });
 
         it('should clear the registry runtime cache', function() {
             var called;
-            var originalClearRuntimeCache = RegistryClient.clearRuntimeCache;
+            var originalClearRuntimeCache = ext_bowerregistryclient_RegistryClient.clearRuntimeCache;
 
             // No need to restore the original method since the constructor
             // gets re-assigned every time in beforeEach
-            RegistryClient.clearRuntimeCache = function() {
+            ext_bowerregistryclient_RegistryClient.clearRuntimeCache = function() {
                 called = true;
                 return originalClearRuntimeCache.apply(
-                    RegistryClient,
+                    ext_bowerregistryclient_RegistryClient,
                     arguments
                 );
             };
 
             packageRepository.constructor.clearRuntimeCache();
-            expect(called).to.be(true);
+            ext_expect_expect(called).to.be(true);
         });
     });
 });
