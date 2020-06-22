@@ -965,7 +965,7 @@ describe('GitResolver', function() {
             clearResolverRuntimeCache();
             // Need to chmodr before removing..at least on windows
             // because .git has some read only files
-            chmodr(tempDir, 0777, function() {
+            chmodr(tempDir, 0o777, function() {
                 rimraf(tempDir, next);
             });
         });
@@ -980,7 +980,7 @@ describe('GitResolver', function() {
                     path.resolve(__dirname, '../../assets/package-a/.git'),
                     dst,
                 {
-                    mode: 0777
+                    mode: 0o777
                 }
                 )
                 .then(function() {

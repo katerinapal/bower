@@ -248,7 +248,7 @@ describe('FsResolver', function() {
                 .copyDir(testPackage, tempSource)
                 .then(function() {
                     // Change tempSource dir to 0777
-                    fs.chmodSync(tempSource, 0777);
+                    fs.chmodSync(tempSource, 0o777);
                     // Get the mode to a variable
                     mode0777 = fs.statSync(tempSource).mode;
                 })
@@ -273,7 +273,7 @@ describe('FsResolver', function() {
                 .copyFile(path.join(testPackage, 'foo'), tempSource)
                 .then(function() {
                     // Change tempSource dir to 0777
-                    fs.chmodSync(tempSource, 0777);
+                    fs.chmodSync(tempSource, 0o777);
                     // Get the mode to a variable
                     mode0777 = fs.statSync(tempSource).mode;
                 })
